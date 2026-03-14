@@ -1,0 +1,318 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RoleEnum {
+  admin
+  reviewer
+  client
+}
+
+enum TwoFaMethods {
+  totp
+  email
+  sms
+  backup_codes
+}
+
+enum TwoFaStatus {
+  pending
+  verified
+  expired
+  failed
+}
+
+enum SessionAppType {
+  web
+  ios
+  android
+  desktop
+  tv
+}
+
+enum SessionStatus {
+  active
+  compromised
+  revoked
+}
+
+enum SessionRiskLevel {
+  low
+  medium
+  high
+}
+
+enum RefreshTokenStatus {
+  active
+  used
+  revoked
+}
+
+enum InviteStatus {
+  pending
+  confirmed
+  expired
+}
+
+enum ProductFileType {
+  content_video
+  preview_video
+  content_image
+  preview_image
+}
+
+enum PaymentStatus {
+  pending
+  success
+  failed
+}
+
+enum BcActionHistoryStatus {
+  draft
+  completed
+  deleted
+}
+
+enum BcUserSpecialistAbility {
+  bc_read
+  bc_edit
+}
+
+
+model User {
+  id              String      @id @default(uuid()) @db.Uuid
+  firstName       String?     @db.VarChar(255) @map("first_name")
+  lastName        String?     @db.VarChar(255) @map("last_name")
+  email           String      @unique @db.VarChar(255)
+  phoneNumber     String?     @unique @db.VarChar(20) @map("phone_number")
+  password        String?
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime?   @map("updated_at")
+  deletedAt       DateTime?   @map("deleted_at")
+  // -----------------------------------
+  profile         Profile?
+  sessions        Session[]
+  userRoles       UserRole[]
+  invites         Invite[]
+  oauthAccounts   OauthAccount[]
+  user2Fas        User2fa[]
+  twoFaChallenges TwoFaChallenge[]
+  productUsers ProductUser[]
+  @@map("user")
+}
+
+model Profile {
+  id          String     @id @default(uuid()) @db.Uuid
+  firstName   String     @db.VarChar(255) @map("first_name")
+  lastName    String     @db.VarChar(255) @map("last_name")
+  userId      String     @unique @db.Uuid @map("user_id")
+  imageId     String?    @db.Uuid @map("image_id")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime?  @map("updated_at")
+  deletedAt   DateTime?  @map("deleted_at")
+  // -----------------------------------
+  image       File?    @relation(fields: [imageId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+  @@map("profile")
+}
+
+model Session {
+  id              String           @id @default(uuid()) @db.Uuid
+  ip              String           @db.VarChar(50)
+  deviceId        String?          @map("device_id") @db.Uuid
+  userId          String?          @map("user_id") @db.Uuid
+  riskLevel       SessionRiskLevel @map("risk_level") @default(low)
+  status          SessionStatus    @default(active)
+  appType         SessionAppType   @map("app_type")
+  userAgent       String?          @map("user_agent")
+  lastSeenAt      DateTime?        @map("last_seen_at")
+  uaHash          String?          @map("ua_hash")
+  createdAt       DateTime         @map("created_at") @default(now())
+  expiresAt       DateTime         @map("expires_at")
+  revokedAt       DateTime?        @map("revoked_at")
+  // -----------------------------------
+  user            User?            @relation(fields: [userId], references: [id])
+  twoFaChallenges TwoFaChallenge[]
+  refreshTokens   RefreshToken[]
+
+  @@map("session")
+}
+
+
+model File {
+  id                     String   @id @default(uuid()) @db.Uuid
+  name                   String
+  mimeType               String   @map("mime_type") @db.VarChar(255)
+  link                   String
+  createdAt              DateTime @map("created_at") @default(now())
+  // -----------------------------------
+  profiles               Profile[]
+  ProductFilesMain       ProductFile[] @relation("ProductFileMain")
+  ProductFilesPreview    ProductFile[] @relation("ProductFilePreview")
+  seedFiles              SeedFile[]
+
+  @@map("file")
+}
+
+model Role {
+  id        String       @id @default(uuid()) @db.Uuid
+  title     RoleEnum     @unique @default(client)
+  internal  Boolean      @default(true)
+  createdAt DateTime     @default(now()) @map("created_at")
+  // -----------------------------------
+  userRoles UserRole[]
+  invites   Invite[]
+  @@map("role")
+}
+
+model UserRole {
+  id        String   @id @default(uuid()) @db.Uuid
+  roleId    String   @db.Uuid @map("role_id")
+  userId    String   @db.Uuid @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  // -----------------------------------
+  role      Role     @relation(fields: [roleId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  @@unique([roleId, userId])
+  @@map("user_role")
+}
+
+model Invite {
+  id          String       @id @default(uuid()) @db.Uuid
+  token       String
+  email       String       @db.VarChar(255)
+  status      InviteStatus @default(pending)
+  userId      String       @db.Uuid @map("user_id")
+  roleId      String       @db.Uuid @map("role_id")
+  expiresAt   DateTime     @map("expires_at")
+  confirmedAt DateTime?    @map("confirmed_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  // -----------------------------------
+  user        User         @relation(fields: [userId], references: [id])
+  role        Role         @relation(fields: [roleId], references: [id])
+  @@map("invite")
+}
+
+model RefreshToken {
+  id         String             @id @default(uuid()) @db.Uuid
+  status     RefreshTokenStatus @default(active)
+  sessionId  String             @db.Uuid @map("session_id")
+  tokenHash  String             @map("token_hash")
+  issuedAt   DateTime           @map("issued_at")
+  expiresAt  DateTime           @map("expires_at")
+  usedAt     DateTime?          @map("used_at")
+  replacedBy String?            @db.Uuid @map("replaced_by")
+  createdAt  DateTime           @default(now()) @map("created_at")
+  // -----------------------------------
+  session    Session            @relation(fields: [sessionId], references: [id])
+  @@map("refresh_token")
+}
+
+model OauthAccount {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @db.Uuid @map("user_id")
+  provider        String?  @db.VarChar(20)
+  providerUserId  String   @db.VarChar(255) @map("provider_user_id")
+  email           String   @db.VarChar(255)
+  emailVerified   Boolean  @default(false) @map("email_verified")
+  createdAt       DateTime @default(now()) @map("created_at")
+  // -----------------------------------
+  user            User     @relation(fields: [userId], references: [id])
+  @@unique([provider, providerUserId], map: "oauth_account_provider_user_id_key")
+  @@map("oauth_account")
+}
+
+model User2fa {
+  id              String       @id @default(uuid()) @db.Uuid
+  userId          String?      @db.Uuid @map("user_id")
+  enabled         Boolean
+  method          TwoFaMethods
+  secretEncrypted String?      @map("secret_encrypted")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime?    @map("updated_at")
+  // -----------------------------------
+  user            User?        @relation(fields: [userId], references: [id])
+  @@map("user_2fa")
+}
+
+model TwoFaChallenge {
+  id            String          @id @default(uuid()) @db.Uuid
+  userId        String?         @db.Uuid @map("user_id")
+  sessionId     String?         @db.Uuid @map("session_id")
+  authFlowId    String?         @db.Uuid @map("auth_flow_id")
+  method        TwoFaMethods   
+  codeHash      String?         @map("code_hash")
+  challengeData String?         @map("challenge_data")
+  expiresAt     DateTime        @map("expires_at")
+  attempts      Int             @default(0)
+  status        TwoFaStatus     @default(pending)
+  createdAt     DateTime        @default(now()) @map("created_at")
+  // -----------------------------------
+  user          User?           @relation(fields: [userId], references: [id])
+  session       Session?        @relation(fields: [sessionId], references: [id])
+  @@map("2fa_challenge")
+}
+
+model Product {
+  id            String      @id @default(uuid()) @db.Uuid
+  title         String      @db.VarChar(255)
+  description   String?
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime?   @map("updated_at")
+  deletedAt     DateTime?   @map("deleted_at")
+  // -----------------------------------
+  productFiles  ProductFile[]
+  productUsers  ProductUser[]
+  @@map("product")
+}
+
+model ProductFile {
+  id            String            @id @default(uuid()) @db.Uuid
+  productId     String            @db.Uuid @map("product_id")
+  fileId        String            @db.Uuid @map("file_id")
+  filePreviewId String?           @db.Uuid @map("file_preview_id")
+  fileType      ProductFileType   @default(content_image) @map("file_type")
+  public        Boolean           @default(false)
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime?         @map("updated_at")
+  // -----------------------------------
+  product       Product @relation(fields: [productId], references: [id])
+  file          File    @relation("ProductFileMain", fields: [fileId], references: [id])
+  filePreview   File?   @relation("ProductFilePreview", fields: [filePreviewId], references: [id])
+  @@map("product_file")
+}
+
+model ProductUser {
+  id        String     @id @default(uuid()) @db.Uuid
+  userId    String     @db.Uuid @map("user_id")
+  productId String     @db.Uuid @map("product_id")
+  comment   String?
+  createdAt DateTime   @default(now()) @map("created_at")
+  deletedAt DateTime?  @map("deleted_at")
+  // -----------------------------------
+  user      User       @relation(fields: [userId], references: [id])
+  product   Product    @relation(fields: [productId], references: [id])
+  @@unique([userId, productId], map: "product_user_id_product_id_key")
+  @@map("product_user")
+}
+
+model SeedFile {
+  id        String      @id @default(uuid()) @db.Uuid
+  fileId    String      @db.Uuid @map("file_id")
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime?   @map("updated_at")
+  // -----------------------------------
+  file      File      @relation(fields: [fileId], references: [id])
+  @@map("seed_file")
+}
