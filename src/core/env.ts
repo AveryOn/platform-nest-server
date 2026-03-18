@@ -19,6 +19,10 @@ export const envSchema = z.object({
   MAX_SESSIONS_PER_USER: zNumberSoft(),
   CLEAR_CONSOLE_BY_START: zBool().default(false),
   REDIS_URL: z.url(),
+  BETTER_AUTH_URL: z.url(),
+  BETTER_AUTH_SECRET: z.string(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
 })
 
 const parsed = envSchema.safeParse(process.env)

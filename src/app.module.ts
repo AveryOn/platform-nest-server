@@ -3,7 +3,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { EmailProviderModule } from '~/infra/email-provider/email-provider.module'
 import { SendGridModule } from '~/infra/email-provider/sendgrid/sendgrid.module'
-import { AuthModule } from '~/modules/auth/auth.module'
+import { AuthModule } from './modules/auth/auth.module'
 import { UserModule } from '~/modules/user/user.module'
 import { SystemModule } from '~/modules/system/system.module'
 import { EmailModule } from '~/modules/email/email.module'
@@ -15,12 +15,14 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
 import { PrismaModule } from '~/infra/prisma/prisma.module'
 import { RedisModule } from '@nestjs-modules/ioredis'
 import { RedisWrapperModule } from '~/infra/redis/redis.module'
+import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 
 @Module({
   imports: [
     LoggerModule,
     PaginatorModule,
     PrismaModule,
+    DrizzleModule,
     SystemModule,
     AuthModule,
     UserModule,

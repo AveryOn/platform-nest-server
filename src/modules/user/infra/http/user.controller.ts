@@ -28,6 +28,7 @@ export class UserController {
     tags: [ApiSwaggerTag.User],
   })
   async getUsers(@Query() query: UserQueryDto): Promise<PaginatedResponse<GetUserResponse>> {
+    await this.userService.find({ id: 'abc123' })
     return await this.userService.getUsers(query) as any
   }
 }

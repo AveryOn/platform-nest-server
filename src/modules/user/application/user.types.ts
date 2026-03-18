@@ -1,13 +1,12 @@
 
 export interface User {
     id: string;
-    firstName: string | null;
-    lastName: string | null;
+    name: string;
     email: string;
-    phoneNumber: string | null;
-    createdAt: string | Date;
-    updatedAt: string | Date | null;
-    deletedAt: string | Date | null;
+    emailVerified: boolean;
+    image: string | null;
+    createdAt: Date;
+    updatedAt: Date
 }
 
 export interface FindUserInput {

@@ -45,16 +45,16 @@ export class UserService implements UserServicePort {
   async find(input: FindUserInput): Promise<User> {
 
     this.logger.info('FindUserInput', { context: { input } })
+    await this.userRepository.findById('abc123')
 
     return {
-      id: 'asd',
+      id: 'id_123',
       email: 'ex@ex.ex',
-      firstName: 'Alex',
-      lastName: 'Mercer',
-      createdAt: new Date().toISOString(),
-      updatedAt: null,
-      deletedAt: null,
-      phoneNumber: null,
+      name: 'Alex Mercer',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      image: null,
+      emailVerified: true,
     }
   }
 }
