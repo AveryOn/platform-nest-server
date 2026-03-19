@@ -17,6 +17,7 @@ import { PrismaModule } from '~/infra/prisma/prisma.module'
 import { RedisModule } from '@nestjs-modules/ioredis'
 import { RedisWrapperModule } from '~/infra/redis/redis.module'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
+import { RuleGroupModule } from './modules/rule-group/rule-group.module'
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
     AuthModule,
     UserModule,
     ProjectModule,
+    RuleGroupModule,
     EmailProviderModule,
     SendGridModule,
     EmailModule,
