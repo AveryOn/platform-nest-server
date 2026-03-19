@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module'
 import { UserModule } from '~/modules/user/user.module'
 import { SystemModule } from '~/modules/system/system.module'
 import { EmailModule } from '~/modules/email/email.module'
+import { ProjectModule } from '~/modules/project/project.module'
 import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
 import { LoggerModule } from '~/core/logger/logger.module'
 import { UserContextInterceptor } from '~/core/interceptors/user-context.interceptor'
@@ -26,6 +27,7 @@ import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
     SystemModule,
     AuthModule,
     UserModule,
+    ProjectModule,
     EmailProviderModule,
     SendGridModule,
     EmailModule,

@@ -7,6 +7,7 @@ export enum ApiSwaggerTag {
   User = 'User',
   Profile = 'Profile',
   Session = 'Session',
+  Project = 'Project',
 }
 
 export enum NodeEnv {
