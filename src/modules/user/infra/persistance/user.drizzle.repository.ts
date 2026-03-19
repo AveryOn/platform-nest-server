@@ -18,33 +18,32 @@ export class UserDrizzleRepository implements UserRepositoryPort {
   ) {}
 
   async findByEmail(email: string): Promise<User | null> {
-    
     const [user] = await this.drizzle.db
-        .select()
-        .from(users)
-        .where(eq(users.email, email));
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
     return user
   }
 
   async findById(id: string): Promise<User | null> {
     const [user] = await this.drizzle.db
-        .select()
-        .from(users)
-        .where(eq(users.id, id));
-        
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+
     console.debug('HELLO WORLD', { user })
     return user
   }
 
   async findMany(input: GetUsersInput): Promise<PaginatedOutput<User>> {
-      return {
-        data: [],
-        paginator: {
-            limit: 1,
-            page: 1,
-            total: 1,
-            totalPages: 1,
-        }
-      }
+    return {
+      data: [],
+      paginator: {
+        limit: 1,
+        page: 1,
+        total: 1,
+        totalPages: 1,
+      },
+    }
   }
 }

@@ -1,13 +1,16 @@
-import { relations } from "drizzle-orm";
-import { organizations } from "./auth-schema";
-import { projects } from "./projects";
-import { ruleGroups } from "./rule-groups";
-import { rules } from "./rules";
-import { templates, templateSnapshots } from "./templates";
+import { relations } from 'drizzle-orm'
+import { organizations } from './auth-schema'
+import { projects } from './projects'
+import { ruleGroups } from './rule-groups'
+import { rules } from './rules'
+import { templates, templateSnapshots } from './templates'
 
-export const organizationProjectsRelations = relations(organizations, ({ many }) => ({
-  projects: many(projects),
-}));
+export const organizationProjectsRelations = relations(
+  organizations,
+  ({ many }) => ({
+    projects: many(projects),
+  }),
+)
 
 export const projectRelations = relations(projects, ({ one, many }) => ({
   organization: one(organizations, {
@@ -20,7 +23,7 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
   }),
   ruleGroups: many(ruleGroups),
   rules: many(rules),
-}));
+}))
 
 export const ruleGroupRelations = relations(ruleGroups, ({ one, many }) => ({
   project: one(projects, {
@@ -30,13 +33,13 @@ export const ruleGroupRelations = relations(ruleGroups, ({ one, many }) => ({
   parentGroup: one(ruleGroups, {
     fields: [ruleGroups.parentGroupId],
     references: [ruleGroups.id],
-    relationName: "parentChild",
+    relationName: 'parentChild',
   }),
   childGroups: many(ruleGroups, {
-    relationName: "parentChild",
+    relationName: 'parentChild',
   }),
   rules: many(rules),
-}));
+}))
 
 export const ruleRelations = relations(rules, ({ one }) => ({
   project: one(projects, {
@@ -47,11 +50,11 @@ export const ruleRelations = relations(rules, ({ one }) => ({
     fields: [rules.groupId],
     references: [ruleGroups.id],
   }),
-}));
+}))
 
 export const templateRelations = relations(templates, ({ many }) => ({
   snapshots: many(templateSnapshots),
-}));
+}))
 
 export const templateSnapshotRelations = relations(
   templateSnapshots,
@@ -61,5 +64,5 @@ export const templateSnapshotRelations = relations(
       references: [templates.id],
     }),
     projects: many(projects),
-  })
-);
+  }),
+)

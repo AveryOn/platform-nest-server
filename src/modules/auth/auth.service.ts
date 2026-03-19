@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { createBetterAuth, type BetterAuthInstance } from '~/modules/auth/auth.instance'
+import {
+  createBetterAuth,
+  type BetterAuthInstance,
+} from '~/modules/auth/auth.instance'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
 
 @Injectable()

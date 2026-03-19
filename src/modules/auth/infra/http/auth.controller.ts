@@ -1,14 +1,15 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Post,
-} from '@nestjs/common'
+import { Body, Controller, Get, HttpStatus, Post } from '@nestjs/common'
 import { AuthService } from '~/modules/auth/auth.service'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
-import { SignInDto, SignInResponse, SignInSocialDto, SignInSocialResponse, SignUpDto, SignUpResponse } from '~/modules/auth/infra/http/auth.dto'
+import {
+  SignInDto,
+  SignInResponse,
+  SignInSocialDto,
+  SignInSocialResponse,
+  SignUpDto,
+  SignUpResponse,
+} from '~/modules/auth/infra/http/auth.dto'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @Controller({ path: 'auth', version: '1' })
@@ -128,9 +129,8 @@ export class AuthController {
     try {
       return await this.authService.auth.api.signOut()
     } catch (err) {
-      console.log(err)      
+      console.log(err)
       throw 'asd'
     }
   }
-
 }

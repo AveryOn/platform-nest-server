@@ -8,12 +8,11 @@ import { JsonResponseInterceptor } from '~/core/interceptors/json-response.inter
 import { GlobalExceptionFilter } from '~/core/filters/global-exception-filter'
 
 async function bootstrap() {
-  if(env.CLEAR_CONSOLE_BY_START) {
+  if (env.CLEAR_CONSOLE_BY_START) {
     console.clear()
   }
-  const app = await NestFactory.create(AppModule, { 
-    logger: env.NEST_LOGGER_ENABLED === false 
-    ? false : void Infinity
+  const app = await NestFactory.create(AppModule, {
+    logger: env.NEST_LOGGER_ENABLED === false ? false : void Infinity,
   })
 
   app

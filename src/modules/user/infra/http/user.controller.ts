@@ -1,8 +1,14 @@
 import { Controller, Get, HttpStatus, Inject, Query } from '@nestjs/common'
-import { USER_PORT, type UserServicePort } from '~/modules/user/ports/user.service.port'
+import {
+  USER_PORT,
+  type UserServicePort,
+} from '~/modules/user/ports/user.service.port'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
-import { GetUserResponse, UserQueryDto } from '~/modules/user/infra/http/user.dto'
+import {
+  GetUserResponse,
+  UserQueryDto,
+} from '~/modules/user/infra/http/user.dto'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import { PaginatedResponse } from '~/shared/paginator/infra/http/paginator.dto'
 
@@ -27,8 +33,10 @@ export class UserController {
     operationId: 'get_users_list',
     tags: [ApiSwaggerTag.User],
   })
-  async getUsers(@Query() query: UserQueryDto): Promise<PaginatedResponse<GetUserResponse>> {
+  async getUsers(
+    @Query() query: UserQueryDto,
+  ): Promise<PaginatedResponse<GetUserResponse>> {
     await this.userService.find({ id: 'abc123' })
-    return await this.userService.getUsers(query) as any
+    return (await this.userService.getUsers(query)) as any
   }
 }

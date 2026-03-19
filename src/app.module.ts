@@ -50,17 +50,10 @@ import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
     RedisWrapperModule,
   ],
   controllers: [],
-  providers: [
-    { provide: APP_INTERCEPTOR, useClass: UserContextInterceptor },
-  ],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: UserContextInterceptor }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(
-        JwtMiddleware, 
-        RequestContextMiddleware,
-      )
-      .forRoutes('*')
+    consumer.apply(JwtMiddleware, RequestContextMiddleware).forRoutes('*')
   }
 }

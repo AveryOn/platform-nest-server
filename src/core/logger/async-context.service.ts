@@ -20,11 +20,11 @@ export class AsyncContextService {
     return this.getStore()?.[field]
   }
 
-  setValue<
-    K extends ALSKey, 
-    V extends AsyncLocalStorageType[K]
-  >(field: K, value: V): void {
-    const store = this.getStore();
-    if (store) store[field] = value;    
-  } 
+  setValue<K extends ALSKey, V extends AsyncLocalStorageType[K]>(
+    field: K,
+    value: V,
+  ): void {
+    const store = this.getStore()
+    if (store) store[field] = value
+  }
 }

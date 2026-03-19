@@ -221,7 +221,11 @@ export class SystemPatchSampleDto extends PartialType(
 }
 
 export class SystemPatchSampleResponse {
-  @ApiProperty({ enum: ['success', 'failed'], default: 'success', example: 'success' })
+  @ApiProperty({
+    enum: ['success', 'failed'],
+    default: 'success',
+    example: 'success',
+  })
   @IsEnum(['success', 'failed'])
   @IsString()
   @IsNotEmpty()

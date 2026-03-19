@@ -22,7 +22,9 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    this.logger.debug('DISCONNECT FROM DATABASE', { scope: 'DrizzleDisconnect' })
+    this.logger.debug('DISCONNECT FROM DATABASE', {
+      scope: 'DrizzleDisconnect',
+    })
     await this.pool.end()
   }
 }

@@ -1,4 +1,4 @@
-import { HttpStatus } from "@nestjs/common"
+import { HttpStatus } from '@nestjs/common'
 
 export enum ErrorEnum {
   USER_NOT_FOUND = 'USER_NOT_FOUND',
@@ -8,10 +8,10 @@ export enum ErrorEnum {
 }
 
 interface ErrorChunk {
-  code: keyof typeof ErrorEnum,
-  httpStatus: typeof HttpStatus[keyof typeof HttpStatus],
-  message: string,
-} 
+  code: keyof typeof ErrorEnum
+  httpStatus: (typeof HttpStatus)[keyof typeof HttpStatus]
+  message: string
+}
 
 export const ERRORS: Record<keyof typeof ErrorEnum, ErrorChunk> = {
   UNKNOWN: {

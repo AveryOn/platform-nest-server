@@ -30,7 +30,10 @@ import { ApiSwaggerTag } from '~/shared/const/app.const'
 import { AppLoggerService } from '~/core/logger/logger.service'
 import { AppError, ERROR } from '~/core/error/app-error'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
-import { PAGINATOR_PORT, type PaginatorServicePort } from '~/shared/paginator/ports/paginator.service.port'
+import {
+  PAGINATOR_PORT,
+  type PaginatorServicePort,
+} from '~/shared/paginator/ports/paginator.service.port'
 
 @ApiTags(ApiSwaggerTag.System)
 @Controller({ path: 'system', version: '1' })
@@ -52,9 +55,12 @@ export class SystemController {
   async ping() {
     this.logger.info('Example log INFO', { scope: 'SystemPing' })
     const num = Math.random()
-    
-    if(num > 0.4) {
-      throw new AppError(ERROR.INVALID_DATA, this.logger).log('ping was wrong', { context: { num }, scope: 'SystemPing' })
+
+    if (num > 0.4) {
+      throw new AppError(ERROR.INVALID_DATA, this.logger).log(
+        'ping was wrong',
+        { context: { num }, scope: 'SystemPing' },
+      )
     }
 
     const { skip, take } = this.paginator.config({ limit: 15, page: 1 })

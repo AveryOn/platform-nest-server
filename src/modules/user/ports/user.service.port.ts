@@ -1,4 +1,8 @@
-import { FindUserInput, GetUsersInput, User } from '~/modules/user/application/user.types'
+import {
+  FindUserInput,
+  GetUsersInput,
+  User,
+} from '~/modules/user/application/user.types'
 import { PaginatedOutput } from '~/shared/paginator/application/paginator.types'
 
 export const USER_PORT = Symbol('USER_PORT')

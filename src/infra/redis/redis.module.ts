@@ -6,9 +6,9 @@ import { RedisService } from '~/infra/redis/application/redis.service'
 @Module({
   providers: [
     {
-        provide: REDIS_PORT,
-        useClass: RedisService,
-    }
+      provide: REDIS_PORT,
+      useClass: RedisService,
+    },
   ],
   exports: [REDIS_PORT],
 })

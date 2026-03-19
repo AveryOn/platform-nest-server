@@ -19,8 +19,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         code: exception.code,
         message: exception.message,
         meta: {
-            ...exception.meta,
-            context: undefined, // Exclude field context
+          ...exception.meta,
+          context: undefined, // Exclude field context
         },
       })
     }

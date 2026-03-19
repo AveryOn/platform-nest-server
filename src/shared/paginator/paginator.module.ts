@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common'
-import { PaginatorService } from '~/shared/paginator/application/paginator.service';
-import { PAGINATOR_PORT } from '~/shared/paginator/ports/paginator.service.port';
+import { PaginatorService } from '~/shared/paginator/application/paginator.service'
+import { PAGINATOR_PORT } from '~/shared/paginator/ports/paginator.service.port'
 
 @Global()
 @Module({
@@ -8,7 +8,7 @@ import { PAGINATOR_PORT } from '~/shared/paginator/ports/paginator.service.port'
     {
       provide: PAGINATOR_PORT,
       useClass: PaginatorService,
-    }
+    },
   ],
   exports: [PAGINATOR_PORT],
 })

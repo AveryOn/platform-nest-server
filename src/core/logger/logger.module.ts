@@ -41,9 +41,9 @@ import { INQUIRER } from '@nestjs/core'
       scope: Scope.TRANSIENT,
       inject: [LOGGER_PORT, AsyncContextService, INQUIRER],
       useFactory: (pino: Logger, ctx: AsyncContextService, parent: object) => {
-        const moduleName = parent?.constructor?.name ?? 'Unknown';
-        const child = pino.child({ module: moduleName });
-        return new AppLoggerService(child, ctx);
+        const moduleName = parent?.constructor?.name ?? 'Unknown'
+        const child = pino.child({ module: moduleName })
+        return new AppLoggerService(child, ctx)
       },
     },
     AsyncContextService,

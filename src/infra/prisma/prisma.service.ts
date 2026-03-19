@@ -9,9 +9,7 @@ export class PrismaService
   extends PrismaClient
   implements OnModuleInit, OnModuleDestroy
 {
-  constructor(
-    private readonly logger: AppLoggerService,
-  ) {
+  constructor(private readonly logger: AppLoggerService) {
     const adapter = new PrismaPg({
       connectionString: env.DATABASE_URL,
     })

@@ -39,12 +39,14 @@ if (!parsed.success) {
 }
 
 {
-  if(parsed.data.NODE_ENV === NodeEnv.development) {
+  if (parsed.data.NODE_ENV === NodeEnv.development) {
     console.debug({ LOG_LEVEL: parsed.data.LOG_LEVEL })
     console.debug({ NODE_ENV: parsed.data.NODE_ENV })
     console.debug({ NEST_LOGGER_ENABLED: parsed.data.NEST_LOGGER_ENABLED })
     console.debug({ MAX_SESSIONS_PER_USER: parsed.data.MAX_SESSIONS_PER_USER })
-    console.debug({ CLEAR_CONSOLE_BY_START: parsed.data.CLEAR_CONSOLE_BY_START })
+    console.debug({
+      CLEAR_CONSOLE_BY_START: parsed.data.CLEAR_CONSOLE_BY_START,
+    })
   }
 }
 

@@ -1,16 +1,16 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty, IsString } from 'class-validator'
 
 export class OperationSuccessResponse {
-    @ApiProperty({ example: 'success', description: 'Status of request' })
-    @IsString()
-    @IsNotEmpty()
-    status: 'success'
+  @ApiProperty({ example: 'success', description: 'Status of request' })
+  @IsString()
+  @IsNotEmpty()
+  status: 'success'
 }
 
 export class OperationFailedResponse {
-    @ApiProperty({ example: 'failed', description: 'Status of request' })
-    @IsString()
-    @IsNotEmpty()
-    status: 'failed'
+  @ApiProperty({ example: 'failed', description: 'Status of request' })
+  @IsString()
+  @IsNotEmpty()
+  status: 'failed'
 }

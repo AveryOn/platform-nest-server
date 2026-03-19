@@ -1,5 +1,3 @@
-export const TREE_REPO_PORT = Symbol('TREE_REPO_PORT');
+export const TREE_REPO_PORT = Symbol('TREE_REPO_PORT')
 
-export interface TreeRepoPort {
-    
-}
+export interface TreeRepoPort {}

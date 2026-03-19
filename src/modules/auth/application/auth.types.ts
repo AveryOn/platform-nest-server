@@ -1,4 +1,4 @@
 export enum SocialProvider {
-    apple = 'apple',
-    google = 'google'
+  apple = 'apple',
+  google = 'google',
 }

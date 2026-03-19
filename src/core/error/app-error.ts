@@ -17,23 +17,16 @@ export class AppError extends Error {
   }
 
   /** Вызывает logger.error */
-  log(
-    message?: string,
-    meta?: LogMeta
-  ): this {
+  log(message?: string, meta?: LogMeta): this {
     this._log = { message, meta }
 
     // If a message text is passed in the argument, it takes priority over the system message from ERRORS
     this.message = message ? message : this.message
 
-    if(this.logger) {
-      this.logger.error(
-        message ?? this.message, 
-        this.stack, 
-        meta,
-      )
+    if (this.logger) {
+      this.logger.error(message ?? this.message, this.stack, meta)
     }
-    return this;
+    return this
   }
 
   get code() {

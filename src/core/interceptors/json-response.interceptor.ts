@@ -3,14 +3,14 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
-  applyDecorators, 
+  applyDecorators,
   Type,
-  HttpStatus
+  HttpStatus,
 } from '@nestjs/common'
 import { map } from 'rxjs'
-import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger';
-import { Observable } from 'rxjs';
-import { PaginationMetaDto } from '~/shared/paginator/infra/http/paginator.dto';
+import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger'
+import { Observable } from 'rxjs'
+import { PaginationMetaDto } from '~/shared/paginator/infra/http/paginator.dto'
 
 @Injectable()
 export class JsonResponseInterceptor implements NestInterceptor {
@@ -54,38 +54,40 @@ export class JsonResponseInterceptor implements NestInterceptor {
  *
  * @param model DTO class describing the structure of the data field.
  */
-export const ApiDataResponse = <TModel extends Type<any>>(
-  {type, description, status, paginated}: {
-    type: TModel, 
-    status?: HttpStatus, 
-    description?: string,
-    paginated?: boolean,
-  }
-) =>
+export const ApiDataResponse = <TModel extends Type<any>>({
+  type,
+  description,
+  status,
+  paginated,
+}: {
+  type: TModel
+  status?: HttpStatus
+  description?: string
+  paginated?: boolean
+}) =>
   applyDecorators(
     ApiExtraModels(type, PaginationMetaDto),
     ApiResponse({
       description,
       status: status ? status : HttpStatus.OK,
-      schema: paginated ? 
-      {
-        type: 'object',
-        properties: {
-          data: {
-            type: 'array',
-            items: { $ref: getSchemaPath(type) },
+      schema: paginated
+        ? {
+            type: 'object',
+            properties: {
+              data: {
+                type: 'array',
+                items: { $ref: getSchemaPath(type) },
+              },
+              paginator: {
+                $ref: getSchemaPath(PaginationMetaDto),
+              },
+            },
+          }
+        : {
+            type: 'object',
+            properties: {
+              data: { $ref: getSchemaPath(type) },
+            },
           },
-          paginator: {
-            $ref: getSchemaPath(PaginationMetaDto)
-          },
-        },
-      }
-      :
-      {
-        type: 'object',
-        properties: {
-          data: { $ref: getSchemaPath(type) },
-        },
-      },
-    })
+    }),
   )

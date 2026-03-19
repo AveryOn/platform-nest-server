@@ -1,8 +1,10 @@
-import { Controller, Get, Inject } from "@nestjs/common"
-import { ApiTags } from "@nestjs/swagger"
-import { ApiSwaggerTag } from "~/shared/const/app.const"
-import { TEMPLATE_SNAPSHOT_PORT, type TemplateSnapshotServicePort } from "~/modules/template-snapshot/ports/template-snapshot.service.port"
-
+import { Controller, Get, Inject } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+import { ApiSwaggerTag } from '~/shared/const/app.const'
+import {
+  TEMPLATE_SNAPSHOT_PORT,
+  type TemplateSnapshotServicePort,
+} from '~/modules/template-snapshot/ports/template-snapshot.service.port'
 
 @ApiTags(ApiSwaggerTag.TemplateSnapshot)
 @Controller({ path: 'template-snapshots', version: '1' })
@@ -12,8 +14,8 @@ export class TemplateSnapshotController {
     private templateSnapshotService: TemplateSnapshotServicePort,
   ) {}
 
-    @Get('')
-    async ping() {
-        return { msg: 'ok' }
-    }
+  @Get('')
+  async ping() {
+    return { msg: 'ok' }
+  }
 }

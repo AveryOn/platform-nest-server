@@ -1,17 +1,27 @@
 import type { PaginatorServicePort } from '~/shared/paginator/ports/paginator.service.port'
 import type { UserServicePort } from '~/modules/user/ports/user.service.port'
 import { Inject, Injectable } from '@nestjs/common'
-import { USER_REPOSITORY_PORT, type UserRepositoryPort } from '~/modules/user/ports/user.repository.port'
+import {
+  USER_REPOSITORY_PORT,
+  type UserRepositoryPort,
+} from '~/modules/user/ports/user.repository.port'
 import { PAGINATOR_PORT } from '~/shared/paginator/ports/paginator.service.port'
-import { FindUserInput, GetUsersInput, User } from '~/modules/user/application/user.types'
+import {
+  FindUserInput,
+  GetUsersInput,
+  User,
+} from '~/modules/user/application/user.types'
 import { AppLoggerService } from '~/core/logger/logger.service'
 import { PaginatedOutput } from '~/shared/paginator/application/paginator.types'
 import { AppError, ERROR } from '~/core/error/app-error'
-import { REDIS_PORT, type RedisServicePort } from '~/infra/redis/ports/redis.service.port'
+import {
+  REDIS_PORT,
+  type RedisServicePort,
+} from '~/infra/redis/ports/redis.service.port'
 
 @Injectable()
 export class UserService implements UserServicePort {
-  constructor (
+  constructor(
     private readonly logger: AppLoggerService,
     @Inject(USER_REPOSITORY_PORT)
     private readonly userRepository: UserRepositoryPort,
@@ -34,7 +44,7 @@ export class UserService implements UserServicePort {
           page: 1,
           total: 200,
           totalPages: 200,
-        }
+        },
       }
     } catch (err) {
       console.error(err)
@@ -43,7 +53,6 @@ export class UserService implements UserServicePort {
   }
 
   async find(input: FindUserInput): Promise<User> {
-
     this.logger.info('FindUserInput', { context: { input } })
     await this.userRepository.findById('abc123')
 

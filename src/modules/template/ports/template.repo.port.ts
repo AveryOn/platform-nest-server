@@ -1,5 +1,3 @@
-export const TEMPLATE_REPO_PORT = Symbol('TEMPLATE_REPO_PORT');
+export const TEMPLATE_REPO_PORT = Symbol('TEMPLATE_REPO_PORT')
 
-export interface TemplateRepoPort {
-    
-}
+export interface TemplateRepoPort {}
