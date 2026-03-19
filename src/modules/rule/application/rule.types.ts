@@ -13,3 +13,21 @@ export interface Rule {
   updatedAt: Date
   deletedAt: Date | null
 }
+
+export interface CreateRuleRecord {
+  projectId: string
+  groupId: string
+  title?: string | null
+  body: string
+  metadata?: unknown
+  orderIndex?: number
+}
+
+export interface UpdateRuleRecord {
+  title?: string | null
+  body?: string
+  metadata?: unknown
+  orderIndex?: number
+  enabled?: boolean
+  groupId?: string
+}
