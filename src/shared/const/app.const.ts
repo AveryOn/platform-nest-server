@@ -12,6 +12,7 @@ export enum ApiSwaggerTag {
   Rule = 'Rule',
   TemplateSnapshot = 'TemplateSnapshot',
   Template = 'Template',
+  Tree = 'Tree',
 }
 
 export enum NodeEnv {
