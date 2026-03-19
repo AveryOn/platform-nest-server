@@ -13,6 +13,7 @@ export enum ApiSwaggerTag {
   TemplateSnapshot = 'TemplateSnapshot',
   Template = 'Template',
   Tree = 'Tree',
+  Export = 'Export',
 }
 
 export enum NodeEnv {
