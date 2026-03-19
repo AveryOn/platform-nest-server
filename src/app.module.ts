@@ -18,6 +18,7 @@ import { RedisModule } from '@nestjs-modules/ioredis'
 import { RedisWrapperModule } from '~/infra/redis/redis.module'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 import { RuleGroupModule } from './modules/rule-group/rule-group.module'
+import { RuleModule } from './modules/rule/rule.module'
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { RuleGroupModule } from './modules/rule-group/rule-group.module'
     UserModule,
     ProjectModule,
     RuleGroupModule,
+    RuleModule,
     EmailProviderModule,
     SendGridModule,
     EmailModule,

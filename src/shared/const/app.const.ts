@@ -9,6 +9,7 @@ export enum ApiSwaggerTag {
   Session = 'Session',
   Project = 'Project',
   RuleGroup = 'RuleGroup',
+  Rule = 'Rule',
 }
 
 export enum NodeEnv {
