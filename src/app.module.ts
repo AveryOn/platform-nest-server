@@ -13,6 +13,7 @@ import { LoggerModule } from '~/core/logger/logger.module'
 import { RuleGroupModule } from '~/modules/rule-group/rule-group.module'
 import { RuleModule } from '~/modules/rule/rule.module'
 import { TemplateSnapshotModule } from '~/modules/template-snapshot/template-snapshot.module'
+import { TemplateModule } from '~/modules/template/template.module'
 import { UserContextInterceptor } from '~/core/interceptors/user-context.interceptor'
 import { JwtMiddleware } from '~/core/middlewares/jwt.middleware'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
@@ -34,6 +35,7 @@ import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
     RuleGroupModule,
     RuleModule,
     TemplateSnapshotModule,
+    TemplateModule,
     EmailProviderModule,
     SendGridModule,
     EmailModule,
