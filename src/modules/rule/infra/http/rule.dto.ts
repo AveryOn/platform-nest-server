@@ -1,7 +1,9 @@
 import { PartialType } from '@nestjs/mapped-types'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
+  IsArray,
   IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsObject,
@@ -88,6 +90,105 @@ export class CreateRuleDto {
   orderIndex?: number
 }
 
+export class RuleResponse {
+  @ApiProperty({
+    example: 'rule_01HXYZABC123DEF456GHI789JK',
+    description: 'Rule ID',
+  })
+  @IsString()
+  id: string
+
+  @ApiProperty({
+    example: 'proj_01HXYZABC123DEF456GHI789JK',
+    description: 'Project ID',
+  })
+  @IsString()
+  projectId: string
+
+  @ApiProperty({
+    example: 'group_01HXYZABC123DEF456GHI789JK',
+    description: 'Group ID',
+  })
+  @IsString()
+  groupId: string
+
+  @ApiProperty({
+    example: 'Button color rule',
+    description: 'Rule title',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  title: string | null
+
+  @ApiProperty({
+    example: 'Buttons must use primary color token',
+    description: 'Rule body',
+  })
+  @IsString()
+  body: string
+
+  @ApiProperty({
+    example: { severity: 'high' },
+    description: 'Metadata',
+    type: Object,
+  })
+  metadata: unknown
+
+  @ApiProperty({
+    example: 1,
+    description: 'Order index',
+  })
+  @IsInt()
+  orderIndex: number
+
+  @ApiProperty({
+    example: true,
+    description: 'Is from template',
+  })
+  @IsBoolean()
+  isFromTemplate: boolean
+
+  @ApiProperty({
+    example: 'rule_ref_button_color',
+    description: 'Template reference',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  templateRef: string | null
+
+  @ApiProperty({
+    example: true,
+    description: 'Is enabled',
+  })
+  @IsBoolean()
+  enabled: boolean
+
+  @ApiProperty({
+    example: '2026-03-20T12:00:00.000Z',
+    description: 'Created at',
+  })
+  @IsDateString()
+  createdAt: string
+
+  @ApiProperty({
+    example: '2026-03-20T12:30:00.000Z',
+    description: 'Updated at',
+  })
+  @IsDateString()
+  updatedAt: string
+
+  @ApiProperty({
+    example: null,
+    description: 'Deleted at',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsDateString()
+  deletedAt: string | null
+}
+
 export class UpdateRuleBaseDto {
   @ApiPropertyOptional({
     example: 'Primary button usage',
@@ -159,4 +260,44 @@ export class UpdateRuleDto extends PartialType(UpdateRuleBaseDto) {
     message: 'At least one field must be provided',
   })
   dummy?: any
+}
+
+export class DeleteRuleResponse {
+  @ApiProperty({
+    example: true,
+    description: 'Success Flag',
+    type: [Boolean],
+  })
+  @IsBoolean()
+  success: boolean
+}
+
+export class ReorderRuleResponse {
+  @ApiProperty({
+    example: true,
+    description: 'Success Flag',
+    type: [Boolean],
+  })
+  @IsBoolean()
+  success: boolean
+}
+
+export class ReorderBodyDto {
+  @ApiProperty({
+    example: 'group_01HXYZABC123DEF456GHI789JK',
+    description: 'Group ID',
+  })
+  @IsString()
+  @IsNotEmpty()
+  groupId: string
+
+  @ApiProperty({
+    example: ['rule_1', 'rule_2', 'rule_3'],
+    description: 'Ordered list of rule IDs',
+    type: [String],
+  })
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty()
+  orderedIds: string[]
 }

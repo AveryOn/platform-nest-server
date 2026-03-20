@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -30,6 +31,17 @@ import {
 } from './project.dto'
 import { Project } from '../../application/project.types'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
+import {
+  CreateRuleDto,
+  DeleteRuleResponse,
+  ReorderBodyDto,
+  ReorderRuleResponse,
+  RuleResponse,
+  UpdateRuleDto,
+} from '~/modules/rule/infra/http/rule.dto'
+import { DeleteRuleRes, Rule } from '~/modules/rule/application/rule.types'
+import { RULE_PORT } from '~/modules/rule/ports/rule.service.port'
+import { RuleService } from '~/modules/rule/application/rule.service'
 
 @ApiTags(ApiSwaggerTag.Project)
 @Controller({ path: 'projects', version: '1' })
@@ -37,6 +49,9 @@ export class ProjectController {
   constructor(
     @Inject(PROJECT_PORT)
     private projectService: ProjectServicePort,
+
+    @Inject(RULE_PORT)
+    private ruleService: RuleService,
   ) {}
 
   @Post()
@@ -160,5 +175,176 @@ export class ProjectController {
     //   await this.getSessionOrThrowUseCase.execute()
 
     return await this.projectService.update('abc123', projectId, body)
+  }
+
+  // ==============================================  RULES
+  @ApiTags(ApiSwaggerTag.Rule)
+  @Post(':projectId/rules')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Create rule',
+    description: 'Create rule in project group',
+    operationId: 'create_rule',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: RuleResponse,
+    status: HttpStatus.CREATED,
+    description: 'Success',
+  })
+  @ApiCreatedResponse({
+    type: RuleResponse,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request. Invalid body or project id',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project or rule group not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description: 'Validation failed',
+  })
+  async createRule(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Body() body: CreateRuleDto,
+  ): Promise<Rule> {
+    // const { activeOrganizationId } =
+    //   await this.getSessionOrThrowUseCase.execute()
+    return await this.ruleService.create('abc123', projectId, body)
+  }
+
+  @ApiTags(ApiSwaggerTag.Rule)
+  @Patch(':projectId/rules/:ruleId')
+  @ApiOperation({
+    summary: 'Update rule',
+    description: 'Update rule in project',
+    operationId: 'update_rule',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiParam({
+    name: 'ruleId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: RuleResponse,
+    status: HttpStatus.OK,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request. Invalid body or ids',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project or rule not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description: 'Validation failed',
+  })
+  async updateRule(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('ruleId', ParseUUIDPipe) ruleId: string,
+    @Body() body: UpdateRuleDto,
+  ): Promise<Rule> {
+    // const { activeOrganizationId } =
+    //   await this.getSessionOrThrowUseCase.execute()
+    return await this.ruleService.update('abc123', projectId, ruleId, body)
+  }
+
+  @ApiTags(ApiSwaggerTag.Rule)
+  @Delete(':projectId/rules/:ruleId')
+  @ApiOperation({
+    summary: 'Delete rule',
+    description: 'Soft delete rule in project',
+    operationId: 'delete_rule',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiParam({
+    name: 'ruleId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: DeleteRuleResponse,
+    status: HttpStatus.OK,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project or rule not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  async deleteRule(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('ruleId', ParseUUIDPipe) ruleId: string,
+  ): Promise<DeleteRuleRes> {
+    // const { activeOrganizationId } =
+    //   await this.getSessionOrThrowUseCase.execute()
+    return await this.ruleService.delete('abc123', projectId, ruleId)
+  }
+
+  @ApiTags(ApiSwaggerTag.Rule)
+  @Patch(':projectId/rules/reorder')
+  @ApiOperation({
+    summary: 'Reorder rules',
+    description: 'Reorder rules inside project group',
+    operationId: 'reorder_rules',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: ReorderRuleResponse,
+    status: HttpStatus.OK,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request. orderedIds must be a non-empty array',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description: 'Validation failed',
+  })
+  async reorderRules(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Body() body: ReorderBodyDto,
+  ): Promise<ReorderRuleResponse> {
+    // const { activeOrganizationId } =
+    //   await this.getSessionOrThrowUseCase.execute()
+    return await this.ruleService.reorder('abc123', projectId, body)
   }
 }

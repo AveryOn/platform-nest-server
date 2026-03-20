@@ -4,8 +4,10 @@ import { ProjectController } from '~/modules/project/infra/http/project.controll
 import { PROJECT_REPO_PORT } from '~/modules/project/ports/project.repo.port'
 import { ProjectDrizzleRepo } from '~/modules/project/infra/persistance/project.drizzle.repo'
 import { ProjectService } from '~/modules/project/application/project.service'
+import { RuleModule } from '../rule/rule.module'
 
 @Module({
+  imports: [RuleModule],
   controllers: [ProjectController],
   providers: [
     {

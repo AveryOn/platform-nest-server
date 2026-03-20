@@ -1,4 +1,4 @@
-import { Controller, Get, Inject } from '@nestjs/common'
+import { Controller, Get, Inject, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 import {
@@ -13,9 +13,4 @@ export class RuleController {
     @Inject(RULE_PORT)
     private ruleService: RuleServicePort,
   ) {}
-
-  @Get('')
-  async ping() {
-    return { msg: 'ok' }
-  }
 }

@@ -15,7 +15,6 @@ export interface Rule {
 }
 
 export interface CreateRuleRecord {
-  projectId: string
   groupId: string
   title?: string | null
   body: string
@@ -30,4 +29,13 @@ export interface UpdateRuleRecord {
   orderIndex?: number
   enabled?: boolean
   groupId?: string
+}
+
+export interface DeleteRuleRes {
+  success: boolean
+}
+
+export interface ReorderInput {
+  groupId: string;
+  orderedIds: string[];
 }
