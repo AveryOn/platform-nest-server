@@ -9,3 +9,9 @@ export interface Project {
   updatedAt: Date
   deletedAt: Date | null
 }
+
+export interface CreateProjectInput {
+  name: string
+  description?: string | null
+  templateSlug?: string
+}
