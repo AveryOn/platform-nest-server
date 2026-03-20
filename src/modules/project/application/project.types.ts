@@ -15,3 +15,8 @@ export interface CreateProjectInput {
   description?: string | null
   templateSlug?: string
 }
+
+export interface UpdateProjectInput {
+  name?: string
+  description?: string | null
+}

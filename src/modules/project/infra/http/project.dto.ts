@@ -1,4 +1,10 @@
-import { IsDateString, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator'
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { PartialType } from '@nestjs/mapped-types'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
