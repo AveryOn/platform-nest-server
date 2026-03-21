@@ -23,6 +23,7 @@ import { PrismaModule } from '~/infra/prisma/prisma.module'
 import { RedisModule } from '@nestjs-modules/ioredis'
 import { RedisWrapperModule } from '~/infra/redis/redis.module'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
+import { SessionGuard } from './core/guards/auth.guards'
 
 @Module({
   imports: [
@@ -50,7 +51,10 @@ import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
     RedisWrapperModule,
   ],
   controllers: [],
-  providers: [{ provide: APP_INTERCEPTOR, useClass: UserContextInterceptor }],
+  providers: [
+    { provide: APP_INTERCEPTOR, useClass: UserContextInterceptor },
+    SessionGuard,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

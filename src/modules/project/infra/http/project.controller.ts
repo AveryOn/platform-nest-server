@@ -10,6 +10,8 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -61,11 +63,16 @@ import { ExportRulesetResponse } from '~/modules/export/infra/http/export.dto'
 import { ResolvedRule } from '~/modules/export/application/export.types'
 import { EXPORT_PORT } from '~/modules/export/ports/export.service.port'
 import { ExportService } from '~/modules/export/application/export.service'
+import { getSessionOrThrow } from '~/shared/helpers/auth.helpers'
+import { type Request } from 'express'
+import { AuthService } from '~/modules/auth/auth.service'
+import { SessionGuard } from '~/core/guards/auth.guards'
 
-@ApiTags(ApiSwaggerTag.Project)
 @Controller({ path: 'projects', version: '1' })
 export class ProjectController {
   constructor(
+    private readonly authService: AuthService,
+
     @Inject(PROJECT_PORT)
     private projectService: ProjectServicePort,
 
@@ -82,7 +89,9 @@ export class ProjectController {
     private exportService: ExportService,
   ) {}
 
+  @ApiTags(ApiSwaggerTag.Project)
   @Post()
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create project',
@@ -106,12 +115,20 @@ export class ProjectController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  async createProject(@Body() body: CreateProjectDto): Promise<Project> {
-    // const { activeOrganizationId } = await this.getSessionOrThrowUseCase.execute()
-    return await this.projectService.create(body, 'abc123')
+  async createProject(
+    @Body() body: CreateProjectDto,
+    @Req() req: Request,
+  ): Promise<Project> {
+    const { activeOrganizationId } = await getSessionOrThrow(
+      req,
+      this.authService,
+    )
+    return await this.projectService.create(body, activeOrganizationId)
   }
 
+  @ApiTags(ApiSwaggerTag.Project)
   @Get(':projectId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get project by id',
     description: 'Get project with access check',
@@ -139,13 +156,14 @@ export class ProjectController {
   })
   async getProjectById(
     @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Req() req: Request,
   ): Promise<Project> {
-    // const { activeOrganizationId } =
-    // await this.getSessionOrThrowUseCase.execute()
-    return await this.projectService.getById('abc123', projectId)
+    return await this.projectService.getById(req.activeOrganizationId, projectId)
   }
 
+  @ApiTags(ApiSwaggerTag.Project)
   @Get()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get projects list',
     description: 'Get all projects for active organization',
@@ -160,13 +178,13 @@ export class ProjectController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Unauthorized',
   })
-  async getProjects(): Promise<Project[]> {
-    // const { activeOrganizationId } =
-    // await this.getSessionOrThrowUseCase.execute()
-    return await this.projectService.list('abc123')
+  async getProjects(@Req() req: Request): Promise<Project[]> {
+    return await this.projectService.list(req.activeOrganizationId)
   }
 
+  @ApiTags(ApiSwaggerTag.Project)
   @Patch(':projectId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update project',
     description: 'Update project with access check',
@@ -198,16 +216,15 @@ export class ProjectController {
   async updateProject(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() body: UpdateProjectDto,
+    @Req() req: Request,
   ): Promise<Project> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
-
-    return await this.projectService.update('abc123', projectId, body)
+    return await this.projectService.update(req.activeOrganizationId, projectId, body)
   }
 
   // ==============================================  RULES
   @ApiTags(ApiSwaggerTag.Rule)
   @Post(':projectId/rules')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create rule',
@@ -244,14 +261,14 @@ export class ProjectController {
   async createRule(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() body: CreateRuleDto,
+    @Req() req: Request,
   ): Promise<Rule> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
-    return await this.ruleService.create('abc123', projectId, body)
+    return await this.ruleService.create(req.activeOrganizationId, projectId, body)
   }
 
   @ApiTags(ApiSwaggerTag.Rule)
   @Patch(':projectId/rules/:ruleId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update rule',
     description: 'Update rule in project',
@@ -290,14 +307,14 @@ export class ProjectController {
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Param('ruleId', ParseUUIDPipe) ruleId: string,
     @Body() body: UpdateRuleDto,
+    @Req() req: Request,
   ): Promise<Rule> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
-    return await this.ruleService.update('abc123', projectId, ruleId, body)
+    return await this.ruleService.update(req.activeOrganizationId, projectId, ruleId, body)
   }
 
   @ApiTags(ApiSwaggerTag.Rule)
   @Delete(':projectId/rules/:ruleId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Delete rule',
     description: 'Soft delete rule in project',
@@ -331,14 +348,14 @@ export class ProjectController {
   async deleteRule(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Param('ruleId', ParseUUIDPipe) ruleId: string,
+    @Req() req: Request,
   ): Promise<DeleteRuleRes> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
-    return await this.ruleService.delete('abc123', projectId, ruleId)
+    return await this.ruleService.delete(req.activeOrganizationId, projectId, ruleId)
   }
 
   @ApiTags(ApiSwaggerTag.Rule)
   @Patch(':projectId/rules/reorder')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Reorder rules',
     description: 'Reorder rules inside project group',
@@ -370,15 +387,15 @@ export class ProjectController {
   async reorderRules(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() body: ReorderBodyDto,
+    @Req() req: Request,
   ): Promise<ReorderRuleResponse> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
-    return await this.ruleService.reorder('abc123', projectId, body)
+    return await this.ruleService.reorder(req.activeOrganizationId, projectId, body)
   }
 
   // ================================================== RULE GROUPS
   @ApiTags(ApiSwaggerTag.RuleGroup)
   @Post(':projectId/rule-groups')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create rule group',
@@ -411,14 +428,14 @@ export class ProjectController {
   async createRuleGroup(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() body: CreateRuleGroupDto,
+    @Req() req: Request,
   ): Promise<RuleGroup> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
-    return await this.ruleGroupService.create('abc123', projectId, body)
+    return await this.ruleGroupService.create(req.activeOrganizationId, projectId, body)
   }
 
   @ApiTags(ApiSwaggerTag.RuleGroup)
   @Patch(':projectId/rule-groups/:groupId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update rule group',
     description: 'Update rule group in project',
@@ -457,11 +474,10 @@ export class ProjectController {
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Param('groupId', ParseUUIDPipe) groupId: string,
     @Body() body: UpdateRuleGroupDto,
+    @Req() req: Request,
   ): Promise<RuleGroup> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
     return await this.ruleGroupService.update(
-      'abc123',
+      req.activeOrganizationId,
       projectId,
       groupId,
       body,
@@ -470,6 +486,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.RuleGroup)
   @Delete(':projectId/rule-groups/:groupId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Delete rule group',
     description: 'Soft delete rule group in project',
@@ -503,14 +520,14 @@ export class ProjectController {
   async deleteRuleGroup(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Param('groupId', ParseUUIDPipe) groupId: string,
+    @Req() req: Request,
   ): Promise<DeleteRuleGroupResponse> {
-    // const { activeOrganizationId } =
-    // await this.getSessionOrThrowUseCase.execute()
-    return await this.ruleGroupService.delete('abd123', projectId, groupId)
+    return await this.ruleGroupService.delete(req.activeOrganizationId, projectId, groupId)
   }
 
   @ApiTags(ApiSwaggerTag.RuleGroup)
   @Patch(':projectId/rule-groups/reorder')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Reorder rule groups',
     description: 'Reorder rule groups inside project parent group',
@@ -542,15 +559,15 @@ export class ProjectController {
   async reorderRuleGroups(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() body: ReorderRuleGroupDto,
+    @Req() req: Request,
   ): Promise<ReorderRuleGroupsResponse> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
-    return await this.ruleGroupService.reorder('abc123', projectId, body)
+    return await this.ruleGroupService.reorder(req.activeOrganizationId, projectId, body)
   }
 
   // ================================================== TREE
   @ApiTags(ApiSwaggerTag.Tree)
   @Get(':projectId/tree')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get project rules tree',
     description: 'Get rule groups and rules tree for project',
@@ -577,15 +594,15 @@ export class ProjectController {
   })
   async getProjectTree(
     @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Req() req: Request,
   ): Promise<GetProjectTreeOutput> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
-    return await this.treeService.getProjectTree('abc123', projectId)
+    return await this.treeService.getProjectTree(req.activeOrganizationId, projectId)
   }
 
   // ================================================== EXPORT
   @ApiTags(ApiSwaggerTag.Export)
   @Get(':projectId/export')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get resolved project ruleset',
     description: 'Get resolved ruleset from project tree',
@@ -612,9 +629,8 @@ export class ProjectController {
   })
   async getResolvedProjectRuleset(
     @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Req() req: Request,
   ): Promise<ResolvedRule[]> {
-    // const { activeOrganizationId } =
-    //   await this.getSessionOrThrowUseCase.execute()
-    return await this.exportService.exportProjectRuleset('abc123', projectId)
+    return await this.exportService.exportProjectRuleset(req.activeOrganizationId, projectId)
   }
 }

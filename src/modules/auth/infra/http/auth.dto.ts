@@ -206,3 +206,13 @@ export class SignInSocialResponse {
   @IsNotEmpty()
   redirect: boolean
 }
+
+export class EnsureOrganizationResponse {
+  @ApiProperty({
+    example: SWAGGER_EXAMPLES.hash,
+    type: [String],
+  })
+  @IsNotEmpty()
+  @IsString()
+  orgId: string
+}
