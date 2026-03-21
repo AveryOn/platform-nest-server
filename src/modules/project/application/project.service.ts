@@ -92,4 +92,15 @@ export class ProjectService implements ProjectServicePort {
 
     return project!
   }
+
+  async delete(activeOrganizationId: string, projectId: string) {
+    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
+
+    await this.drizzle.db
+      .update(projects)
+      .set({ deletedAt: new Date() })
+      .where(eq(projects.id, projectId))
+
+    return { success: true }
+  }
 }

@@ -18,4 +18,8 @@ export interface ProjectServicePort {
     projectId: string,
     data: UpdateProjectInput,
   ): Promise<Project>
+  delete(
+    activeOrganizationId: string,
+    projectId: string,
+  ): Promise<{ success: boolean }>
 }

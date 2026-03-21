@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsOptional,
@@ -143,4 +144,14 @@ export class UpdateProjectDto extends PartialType(UpdateProjectBaseDto) {
     message: 'At least one field must be provided',
   })
   dummy?: any
+}
+
+export class DeleteProjectResponse {
+  @ApiProperty({
+    example: true,
+    description: 'Success Flag',
+    type: [Boolean],
+  })
+  @IsBoolean()
+  success: boolean
 }
