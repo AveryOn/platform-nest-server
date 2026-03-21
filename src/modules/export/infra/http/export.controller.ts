@@ -13,9 +13,4 @@ export class ExportController {
     @Inject(EXPORT_PORT)
     private exportService: ExportServicePort,
   ) {}
-
-  @Get('')
-  async ping() {
-    return { msg: 'ok' }
-  }
 }

@@ -7,9 +7,10 @@ import { ProjectService } from '~/modules/project/application/project.service'
 import { RuleModule } from '../rule/rule.module'
 import { RuleGroupModule } from '../rule-group/rule-group.module'
 import { TreeModule } from '../tree/tree.module'
+import { ExportModule } from '../export/export.module'
 
 @Module({
-  imports: [RuleModule, RuleGroupModule, TreeModule],
+  imports: [RuleModule, RuleGroupModule, TreeModule, ExportModule],
   controllers: [ProjectController],
   providers: [
     {

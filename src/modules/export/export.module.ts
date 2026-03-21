@@ -4,8 +4,10 @@ import { ExportController } from '~/modules/export/infra/http/export.controller'
 import { EXPORT_REPO_PORT } from '~/modules/export/ports/export.repo.port'
 import { ExportDrizzleRepo } from '~/modules/export/infra/persistance/export.drizzle.repo'
 import { ExportService } from '~/modules/export/application/export.service'
+import { TreeModule } from '../tree/tree.module'
 
 @Module({
+  imports: [TreeModule],
   controllers: [ExportController],
   providers: [
     {

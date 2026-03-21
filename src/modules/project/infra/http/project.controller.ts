@@ -57,6 +57,10 @@ import { GetProjectTreeResponse } from '~/modules/tree/infra/http/tree.dto'
 import { GetProjectTreeOutput } from '~/modules/tree/application/tree.types'
 import { TREE_PORT } from '~/modules/tree/ports/tree.service.port'
 import { TreeService } from '~/modules/tree/application/tree.service'
+import { ExportRulesetResponse } from '~/modules/export/infra/http/export.dto'
+import { ResolvedRule } from '~/modules/export/application/export.types'
+import { EXPORT_PORT } from '~/modules/export/ports/export.service.port'
+import { ExportService } from '~/modules/export/application/export.service'
 
 @ApiTags(ApiSwaggerTag.Project)
 @Controller({ path: 'projects', version: '1' })
@@ -73,6 +77,9 @@ export class ProjectController {
 
     @Inject(TREE_PORT)
     private treeService: TreeService,
+
+    @Inject(EXPORT_PORT)
+    private exportService: ExportService,
   ) {}
 
   @Post()
@@ -574,5 +581,40 @@ export class ProjectController {
     // const { activeOrganizationId } =
     //   await this.getSessionOrThrowUseCase.execute()
     return await this.treeService.getProjectTree('abc123', projectId)
+  }
+
+  // ================================================== EXPORT
+  @ApiTags(ApiSwaggerTag.Export)
+  @Get(':projectId/export')
+  @ApiOperation({
+    summary: 'Get resolved project ruleset',
+    description: 'Get resolved ruleset from project tree',
+    operationId: 'get_resolved_project_ruleset',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: ExportRulesetResponse,
+    status: HttpStatus.OK,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  async getResolvedProjectRuleset(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+  ): Promise<ResolvedRule[]> {
+    // const { activeOrganizationId } =
+    //   await this.getSessionOrThrowUseCase.execute()
+    return await this.exportService.exportProjectRuleset('abc123', projectId)
   }
 }

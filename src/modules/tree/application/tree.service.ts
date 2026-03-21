@@ -18,7 +18,7 @@ export interface RuleGroupNode {
 export class TreeService implements TreeServicePort {
   constructor(private readonly drizzle: DrizzleService) {}
 
-  private buildTree(groups: RuleGroupRow[], allRules: RuleRow[]): RuleGroupNode[] {
+  buildTree(groups: RuleGroupRow[], allRules: RuleRow[]): RuleGroupNode[] {
     const rulesByGroup = new Map<string, RuleRow[]>()
     for (const rule of allRules) {
       const existing = rulesByGroup.get(rule.groupId) ?? []
