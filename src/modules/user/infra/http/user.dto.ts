@@ -5,19 +5,17 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsUUID,
 } from 'class-validator'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
 import { WithPaginationQuery } from '~/shared/paginator/infra/http/paginator-factory.helper'
 
 export class GetUserResponse {
   @ApiProperty({
-    example: SWAGGER_EXAMPLES.uuid,
+    example: SWAGGER_EXAMPLES.cuid2,
     description: 'Identification of user',
   })
   @IsNotEmpty()
   @IsString()
-  @IsUUID()
   id: string
 
   @ApiProperty({ example: SWAGGER_EXAMPLES.email, description: 'User Email' })
@@ -93,10 +91,9 @@ export class FindUserDto {
   email?: string
 
   @ApiPropertyOptional({
-    example: SWAGGER_EXAMPLES.uuid,
+    example: SWAGGER_EXAMPLES.cuid2,
     description: 'User ID',
   })
-  @IsUUID()
   @IsString()
   @IsOptional()
   id?: string

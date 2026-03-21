@@ -14,7 +14,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsUUID,
   MaxLength,
   Min,
   ValidateIf,
@@ -22,6 +21,7 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
+import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
 
 // TODO exclude of here
 export const RULE_GROUP_KINDS = [
@@ -340,12 +340,11 @@ export class CreateRuleGroupDto {
   kind: RuleGroupKind
 
   @ApiPropertyOptional({
-    example: '550e8400-e29b-41d4-a716-446655440000',
+    example: SWAGGER_EXAMPLES.cuid2,
     description: 'Parent group id',
     nullable: true,
   })
   @IsOptional()
-  @IsUUID()
   @IsString()
   parentGroupId?: string | null
 
@@ -431,12 +430,11 @@ export class UpdateRuleGroupBaseDto {
   kind?: RuleGroupKind
 
   @ApiPropertyOptional({
-    example: '550e8400-e29b-41d4-a716-446655440000',
+    example: SWAGGER_EXAMPLES.cuid2,
     description: 'Parent group id',
     nullable: true,
   })
   @IsOptional()
-  @IsUUID()
   @IsString()
   parentGroupId?: string | null
 
