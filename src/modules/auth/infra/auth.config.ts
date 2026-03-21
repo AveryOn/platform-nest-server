@@ -22,7 +22,8 @@ export const baseAuthConfig = {
     enabled: true,
     minPasswordLength: 8,
   },
-  trustedOrigins: [...env.CORS_ORIGIN],
+  // trustedOrigins: [...env.CORS_ORIGIN],
+  trustedOrigins: ['*'],
   session: {
     cookieCache: {
       enabled: true,

@@ -1,23 +1,23 @@
-import { env } from '~/core/env'
 import helmet from 'helmet'
+import express from 'express'
 import { NestFactory } from '@nestjs/core'
 import { ValidationPipe, VersioningType } from '@nestjs/common'
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+
 import { AppModule } from '~/app.module'
-import { JsonResponseInterceptor } from '~/core/interceptors/json-response.interceptor'
-import { GlobalExceptionFilter } from '~/core/filters/global-exception-filter'
+import { env } from '~/core/env'
+import { AuthService } from '~/modules/auth/auth.service'
+import { betterAuthExpressHandler } from '~/modules/auth/auth.instance'
+import { GlobalExceptionFilter } from './core/filters/global-exception-filter'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 async function bootstrap() {
-  if (env.CLEAR_CONSOLE_BY_START) {
-    console.clear()
-  }
-  const app = await NestFactory.create(AppModule, {
-    logger: env.NEST_LOGGER_ENABLED === false ? false : void Infinity,
-  })
+  const app = await NestFactory.create(AppModule)
 
   app
     .useGlobalFilters(new GlobalExceptionFilter())
     .use(helmet())
+    .use(express.json())
+    .use(express.urlencoded({ extended: true }))
     .setGlobalPrefix('api')
     .enableVersioning({
       type: VersioningType.URI,
@@ -30,12 +30,10 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
       }),
     )
-    .useGlobalInterceptors(new JsonResponseInterceptor())
-    .enableVersioning()
     .enableCors({
       origin: [...env.CORS_ORIGIN],
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     })
 
   // Enable Swagger based on a variable condition
@@ -50,6 +48,13 @@ async function bootstrap() {
       jsonDocumentUrl: 'docs/json',
     })
   }
+
+  const authService = app.get(AuthService)
+  const server = app.getHttpAdapter().getInstance()
+
+  server.all(/^\/api\/v1\/auth(\/.*)?$/, async (req, res) => {
+    await betterAuthExpressHandler(req, res, authService.auth)
+  })
 
   await app.listen(env.PORT)
 }

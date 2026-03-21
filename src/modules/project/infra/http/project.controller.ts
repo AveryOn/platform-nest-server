@@ -67,12 +67,12 @@ import { ExportService } from '~/modules/export/application/export.service'
 import { getSessionOrThrow } from '~/shared/helpers/auth.helpers'
 import { type Request } from 'express'
 import { AuthService } from '~/modules/auth/auth.service'
-import { SessionGuard } from '~/core/guards/auth.guards'
+// import { SessionGuard } from '~/core/guards/auth.guards'
 
 @Controller({ path: 'projects', version: '1' })
 export class ProjectController {
   constructor(
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
 
     @Inject(PROJECT_PORT)
     private projectService: ProjectServicePort,
@@ -92,7 +92,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.Project)
   @Post()
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create project',
@@ -120,16 +120,16 @@ export class ProjectController {
     @Body() body: CreateProjectDto,
     @Req() req: Request,
   ): Promise<Project> {
-    const { activeOrganizationId } = await getSessionOrThrow(
-      req,
-      this.authService,
-    )
-    return await this.projectService.create(body, activeOrganizationId)
+    // const { activeOrganizationId } = await getSessionOrThrow(
+    //   req,
+    //   // this.authService,
+    // )
+    return await this.projectService.create(body, 'activeOrganizationId')
   }
 
   @ApiTags(ApiSwaggerTag.Project)
   @Get(':projectId')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get project by id',
     description: 'Get project with access check',
@@ -167,7 +167,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.Project)
   @Get()
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get projects list',
     description: 'Get all projects for active organization',
@@ -188,7 +188,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.Project)
   @Patch(':projectId')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update project',
     description: 'Update project with access check',
@@ -231,7 +231,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.Project)
   @Delete(':projectId')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Delete project',
     description: 'Soft delete the project',
@@ -266,7 +266,7 @@ export class ProjectController {
   // ==============================================  RULES
   @ApiTags(ApiSwaggerTag.Rule)
   @Post(':projectId/rules')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create rule',
@@ -314,7 +314,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.Rule)
   @Patch(':projectId/rules/:ruleId')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update rule',
     description: 'Update rule in project',
@@ -365,7 +365,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.Rule)
   @Delete(':projectId/rules/:ruleId')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Delete rule',
     description: 'Soft delete rule in project',
@@ -410,7 +410,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.Rule)
   @Patch(':projectId/rules/reorder')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Reorder rules',
     description: 'Reorder rules inside project group',
@@ -454,7 +454,7 @@ export class ProjectController {
   // ================================================== RULE GROUPS
   @ApiTags(ApiSwaggerTag.RuleGroup)
   @Post(':projectId/rule-groups')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create rule group',
@@ -498,7 +498,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.RuleGroup)
   @Patch(':projectId/rule-groups/:groupId')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update rule group',
     description: 'Update rule group in project',
@@ -549,7 +549,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.RuleGroup)
   @Delete(':projectId/rule-groups/:groupId')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Delete rule group',
     description: 'Soft delete rule group in project',
@@ -594,7 +594,7 @@ export class ProjectController {
 
   @ApiTags(ApiSwaggerTag.RuleGroup)
   @Patch(':projectId/rule-groups/reorder')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Reorder rule groups',
     description: 'Reorder rule groups inside project parent group',
@@ -638,7 +638,7 @@ export class ProjectController {
   // ================================================== TREE
   @ApiTags(ApiSwaggerTag.Tree)
   @Get(':projectId/tree')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get project rules tree',
     description: 'Get rule groups and rules tree for project',
@@ -676,7 +676,7 @@ export class ProjectController {
   // ================================================== EXPORT
   @ApiTags(ApiSwaggerTag.Export)
   @Get(':projectId/export')
-  @UseGuards(SessionGuard)
+  // @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get resolved project ruleset',
     description: 'Get resolved ruleset from project tree',

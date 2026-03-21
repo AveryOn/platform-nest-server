@@ -3,14 +3,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
 import { AuthModule } from '~/modules/auth/auth.module'
-import { UserModule } from '~/modules/user/user.module'
-import { SystemModule } from '~/modules/system/system.module'
 import { ProjectModule } from '~/modules/project/project.module'
 import { LoggerModule } from '~/core/logger/logger.module'
 import { RuleGroupModule } from '~/modules/rule-group/rule-group.module'
 import { RuleModule } from '~/modules/rule/rule.module'
-import { TemplateSnapshotModule } from '~/modules/template-snapshot/template-snapshot.module'
-import { TemplateModule } from '~/modules/template/template.module'
 import { TreeModule } from '~/modules/tree/tree.module'
 import { ExportModule } from '~/modules/export/export.module'
 import { UserContextInterceptor } from '~/core/interceptors/user-context.interceptor'
@@ -27,14 +23,10 @@ import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
     PaginatorModule,
     PrismaModule,
     DrizzleModule,
-    SystemModule,
     AuthModule,
-    UserModule,
     ProjectModule,
     RuleGroupModule,
     RuleModule,
-    TemplateSnapshotModule,
-    TemplateModule,
     TreeModule,
     ExportModule,
     RedisModule.forRoot({

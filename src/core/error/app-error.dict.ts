@@ -7,6 +7,7 @@ export enum ErrorEnum {
   INVALID_DATA = 'INVALID_DATA',
   GROUP_NOT_FOUND = 'GROUP_NOT_FOUND',
   UNAUTHORIZED = 'UNAUTHORIZED',
+  USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL = 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL',
 }
 
 interface ErrorChunk {
@@ -45,6 +46,11 @@ export const ERRORS: Record<keyof typeof ErrorEnum, ErrorChunk> = {
     code: 'UNAUTHORIZED',
     httpStatus: 401,
     message: 'User is not authorized',
+  },
+  USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: {
+    code: 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL',
+    httpStatus: 409,
+    message: 'User already exists. Use another email',
   },
 }
 

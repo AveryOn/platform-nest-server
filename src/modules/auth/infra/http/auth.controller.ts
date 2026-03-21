@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Req } from '@nestjs/common'
+import { Body, Controller, HttpStatus, Post, Req, Res } from '@nestjs/common'
 import { AuthService } from '~/modules/auth/auth.service'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
@@ -12,12 +12,19 @@ import {
   SignUpResponse,
 } from '~/modules/auth/infra/http/auth.dto'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
-import { type Request } from 'express'
+import { type Response, type Request } from 'express'
+import { toWebHeaders } from '~/shared/helpers/http.helpers'
+import { AppError } from '~/core/error/app-error'
+import { ErrorEnum } from '~/core/error/app-error.dict'
+import { AppLoggerService } from '~/core/logger/logger.service'
 
 @Controller({ path: 'auth', version: '1' })
 @ApiTags(ApiSwaggerTag.Auth)
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly logger: AppLoggerService,
+  ) {}
   @Post('ensure-organization')
   @ApiOperation({
     summary: 'Ensure Organiztion',
@@ -60,14 +67,32 @@ export class AuthController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  async signUp(@Body() body: SignUpDto) {
-    return await this.authService.auth.api.signUpEmail({
-      body: {
-        name: body.name,
-        email: body.email,
-        password: body.password,
-      },
-    })
+  async signUp(
+    @Body() body: SignUpDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) _res: Response,
+  ) {
+    try {
+      const result = await this.authService.auth.api.signUpEmail({
+        body: {
+          name: body.name,
+          email: body.email,
+          password: body.password,
+        },
+        headers: toWebHeaders(req),
+      })
+      this.logger.info('', { context: { result } })
+      return result
+    } catch (err) {
+      if (err?.body?.code === ErrorEnum.USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL) {
+        throw new AppError(
+          ErrorEnum.USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL,
+          this.logger,
+          { err },
+        ).log('', { context: { err } })
+      }
+      throw new AppError(ErrorEnum.UNKNOWN)
+    }
   }
 
   @Post('sign-in')
@@ -89,12 +114,17 @@ export class AuthController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  async signIn(@Body() body: SignInDto) {
+  async signIn(
+    @Body() body: SignInDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) _res: Response,
+  ) {
     return await this.authService.auth.api.signInEmail({
       body: {
         email: body.email,
         password: body.password,
       },
+      headers: toWebHeaders(req),
     })
   }
 
@@ -117,12 +147,17 @@ export class AuthController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  async signInSocial(@Body() body: SignInSocialDto) {
+  async signInSocial(
+    @Body() body: SignInSocialDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) _res: Response,
+  ) {
     return await this.authService.auth.api.signInSocial({
       body: {
         provider: body.provider,
         callbackURL: body.callbackURL,
       },
+      headers: toWebHeaders(req),
     })
   }
 
@@ -145,12 +180,17 @@ export class AuthController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  async signOut() {
+  async signOut(
+    @Req() req: Request,
+    @Res({ passthrough: true }) _res: Response,
+  ) {
     try {
-      return await this.authService.auth.api.signOut()
+      return await this.authService.auth.api.signOut({
+        headers: toWebHeaders(req),
+      })
     } catch (err) {
       console.log(err)
-      throw 'asd'
+      throw err
     }
   }
 }
