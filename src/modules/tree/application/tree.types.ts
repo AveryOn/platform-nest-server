@@ -32,3 +32,5 @@ export interface RuleGroupNode {
   }>
   children: RuleGroupNode[]
 }
+
+export type GetProjectTreeOutput = RuleGroupNode[]

@@ -53,6 +53,6 @@ export interface RuleGroupUpdateInput {
 }
 
 export interface RuleGroupReorderInput {
-  parentGroupId: string | null;
-  orderedIds: string[];
+  parentGroupId: string | null
+  orderedIds: string[]
 }

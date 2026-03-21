@@ -53,6 +53,10 @@ import {
 import { RuleGroup } from '~/modules/rule-group/application/rule-group.types'
 import { RuleGroupService } from '~/modules/rule-group/application/rule-group.service'
 import { RULE_GROUP_PORT } from '~/modules/rule-group/ports/rule-group.service.port'
+import { GetProjectTreeResponse } from '~/modules/tree/infra/http/tree.dto'
+import { GetProjectTreeOutput } from '~/modules/tree/application/tree.types'
+import { TREE_PORT } from '~/modules/tree/ports/tree.service.port'
+import { TreeService } from '~/modules/tree/application/tree.service'
 
 @ApiTags(ApiSwaggerTag.Project)
 @Controller({ path: 'projects', version: '1' })
@@ -66,6 +70,9 @@ export class ProjectController {
 
     @Inject(RULE_GROUP_PORT)
     private ruleGroupService: RuleGroupService,
+
+    @Inject(TREE_PORT)
+    private treeService: TreeService,
   ) {}
 
   @Post()
@@ -532,5 +539,40 @@ export class ProjectController {
     // const { activeOrganizationId } =
     //   await this.getSessionOrThrowUseCase.execute()
     return await this.ruleGroupService.reorder('abc123', projectId, body)
+  }
+
+  // ================================================== TREE
+  @ApiTags(ApiSwaggerTag.Tree)
+  @Get(':projectId/tree')
+  @ApiOperation({
+    summary: 'Get project rules tree',
+    description: 'Get rule groups and rules tree for project',
+    operationId: 'get_project_rules_tree',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: GetProjectTreeResponse,
+    status: HttpStatus.OK,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  async getProjectTree(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+  ): Promise<GetProjectTreeOutput> {
+    // const { activeOrganizationId } =
+    //   await this.getSessionOrThrowUseCase.execute()
+    return await this.treeService.getProjectTree('abc123', projectId)
   }
 }

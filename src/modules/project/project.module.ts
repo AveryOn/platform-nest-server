@@ -6,9 +6,10 @@ import { ProjectDrizzleRepo } from '~/modules/project/infra/persistance/project.
 import { ProjectService } from '~/modules/project/application/project.service'
 import { RuleModule } from '../rule/rule.module'
 import { RuleGroupModule } from '../rule-group/rule-group.module'
+import { TreeModule } from '../tree/tree.module'
 
 @Module({
-  imports: [RuleModule, RuleGroupModule],
+  imports: [RuleModule, RuleGroupModule, TreeModule],
   controllers: [ProjectController],
   providers: [
     {

@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common'
 import { RuleGroupServicePort } from '~/modules/rule-group/ports/rule-group.service.port'
 import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import { RuleGroupCreateInput, RuleGroupReorderInput, RuleGroupUpdateInput } from './rule-group.types'
+import {
+  RuleGroupCreateInput,
+  RuleGroupReorderInput,
+  RuleGroupUpdateInput,
+} from './rule-group.types'
 import { createId } from '~/shared/crypto/hash.crypto'
 import { ruleGroups } from '~/infra/drizzle/schemas'
 
@@ -97,14 +101,16 @@ export class RuleGroupService implements RuleGroupServicePort {
   async reorder(
     activeOrganizationId: string,
     projectId: string,
-    body: RuleGroupReorderInput
+    body: RuleGroupReorderInput,
   ) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     const { parentGroupId, orderedIds } = body
 
     if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
-      throw new AppError('INVALID_DATA', undefined, { msg: 'orderedIds must be a non-empty array' })
+      throw new AppError('INVALID_DATA', undefined, {
+        msg: 'orderedIds must be a non-empty array',
+      })
     }
 
     await this.drizzle.db.transaction(async (tx) => {

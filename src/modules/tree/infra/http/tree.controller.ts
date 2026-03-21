@@ -13,9 +13,4 @@ export class TreeController {
     @Inject(TREE_PORT)
     private treeService: TreeServicePort,
   ) {}
-
-  @Get('')
-  async ping() {
-    return { msg: 'ok' }
-  }
 }
