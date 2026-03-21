@@ -1,6 +1,8 @@
 import { Request } from 'express'
 import { AuthService } from '~/modules/auth/auth.service'
 import { toWebHeaders } from './http.helpers'
+import { AppError } from '~/core/error/app-error'
+import { ErrorEnum } from '~/core/error/app-error.dict'
 
 export async function getSessionOrThrow(
   req: Request,
@@ -11,11 +13,11 @@ export async function getSessionOrThrow(
   })
 
   if (!session?.user) {
-    throw new Error('Unauthorized')
+    throw new AppError(ErrorEnum.UNAUTHORIZED)
   }
 
   if (!session.session?.activeOrganizationId) {
-    throw new Error('No active organization')
+    throw new AppError(ErrorEnum.UNAUTHORIZED)
   }
 
   return {

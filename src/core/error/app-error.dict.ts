@@ -6,6 +6,7 @@ export enum ErrorEnum {
   UNKNOWN = 'UNKNOWN',
   INVALID_DATA = 'INVALID_DATA',
   GROUP_NOT_FOUND = 'GROUP_NOT_FOUND',
+  UNAUTHORIZED = 'UNAUTHORIZED',
 }
 
 interface ErrorChunk {
@@ -39,6 +40,11 @@ export const ERRORS: Record<keyof typeof ErrorEnum, ErrorChunk> = {
     code: 'GROUP_NOT_FOUND',
     httpStatus: 404,
     message: 'Rule Group Not Found',
+  },
+  UNAUTHORIZED: {
+    code: 'UNAUTHORIZED',
+    httpStatus: 401,
+    message: 'User is not authorized',
   },
 }
 
