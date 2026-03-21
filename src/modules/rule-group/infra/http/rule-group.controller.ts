@@ -13,9 +13,4 @@ export class RuleGroupController {
     @Inject(RULE_GROUP_PORT)
     private ruleGroupService: RuleGroupServicePort,
   ) {}
-
-  @Get('')
-  async ping() {
-    return { msg: 'ok' }
-  }
 }

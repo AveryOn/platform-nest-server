@@ -5,9 +5,10 @@ import { PROJECT_REPO_PORT } from '~/modules/project/ports/project.repo.port'
 import { ProjectDrizzleRepo } from '~/modules/project/infra/persistance/project.drizzle.repo'
 import { ProjectService } from '~/modules/project/application/project.service'
 import { RuleModule } from '../rule/rule.module'
+import { RuleGroupModule } from '../rule-group/rule-group.module'
 
 @Module({
-  imports: [RuleModule],
+  imports: [RuleModule, RuleGroupModule],
   controllers: [ProjectController],
   providers: [
     {

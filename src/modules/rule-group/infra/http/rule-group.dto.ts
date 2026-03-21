@@ -6,7 +6,9 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger'
 import {
+  IsArray,
   IsBoolean,
+  IsDateString,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -196,6 +198,114 @@ export class ShadowTokenMetadataDto {
   RadiusTokenMetadataDto,
   ShadowTokenMetadataDto,
 )
+export class RuleGroupResponse {
+  @ApiProperty({
+    example: 'group_01HXYZABC123DEF456GHI789JK',
+    description: 'Group ID',
+  })
+  @IsString()
+  id: string
+
+  @ApiProperty({
+    example: 'proj_01HXYZABC123DEF456GHI789JK',
+    description: 'Project ID',
+  })
+  @IsString()
+  projectId: string
+
+  @ApiProperty({
+    example: null,
+    description: 'Parent group ID',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  parentGroupId: string | null
+
+  @ApiProperty({
+    example: 'Buttons',
+    description: 'Group name',
+  })
+  @IsString()
+  name: string
+
+  @ApiProperty({
+    example: 'Rules for button components',
+    description: 'Group description',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  description: string | null
+
+  @ApiProperty({
+    example: 'component',
+    description: 'Group kind',
+  })
+  @IsString()
+  kind: string
+
+  @ApiProperty({
+    example: { scope: 'ui' },
+    description: 'Metadata',
+    type: Object,
+  })
+  metadata: unknown
+
+  @ApiProperty({
+    example: 1,
+    description: 'Order index',
+  })
+  @IsInt()
+  orderIndex: number
+
+  @ApiProperty({
+    example: true,
+    description: 'Is from template',
+  })
+  @IsBoolean()
+  isFromTemplate: boolean
+
+  @ApiProperty({
+    example: 'group_ref_buttons',
+    description: 'Template reference',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  templateRef: string | null
+
+  @ApiProperty({
+    example: true,
+    description: 'Is enabled',
+  })
+  @IsBoolean()
+  enabled: boolean
+
+  @ApiProperty({
+    example: '2026-03-20T12:00:00.000Z',
+    description: 'Created at',
+  })
+  @IsDateString()
+  createdAt: string
+
+  @ApiProperty({
+    example: '2026-03-20T12:30:00.000Z',
+    description: 'Updated at',
+  })
+  @IsDateString()
+  updatedAt: string
+
+  @ApiProperty({
+    example: null,
+    description: 'Deleted at',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsDateString()
+  deletedAt: string | null
+}
+
 export class CreateRuleGroupDto {
   @ApiProperty({
     example: 'Colors',
@@ -378,4 +488,44 @@ export class UpdateRuleGroupDto extends PartialType(UpdateRuleGroupBaseDto) {
     message: 'At least one field must be provided',
   })
   dummy?: any
+}
+
+export class DeleteRuleGroupResponse {
+  @ApiProperty({
+    example: true,
+    description: 'Success Flag',
+    type: [Boolean],
+  })
+  @IsBoolean()
+  success: boolean
+}
+
+export class ReorderRuleGroupDto {
+  @ApiProperty({
+    example: null,
+    description: 'Parent group ID',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  parentGroupId: string | null
+
+  @ApiProperty({
+    example: ['group_1', 'group_2', 'group_3'],
+    description: 'Ordered list of group IDs',
+    type: [String],
+  })
+  @IsArray()
+  @IsString({ each: true })
+  orderedIds: string[]
+}
+
+export class ReorderRuleGroupsResponse {
+  @ApiProperty({
+    example: true,
+    description: 'Success Flag',
+    type: [Boolean],
+  })
+  @IsBoolean()
+  success: boolean
 }

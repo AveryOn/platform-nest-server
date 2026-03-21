@@ -42,6 +42,17 @@ import {
 import { DeleteRuleRes, Rule } from '~/modules/rule/application/rule.types'
 import { RULE_PORT } from '~/modules/rule/ports/rule.service.port'
 import { RuleService } from '~/modules/rule/application/rule.service'
+import {
+  CreateRuleGroupDto,
+  DeleteRuleGroupResponse,
+  ReorderRuleGroupDto,
+  ReorderRuleGroupsResponse,
+  RuleGroupResponse,
+  UpdateRuleGroupDto,
+} from '~/modules/rule-group/infra/http/rule-group.dto'
+import { RuleGroup } from '~/modules/rule-group/application/rule-group.types'
+import { RuleGroupService } from '~/modules/rule-group/application/rule-group.service'
+import { RULE_GROUP_PORT } from '~/modules/rule-group/ports/rule-group.service.port'
 
 @ApiTags(ApiSwaggerTag.Project)
 @Controller({ path: 'projects', version: '1' })
@@ -52,6 +63,9 @@ export class ProjectController {
 
     @Inject(RULE_PORT)
     private ruleService: RuleService,
+
+    @Inject(RULE_GROUP_PORT)
+    private ruleGroupService: RuleGroupService,
   ) {}
 
   @Post()
@@ -346,5 +360,177 @@ export class ProjectController {
     // const { activeOrganizationId } =
     //   await this.getSessionOrThrowUseCase.execute()
     return await this.ruleService.reorder('abc123', projectId, body)
+  }
+
+  // ================================================== RULE GROUPS
+  @ApiTags(ApiSwaggerTag.RuleGroup)
+  @Post(':projectId/rule-groups')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Create rule group',
+    description: 'Create rule group in project',
+    operationId: 'create_rule_group',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: RuleGroupResponse,
+    status: HttpStatus.CREATED,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request. Invalid body or project id',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description: 'Validation failed',
+  })
+  async createRuleGroup(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Body() body: CreateRuleGroupDto,
+  ): Promise<RuleGroup> {
+    // const { activeOrganizationId } =
+    //   await this.getSessionOrThrowUseCase.execute()
+    return await this.ruleGroupService.create('abc123', projectId, body)
+  }
+
+  @ApiTags(ApiSwaggerTag.RuleGroup)
+  @Patch(':projectId/rule-groups/:groupId')
+  @ApiOperation({
+    summary: 'Update rule group',
+    description: 'Update rule group in project',
+    operationId: 'update_rule_group',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiParam({
+    name: 'groupId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: RuleGroupResponse,
+    status: HttpStatus.OK,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request. Invalid body or ids',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project or rule group not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description: 'Validation failed',
+  })
+  async updateRuleGroup(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('groupId', ParseUUIDPipe) groupId: string,
+    @Body() body: UpdateRuleGroupDto,
+  ): Promise<RuleGroup> {
+    // const { activeOrganizationId } =
+    //   await this.getSessionOrThrowUseCase.execute()
+    return await this.ruleGroupService.update(
+      'abc123',
+      projectId,
+      groupId,
+      body,
+    )
+  }
+
+  @ApiTags(ApiSwaggerTag.RuleGroup)
+  @Delete(':projectId/rule-groups/:groupId')
+  @ApiOperation({
+    summary: 'Delete rule group',
+    description: 'Soft delete rule group in project',
+    operationId: 'delete_rule_group',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiParam({
+    name: 'groupId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: DeleteRuleGroupResponse,
+    status: HttpStatus.OK,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project or rule group not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  async deleteRuleGroup(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('groupId', ParseUUIDPipe) groupId: string,
+  ): Promise<DeleteRuleGroupResponse> {
+    // const { activeOrganizationId } =
+    // await this.getSessionOrThrowUseCase.execute()
+    return await this.ruleGroupService.delete('abd123', projectId, groupId)
+  }
+
+  @ApiTags(ApiSwaggerTag.RuleGroup)
+  @Patch(':projectId/rule-groups/reorder')
+  @ApiOperation({
+    summary: 'Reorder rule groups',
+    description: 'Reorder rule groups inside project parent group',
+    operationId: 'reorder_rule_groups',
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    type: String,
+    format: 'uuid',
+  })
+  @ApiDataResponse({
+    type: ReorderRuleGroupsResponse,
+    status: HttpStatus.OK,
+    description: 'Success',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request. orderedIds must be a non-empty array',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Project not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description: 'Validation failed',
+  })
+  async reorderRuleGroups(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Body() body: ReorderRuleGroupDto,
+  ): Promise<ReorderRuleGroupsResponse> {
+    // const { activeOrganizationId } =
+    //   await this.getSessionOrThrowUseCase.execute()
+    return await this.ruleGroupService.reorder('abc123', projectId, body)
   }
 }

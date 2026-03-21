@@ -36,6 +36,6 @@ export interface DeleteRuleRes {
 }
 
 export interface ReorderInput {
-  groupId: string;
-  orderedIds: string[];
+  groupId: string
+  orderedIds: string[]
 }

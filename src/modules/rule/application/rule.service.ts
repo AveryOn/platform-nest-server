@@ -97,20 +97,24 @@ export class RuleService implements RuleServicePort {
     return { success: true }
   }
 
-  async reorder(activeOrganizationId: string, projectId: string, body: ReorderInput) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle);
-  
-    const { groupId, orderedIds } = body;
-  
+  async reorder(
+    activeOrganizationId: string,
+    projectId: string,
+    body: ReorderInput,
+  ) {
+    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
+
+    const { groupId, orderedIds } = body
+
     if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
       throw new AppError('INVALID_DATA')
     }
-  
+
     await this.drizzle.db.transaction(async (tx) => {
       for (let i = 0; i < orderedIds.length; i++) {
-        const id = orderedIds[i];
-        if (typeof id !== "string") continue;
-  
+        const id = orderedIds[i]
+        if (typeof id !== 'string') continue
+
         await tx
           .update(rules)
           .set({ orderIndex: i })
@@ -118,12 +122,12 @@ export class RuleService implements RuleServicePort {
             and(
               eq(rules.id, id),
               eq(rules.projectId, projectId),
-              eq(rules.groupId, groupId)
-            )
-          );
+              eq(rules.groupId, groupId),
+            ),
+          )
       }
-    });
-  
+    })
+
     return { success: true }
   }
 }
