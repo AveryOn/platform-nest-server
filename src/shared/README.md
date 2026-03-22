@@ -27,7 +27,7 @@ Shared does not contain business logic.
 - Feature services
 - Repositories
 - Persistence
-- Prisma / Redis
+- Drizzle / Redis
 - Business rules
 - Use-cases
 - HTTP controllers

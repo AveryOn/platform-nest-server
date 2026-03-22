@@ -12,7 +12,6 @@ import { ExportModule } from '~/modules/export/export.module'
 import { UserContextInterceptor } from '~/core/interceptors/user-context.interceptor'
 import { JwtMiddleware } from '~/core/middlewares/jwt.middleware'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
-import { PrismaModule } from '~/infra/prisma/prisma.module'
 import { RedisModule } from '@nestjs-modules/ioredis'
 import { RedisWrapperModule } from '~/infra/redis/redis.module'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
@@ -21,7 +20,6 @@ import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
   imports: [
     LoggerModule,
     PaginatorModule,
-    PrismaModule,
     DrizzleModule,
     AuthModule,
     ProjectModule,
