@@ -12,7 +12,7 @@ import { UserContextInterceptor } from '~/core/interceptors/user-context.interce
 import { JwtMiddleware } from '~/core/middlewares/jwt.middleware'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
 // import { RedisModule } from '@nestjs-modules/ioredis'
-import { RedisWrapperModule } from '~/infra/redis/redis.module'
+// import { RedisWrapperModule } from '~/infra/redis/redis.module'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 
 @Module({
@@ -30,7 +30,7 @@ import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
     //   type: 'single',
     //   url: env.REDIS_URL,
     // }),
-    RedisWrapperModule,
+    // RedisWrapperModule,
   ],
   controllers: [],
   providers: [{ provide: APP_INTERCEPTOR, useClass: UserContextInterceptor }],
