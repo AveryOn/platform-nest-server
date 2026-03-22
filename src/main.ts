@@ -9,6 +9,7 @@ import { AuthService } from '~/modules/auth/auth.service'
 import { betterAuthExpressHandler } from '~/modules/auth/auth.instance'
 import { GlobalExceptionFilter } from './core/filters/global-exception-filter'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { NodeEnv } from './shared/const/app.const'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -31,7 +32,7 @@ async function bootstrap() {
       }),
     )
     .enableCors({
-      origin: [...env.CORS_ORIGIN],
+      origin: env.NODE_ENV === NodeEnv.production ? [...env.CORS_ORIGIN] : '*',
       credentials: true,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     })
