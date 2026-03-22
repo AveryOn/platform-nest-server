@@ -1,4 +1,3 @@
-import { env } from '~/core/env'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
@@ -12,7 +11,7 @@ import { ExportModule } from '~/modules/export/export.module'
 import { UserContextInterceptor } from '~/core/interceptors/user-context.interceptor'
 import { JwtMiddleware } from '~/core/middlewares/jwt.middleware'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
-import { RedisModule } from '@nestjs-modules/ioredis'
+// import { RedisModule } from '@nestjs-modules/ioredis'
 import { RedisWrapperModule } from '~/infra/redis/redis.module'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 
@@ -27,10 +26,10 @@ import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
     RuleModule,
     TreeModule,
     ExportModule,
-    RedisModule.forRoot({
-      type: 'single',
-      url: env.REDIS_URL,
-    }),
+    // RedisModule.forRoot({
+    //   type: 'single',
+    //   url: env.REDIS_URL,
+    // }),
     RedisWrapperModule,
   ],
   controllers: [],
