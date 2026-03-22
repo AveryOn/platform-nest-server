@@ -9,7 +9,7 @@ export const envSchema = z.object({
   DATABASE_URL: z.string(),
   PORT: zNumberSoft().default(3000),
   SWAGGER_ENABLED: zBool(),
-  CORS_ORIGIN: zJson().pipe(z.array(z.url(''))),
+  CORS_ORIGIN: zJson().pipe(z.array(z.string())),
   SENDGRID_API_KEY: z.string(),
   EMAIL_NO_REPLY: z.string(),
   EMAIL_COMPANY_NAME: z.string(),
