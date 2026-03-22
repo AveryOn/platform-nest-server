@@ -31,11 +31,14 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
       }),
     )
-    .enableCors({
-      origin: env.NODE_ENV === NodeEnv.production ? [...env.CORS_ORIGIN] : '*',
+
+  if(env.NODE_ENV === NodeEnv.production) {
+    app.enableCors({
+      origin: [...env.CORS_ORIGIN],
       credentials: true,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     })
+  }
 
   // Enable Swagger based on a variable condition
   if (env.SWAGGER_ENABLED === true) {
