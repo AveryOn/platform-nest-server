@@ -18,7 +18,7 @@ async function bootstrap() {
 
   app
     .useGlobalFilters(new GlobalExceptionFilter())
-    .use(helmet())
+    // .use(helmet())
     // app.use(
     //   helmet({
     //     contentSecurityPolicy: isProduction
