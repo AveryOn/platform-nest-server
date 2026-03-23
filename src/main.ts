@@ -28,8 +28,8 @@ async function bootstrap() {
                 'upgrade-insecure-requests': null,
               },
             },
-        // crossOriginOpenerPolicy: false,
-        // originAgentCluster: false,
+        crossOriginOpenerPolicy: false,
+        originAgentCluster: false,
       }),
     )
     .use(express.json())
