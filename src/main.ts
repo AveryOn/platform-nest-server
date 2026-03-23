@@ -18,7 +18,20 @@ async function bootstrap() {
 
   app
     .useGlobalFilters(new GlobalExceptionFilter())
-    .use(helmet())
+    // .use(helmet())
+    app.use(
+      helmet({
+        contentSecurityPolicy: isProduction
+          ? undefined
+          : {
+              directives: {
+                'upgrade-insecure-requests': null,
+              },
+            },
+        crossOriginOpenerPolicy: false,
+        originAgentCluster: false,
+      }),
+    )
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
     .setGlobalPrefix('api')
