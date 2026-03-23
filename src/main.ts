@@ -11,6 +11,8 @@ import { GlobalExceptionFilter } from './core/filters/global-exception-filter'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { NodeEnv } from './shared/const/app.const'
 
+const isProduction = env.NODE_ENV === NodeEnv.production
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
@@ -31,14 +33,11 @@ async function bootstrap() {
         forbidNonWhitelisted: true,
       }),
     )
-
-  if(env.NODE_ENV === NodeEnv.production) {
-    app.enableCors({
-      origin: [...env.CORS_ORIGIN],
-      credentials: true,
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    .enableCors({
+      origin: isProduction ? [...env.CORS_ORIGIN] : '*',
+      credentials: isProduction,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     })
-  }
 
   // Enable Swagger based on a variable condition
   if (env.SWAGGER_ENABLED === true) {
