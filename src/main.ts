@@ -16,22 +16,12 @@ const isProduction = env.NODE_ENV === NodeEnv.production
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  // Enabled helmet gaurd by prod flag
+  if(isProduction) {
+    app.use(helmet())
+  }
   app
     .useGlobalFilters(new GlobalExceptionFilter())
-    // .use(helmet())
-    app.use(
-      helmet({
-        contentSecurityPolicy: isProduction
-          ? undefined
-          : {
-              directives: {
-                'upgrade-insecure-requests': null,
-              },
-            },
-        crossOriginOpenerPolicy: false,
-        originAgentCluster: false,
-      }),
-    )
     .use(express.json())
     .use(express.urlencoded({ extended: true }))
     .setGlobalPrefix('api')
