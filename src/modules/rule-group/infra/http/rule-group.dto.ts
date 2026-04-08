@@ -1,10 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types'
-import {
-  ApiExtraModels,
-  ApiProperty,
-  ApiPropertyOptional,
-  getSchemaPath,
-} from '@nestjs/swagger'
+import { ApiExtraModels, ApiProperty, ApiPropertyOptional, getSchemaPath } from '@nestjs/swagger'
 import {
   IsArray,
   IsBoolean,
@@ -24,21 +19,10 @@ import { IsNotEmptyBody } from '~/shared/validators/object.validator'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
 
 // TODO exclude of here
-export const RULE_GROUP_KINDS = [
-  'category',
-  'component',
-  'variant',
-  'section',
-  'token',
-] as const
+export const RULE_GROUP_KINDS = ['category', 'component', 'variant', 'section', 'token'] as const
 
 // TODO exclude of here
-export type RuleGroupKind =
-  | 'category'
-  | 'component'
-  | 'variant'
-  | 'section'
-  | 'token'
+export type RuleGroupKind = 'category' | 'component' | 'variant' | 'section' | 'token'
 
 export class ColorTokenMetadataDto {
   @ApiProperty({

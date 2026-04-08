@@ -4,7 +4,7 @@ import { RuleGroupNode } from '~/modules/tree/application/tree.types'
 import { ResolvedRule } from './export.types'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
 import { requireProjectAccess } from '~/modules/auth/auth.utils'
-import { ruleGroups, rules } from '~/infra/drizzle/schemas'
+import { ruleGroupsTable, rules } from '~/infra/drizzle/schemas'
 import { and, eq, isNull } from 'drizzle-orm'
 import { TREE_PORT } from '~/modules/tree/ports/tree.service.port'
 import { TreeService } from '~/modules/tree/application/tree.service'
@@ -58,10 +58,7 @@ export class ExportService implements ExportServicePort {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     const groups = await this.drizzle.db.query.ruleGroups.findMany({
-      where: and(
-        eq(ruleGroups.projectId, projectId),
-        isNull(ruleGroups.deletedAt),
-      ),
+      where: and(eq(ruleGroupsTable.projectId, projectId), isNull(ruleGroupsTable.deletedAt)),
     })
 
     const allRules = await this.drizzle.db.query.rules.findMany({

@@ -17,7 +17,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   // Enabled helmet gaurd by prod flag
-  if(isProduction) {
+  if (isProduction) {
     app.use(helmet())
   }
   app

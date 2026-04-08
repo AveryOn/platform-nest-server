@@ -48,8 +48,7 @@ export class AppLoggerService implements LoggerService {
   private write(level: LogLevel, message: string, meta?: LogMeta) {
     if (!meta) return
 
-    const requestId =
-      this.ctx.getValue(this.ctx.ALSKey['requestId']) ?? 'no-request'
+    const requestId = this.ctx.getValue(this.ctx.ALSKey['requestId']) ?? 'no-request'
     const userId = this.ctx.getValue(this.ctx.ALSKey['userId'])
 
     const entry: LogEntry = {

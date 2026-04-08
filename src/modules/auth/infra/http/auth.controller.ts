@@ -85,11 +85,9 @@ export class AuthController {
       return result
     } catch (err) {
       if (err?.body?.code === ErrorEnum.USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL) {
-        throw new AppError(
-          ErrorEnum.USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL,
-          this.logger,
-          { err },
-        ).log('', { context: { err } })
+        throw new AppError(ErrorEnum.USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL, this.logger, {
+          err,
+        }).log('', { context: { err } })
       }
       throw new AppError(ErrorEnum.UNKNOWN)
     }
@@ -180,10 +178,7 @@ export class AuthController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  async signOut(
-    @Req() req: Request,
-    @Res({ passthrough: true }) _res: Response,
-  ) {
+  async signOut(@Req() req: Request, @Res({ passthrough: true }) _res: Response) {
     try {
       return await this.authService.auth.api.signOut({
         headers: toWebHeaders(req),

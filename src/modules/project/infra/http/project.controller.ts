@@ -13,18 +13,9 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common'
-import {
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
-import {
-  PROJECT_PORT,
-  type ProjectServicePort,
-} from '~/modules/project/ports/project.service.port'
+import { PROJECT_PORT, type ProjectServicePort } from '~/modules/project/ports/project.service.port'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import {
   CreateProjectDto,
@@ -116,10 +107,7 @@ export class ProjectController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  async createProject(
-    @Body() body: CreateProjectDto,
-    @Req() req: Request,
-  ): Promise<Project> {
+  async createProject(@Body() body: CreateProjectDto, @Req() req: Request): Promise<Project> {
     // const { activeOrganizationId } = await getSessionOrThrow(
     //   req,
     //   // this.authService,
@@ -159,10 +147,7 @@ export class ProjectController {
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Req() req: Request,
   ): Promise<Project> {
-    return await this.projectService.getById(
-      req.activeOrganizationId,
-      projectId,
-    )
+    return await this.projectService.getById(req.activeOrganizationId, projectId)
   }
 
   @ApiTags(ApiSwaggerTag.Project)
@@ -222,11 +207,7 @@ export class ProjectController {
     @Body() body: UpdateProjectDto,
     @Req() req: Request,
   ): Promise<Project> {
-    return await this.projectService.update(
-      req.activeOrganizationId,
-      projectId,
-      body,
-    )
+    return await this.projectService.update(req.activeOrganizationId, projectId, body)
   }
 
   @ApiTags(ApiSwaggerTag.Project)
@@ -305,11 +286,7 @@ export class ProjectController {
     @Body() body: CreateRuleDto,
     @Req() req: Request,
   ): Promise<Rule> {
-    return await this.ruleService.create(
-      req.activeOrganizationId,
-      projectId,
-      body,
-    )
+    return await this.ruleService.create(req.activeOrganizationId, projectId, body)
   }
 
   @ApiTags(ApiSwaggerTag.Rule)
@@ -355,12 +332,7 @@ export class ProjectController {
     @Body() body: UpdateRuleDto,
     @Req() req: Request,
   ): Promise<Rule> {
-    return await this.ruleService.update(
-      req.activeOrganizationId,
-      projectId,
-      ruleId,
-      body,
-    )
+    return await this.ruleService.update(req.activeOrganizationId, projectId, ruleId, body)
   }
 
   @ApiTags(ApiSwaggerTag.Rule)
@@ -401,11 +373,7 @@ export class ProjectController {
     @Param('ruleId', ParseUUIDPipe) ruleId: string,
     @Req() req: Request,
   ): Promise<DeleteRuleRes> {
-    return await this.ruleService.delete(
-      req.activeOrganizationId,
-      projectId,
-      ruleId,
-    )
+    return await this.ruleService.delete(req.activeOrganizationId, projectId, ruleId)
   }
 
   @ApiTags(ApiSwaggerTag.Rule)
@@ -444,11 +412,7 @@ export class ProjectController {
     @Body() body: ReorderBodyDto,
     @Req() req: Request,
   ): Promise<ReorderRuleResponse> {
-    return await this.ruleService.reorder(
-      req.activeOrganizationId,
-      projectId,
-      body,
-    )
+    return await this.ruleService.reorder(req.activeOrganizationId, projectId, body)
   }
 
   // ================================================== RULE GROUPS
@@ -489,11 +453,7 @@ export class ProjectController {
     @Body() body: CreateRuleGroupDto,
     @Req() req: Request,
   ): Promise<RuleGroup> {
-    return await this.ruleGroupService.create(
-      req.activeOrganizationId,
-      projectId,
-      body,
-    )
+    return await this.ruleGroupService.create(req.activeOrganizationId, projectId, body)
   }
 
   @ApiTags(ApiSwaggerTag.RuleGroup)
@@ -539,12 +499,7 @@ export class ProjectController {
     @Body() body: UpdateRuleGroupDto,
     @Req() req: Request,
   ): Promise<RuleGroup> {
-    return await this.ruleGroupService.update(
-      req.activeOrganizationId,
-      projectId,
-      groupId,
-      body,
-    )
+    return await this.ruleGroupService.update(req.activeOrganizationId, projectId, groupId, body)
   }
 
   @ApiTags(ApiSwaggerTag.RuleGroup)
@@ -585,11 +540,7 @@ export class ProjectController {
     @Param('groupId', ParseUUIDPipe) groupId: string,
     @Req() req: Request,
   ): Promise<DeleteRuleGroupResponse> {
-    return await this.ruleGroupService.delete(
-      req.activeOrganizationId,
-      projectId,
-      groupId,
-    )
+    return await this.ruleGroupService.delete(req.activeOrganizationId, projectId, groupId)
   }
 
   @ApiTags(ApiSwaggerTag.RuleGroup)
@@ -628,11 +579,7 @@ export class ProjectController {
     @Body() body: ReorderRuleGroupDto,
     @Req() req: Request,
   ): Promise<ReorderRuleGroupsResponse> {
-    return await this.ruleGroupService.reorder(
-      req.activeOrganizationId,
-      projectId,
-      body,
-    )
+    return await this.ruleGroupService.reorder(req.activeOrganizationId, projectId, body)
   }
 
   // ================================================== TREE
@@ -667,10 +614,7 @@ export class ProjectController {
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Req() req: Request,
   ): Promise<GetProjectTreeOutput> {
-    return await this.treeService.getProjectTree(
-      req.activeOrganizationId,
-      projectId,
-    )
+    return await this.treeService.getProjectTree(req.activeOrganizationId, projectId)
   }
 
   // ================================================== EXPORT
@@ -705,9 +649,6 @@ export class ProjectController {
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Req() req: Request,
   ): Promise<ResolvedRule[]> {
-    return await this.exportService.exportProjectRuleset(
-      req.activeOrganizationId,
-      projectId,
-    )
+    return await this.exportService.exportProjectRuleset(req.activeOrganizationId, projectId)
   }
 }

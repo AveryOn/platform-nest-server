@@ -2,10 +2,7 @@ import { betterAuth, type BetterAuthOptions } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { organization } from 'better-auth/plugins'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
-import type {
-  Request as ExpressRequest,
-  Response as ExpressResponse,
-} from 'express'
+import type { Request as ExpressRequest, Response as ExpressResponse } from 'express'
 
 import * as schema from '~/infra/drizzle/schemas'
 import { env } from '~/core/env'

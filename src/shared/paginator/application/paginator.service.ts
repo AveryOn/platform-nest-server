@@ -48,17 +48,14 @@ export class PaginatorService implements PaginatorServicePort {
   }
 
   /** Prepares the response for the paginator */
-  public response<T>({
-    data,
-    total,
-  }: ResponsePaginatorInput<T>): PaginationMeta {
+  public response<T>({ data, total }: ResponsePaginatorInput<T>): PaginationMeta {
     const totalPages = Math.ceil(total / this.limit)
 
     if (!data || !Array.isArray(data)) {
-      throw new AppError(ERROR.INVALID_DATA, this.logger).log(
-        '`data` must be an Array>',
-        { context: { data }, scope: 'paginator.Response' },
-      )
+      throw new AppError(ERROR.INVALID_DATA, this.logger).log('`data` must be an Array>', {
+        context: { data },
+        scope: 'paginator.Response',
+      })
     }
     if (!numCheck(totalPages, 0).success) {
       throw new AppError(ERROR.INVALID_DATA, this.logger).log('', {

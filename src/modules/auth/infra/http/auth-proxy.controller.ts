@@ -1,8 +1,5 @@
 import { All, Controller, Req, Res } from '@nestjs/common'
-import type {
-  Request as ExpressRequest,
-  Response as ExpressResponse,
-} from 'express'
+import type { Request as ExpressRequest, Response as ExpressResponse } from 'express'
 
 import { AuthService } from '~/modules/auth/auth.service'
 import type { BetterAuthInstance } from '~/modules/auth/auth.instance'

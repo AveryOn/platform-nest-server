@@ -8,7 +8,7 @@ import {
   RuleGroupUpdateInput,
 } from './rule-group.types'
 import { createId } from '~/shared/crypto/hash.crypto'
-import { ruleGroups } from '~/infra/drizzle/schemas'
+import { ruleGroupsTable } from '~/infra/drizzle/schemas'
 
 import { and, eq, isNull } from 'drizzle-orm'
 import { AppError } from '~/core/error/app-error'
@@ -21,16 +21,12 @@ export class RuleGroupService implements RuleGroupServicePort {
     private readonly drizzle: DrizzleService,
   ) {}
 
-  async create(
-    activeOrganizationId: string,
-    projectId: string,
-    data: RuleGroupCreateInput,
-  ) {
+  async create(activeOrganizationId: string, projectId: string, data: RuleGroupCreateInput) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     const groupId = createId()
 
-    await this.drizzle.db.insert(ruleGroups).values({
+    await this.drizzle.db.insert(ruleGroupsTable).values({
       id: groupId,
       projectId,
       parentGroupId: data.parentGroupId ?? null,
@@ -42,7 +38,7 @@ export class RuleGroupService implements RuleGroupServicePort {
     })
 
     const group = await this.drizzle.db.query.ruleGroups.findFirst({
-      where: eq(ruleGroups.id, groupId),
+      where: eq(ruleGroupsTable.id, groupId),
     })
 
     return group!
@@ -56,53 +52,39 @@ export class RuleGroupService implements RuleGroupServicePort {
   ) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
-    const updateData: Partial<typeof ruleGroups.$inferInsert> = {}
+    const updateData: Partial<typeof ruleGroupsTable.$inferInsert> = {}
     if (data.name !== undefined) updateData.name = data.name
-    if (data.description !== undefined)
-      updateData.description = data.description
+    if (data.description !== undefined) updateData.description = data.description
     if (data.kind !== undefined) updateData.kind = data.kind
-    if (data.parentGroupId !== undefined)
-      updateData.parentGroupId = data.parentGroupId
+    if (data.parentGroupId !== undefined) updateData.parentGroupId = data.parentGroupId
     if (data.metadata !== undefined) updateData.metadata = data.metadata
     if (data.orderIndex !== undefined) updateData.orderIndex = data.orderIndex
     if (data.enabled !== undefined) updateData.enabled = data.enabled
 
     await this.drizzle.db
-      .update(ruleGroups)
+      .update(ruleGroupsTable)
       .set(updateData)
-      .where(
-        and(eq(ruleGroups.id, groupId), eq(ruleGroups.projectId, projectId)),
-      )
+      .where(and(eq(ruleGroupsTable.id, groupId), eq(ruleGroupsTable.projectId, projectId)))
 
     const group = await this.drizzle.db.query.ruleGroups.findFirst({
-      where: eq(ruleGroups.id, groupId),
+      where: eq(ruleGroupsTable.id, groupId),
     })
 
     return group!
   }
 
-  async delete(
-    activeOrganizationId: string,
-    projectId: string,
-    groupId: string,
-  ) {
+  async delete(activeOrganizationId: string, projectId: string, groupId: string) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     await this.drizzle.db
-      .update(ruleGroups)
+      .update(ruleGroupsTable)
       .set({ deletedAt: new Date() })
-      .where(
-        and(eq(ruleGroups.id, groupId), eq(ruleGroups.projectId, projectId)),
-      )
+      .where(and(eq(ruleGroupsTable.id, groupId), eq(ruleGroupsTable.projectId, projectId)))
 
     return { success: true }
   }
 
-  async reorder(
-    activeOrganizationId: string,
-    projectId: string,
-    body: RuleGroupReorderInput,
-  ) {
+  async reorder(activeOrganizationId: string, projectId: string, body: RuleGroupReorderInput) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     const { parentGroupId, orderedIds } = body
@@ -119,15 +101,15 @@ export class RuleGroupService implements RuleGroupServicePort {
         if (typeof id !== 'string') continue
 
         await tx
-          .update(ruleGroups)
+          .update(ruleGroupsTable)
           .set({ orderIndex: i })
           .where(
             and(
-              eq(ruleGroups.id, id),
-              eq(ruleGroups.projectId, projectId),
+              eq(ruleGroupsTable.id, id),
+              eq(ruleGroupsTable.projectId, projectId),
               parentGroupId === null
-                ? isNull(ruleGroups.parentGroupId)
-                : eq(ruleGroups.parentGroupId, parentGroupId),
+                ? isNull(ruleGroupsTable.parentGroupId)
+                : eq(ruleGroupsTable.parentGroupId, parentGroupId),
             ),
           )
       }

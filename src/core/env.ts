@@ -34,7 +34,10 @@ export const envSchema = z.object({
   SUPABASE_STORAGE_URL: z.url().optional(),
   SUPABASE_STORAGE_ACCESS_KEY: z.string().min(1).optional(),
   SUPABASE_STORAGE_SECRET_KEY: z.string().min(1).optional(),
-  SUPABASE_STORAGE_REGION: z.enum(['local', 'us-east-1', 'us-east-1', 'eu-central-1', 'ap-southeast-1']).default('local').optional(),
+  SUPABASE_STORAGE_REGION: z
+    .enum(['local', 'us-east-1', 'us-east-1', 'eu-central-1', 'ap-southeast-1'])
+    .default('local')
+    .optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)

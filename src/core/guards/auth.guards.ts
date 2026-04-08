@@ -13,10 +13,7 @@ export class SessionGuard implements CanActivate {
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req = ctx.switchToHttp().getRequest<Request>()
-    const { activeOrganizationId, session, user } = await getSessionOrThrow(
-      req,
-      this.authService,
-    )
+    const { activeOrganizationId, session, user } = await getSessionOrThrow(req, this.authService)
 
     req.session = session
     req.activeOrganizationId = activeOrganizationId!

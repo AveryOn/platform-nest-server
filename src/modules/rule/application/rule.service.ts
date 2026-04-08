@@ -4,7 +4,7 @@ import { DrizzleService } from '~/infra/drizzle/drizzle.service'
 import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { CreateRuleRecord, ReorderInput, UpdateRuleRecord } from './rule.types'
 import { and, eq } from 'drizzle-orm'
-import { ruleGroups, rules } from '~/infra/drizzle/schemas'
+import { ruleGroupsTable, rules } from '~/infra/drizzle/schemas'
 import { AppError } from '~/core/error/app-error'
 import { ErrorEnum } from '~/core/error/app-error.dict'
 import { createId } from '~/shared/crypto/hash.crypto'
@@ -17,18 +17,11 @@ export class RuleService implements RuleServicePort {
     private readonly drizzle: DrizzleService,
   ) {}
 
-  async create(
-    activeOrganizationId: string,
-    projectId: string,
-    data: CreateRuleRecord,
-  ) {
+  async create(activeOrganizationId: string, projectId: string, data: CreateRuleRecord) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     const group = await this.drizzle.db.query.ruleGroups.findFirst({
-      where: and(
-        eq(ruleGroups.id, data.groupId),
-        eq(ruleGroups.projectId, projectId),
-      ),
+      where: and(eq(ruleGroupsTable.id, data.groupId), eq(ruleGroupsTable.projectId, projectId)),
     })
 
     if (!group) {
@@ -82,11 +75,7 @@ export class RuleService implements RuleServicePort {
     return rule!
   }
 
-  async delete(
-    activeOrganizationId: string,
-    projectId: string,
-    ruleId: string,
-  ) {
+  async delete(activeOrganizationId: string, projectId: string, ruleId: string) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     await this.drizzle.db
@@ -97,11 +86,7 @@ export class RuleService implements RuleServicePort {
     return { success: true }
   }
 
-  async reorder(
-    activeOrganizationId: string,
-    projectId: string,
-    body: ReorderInput,
-  ) {
+  async reorder(activeOrganizationId: string, projectId: string, body: ReorderInput) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     const { groupId, orderedIds } = body
@@ -118,13 +103,7 @@ export class RuleService implements RuleServicePort {
         await tx
           .update(rules)
           .set({ orderIndex: i })
-          .where(
-            and(
-              eq(rules.id, id),
-              eq(rules.projectId, projectId),
-              eq(rules.groupId, groupId),
-            ),
-          )
+          .where(and(eq(rules.id, id), eq(rules.projectId, projectId), eq(rules.groupId, groupId)))
       }
     })
 

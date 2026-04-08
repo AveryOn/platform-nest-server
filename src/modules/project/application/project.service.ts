@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { ProjectServicePort } from '~/modules/project/ports/project.service.port'
-import {
-  Project,
-  UpdateProjectInput,
-} from '~/modules/project/application/project.types'
+import { Project, UpdateProjectInput } from '~/modules/project/application/project.types'
 import { createId } from '~/shared/crypto/hash.crypto'
 import { slugify } from '~/shared/utils/string'
 import { CreateProjectDto } from '../infra/http/project.dto'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import { projects } from '~/infra/drizzle/schemas'
+import { projectsTable } from '~/infra/drizzle/schemas'
 import { stampTemplate } from './project.stamper.service'
 import { and, eq, isNull } from 'drizzle-orm'
 import { requireProjectAccess } from '~/modules/auth/auth.utils'
@@ -19,14 +16,11 @@ export class ProjectService implements ProjectServicePort {
     // TODO ЗАМЕНИТЬ НА РЕАЛИЗАЦИЮ /infra/persistance
     private readonly drizzle: DrizzleService,
   ) {}
-  async create(
-    data: CreateProjectDto,
-    activeOrganizationId: string,
-  ): Promise<Project> {
+  async create(data: CreateProjectDto, activeOrganizationId: string): Promise<Project> {
     const projectId = createId()
     const projectSlug = slugify(data.name)
 
-    await this.drizzle.db.insert(projects).values({
+    await this.drizzle.db.insert(projectsTable).values({
       id: projectId,
       organizationId: activeOrganizationId,
       name: data.name,
@@ -39,7 +33,7 @@ export class ProjectService implements ProjectServicePort {
     }
 
     const project = await this.drizzle.db.query.projects.findFirst({
-      where: eq(projects.id, projectId),
+      where: eq(projectsTable.id, projectId),
     })
 
     return project!
@@ -48,8 +42,8 @@ export class ProjectService implements ProjectServicePort {
   async list(activeOrganizationId: string): Promise<Project[]> {
     const projectsList = await this.drizzle.db.query.projects.findMany({
       where: and(
-        eq(projects.organizationId, activeOrganizationId),
-        isNull(projects.deletedAt),
+        eq(projectsTable.organizationId, activeOrganizationId),
+        isNull(projectsTable.deletedAt),
       ),
       orderBy: (projects, { desc }) => [desc(projects.createdAt)],
     })
@@ -58,11 +52,7 @@ export class ProjectService implements ProjectServicePort {
   }
 
   async getById(activeOrganizationId: string, projectId: string) {
-    return await requireProjectAccess(
-      activeOrganizationId,
-      projectId,
-      this.drizzle,
-    )
+    return await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
   }
 
   async update(
@@ -72,7 +62,7 @@ export class ProjectService implements ProjectServicePort {
   ): Promise<Project> {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
-    const updateData: Partial<typeof projects.$inferInsert> = {}
+    const updateData: Partial<typeof projectsTable.$inferInsert> = {}
     if (data.name !== undefined) {
       updateData.name = data.name
       updateData.slug = slugify(data.name)
@@ -82,12 +72,12 @@ export class ProjectService implements ProjectServicePort {
     }
 
     await this.drizzle.db
-      .update(projects)
+      .update(projectsTable)
       .set(updateData)
-      .where(eq(projects.id, projectId))
+      .where(eq(projectsTable.id, projectId))
 
     const project = await this.drizzle.db.query.projects.findFirst({
-      where: eq(projects.id, projectId),
+      where: eq(projectsTable.id, projectId),
     })
 
     return project!
@@ -97,9 +87,9 @@ export class ProjectService implements ProjectServicePort {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     await this.drizzle.db
-      .update(projects)
+      .update(projectsTable)
       .set({ deletedAt: new Date() })
-      .where(eq(projects.id, projectId))
+      .where(eq(projectsTable.id, projectId))
 
     return { success: true }
   }

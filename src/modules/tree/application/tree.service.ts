@@ -3,9 +3,9 @@ import { TreeServicePort } from '~/modules/tree/ports/tree.service.port'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
 import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { and, eq, InferSelectModel, isNull } from 'drizzle-orm'
-import { ruleGroups, rules } from '~/infra/drizzle/schemas'
+import { ruleGroupsTable, rules } from '~/infra/drizzle/schemas'
 
-type RuleGroupRow = InferSelectModel<typeof ruleGroups>
+type RuleGroupRow = InferSelectModel<typeof ruleGroupsTable>
 type RuleRow = InferSelectModel<typeof rules>
 
 export interface RuleGroupNode {
@@ -56,10 +56,7 @@ export class TreeService implements TreeServicePort {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     const groups = await this.drizzle.db.query.ruleGroups.findMany({
-      where: and(
-        eq(ruleGroups.projectId, projectId),
-        isNull(ruleGroups.deletedAt),
-      ),
+      where: and(eq(ruleGroupsTable.projectId, projectId), isNull(ruleGroupsTable.deletedAt)),
     })
 
     const allRules = await this.drizzle.db.query.rules.findMany({

@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import {
-  IsArray,
-  IsBoolean,
-  IsDateString,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator'
+import { IsArray, IsBoolean, IsDateString, IsInt, IsOptional, IsString } from 'class-validator'
 
 class RuleGroupNodeGroupDto {
   @ApiProperty({ example: 'group_01', description: 'Group ID' })

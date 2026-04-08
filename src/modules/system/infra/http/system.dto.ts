@@ -60,9 +60,7 @@ export class SystemGetSampleQueryDto {
     description: 'Description',
   })
   @IsOptional()
-  @Transform(({ value }) =>
-    typeof value === 'string' ? JSON.parse(value) : value,
-  )
+  @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
   meta?: Record<string, any>
 }
 
@@ -210,9 +208,7 @@ export class SystemPatchSampleBaseDto {
   enabled: boolean
 }
 
-export class SystemPatchSampleDto extends PartialType(
-  SystemPatchSampleBaseDto,
-) {
+export class SystemPatchSampleDto extends PartialType(SystemPatchSampleBaseDto) {
   @IsNotEmptyBody({
     message: 'At least one field must be provided',
   })

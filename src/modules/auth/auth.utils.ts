@@ -1,6 +1,6 @@
 import { and, eq, isNull } from 'drizzle-orm'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import { projects } from '~/infra/drizzle/schemas'
+import { projectsTable } from '~/infra/drizzle/schemas'
 
 export async function requireProjectAccess(
   organizationId: string,
@@ -9,9 +9,9 @@ export async function requireProjectAccess(
 ) {
   const project = await drizzle.db.query.projects.findFirst({
     where: and(
-      eq(projects.id, projectId),
-      eq(projects.organizationId, organizationId),
-      isNull(projects.deletedAt),
+      eq(projectsTable.id, projectId),
+      eq(projectsTable.organizationId, organizationId),
+      isNull(projectsTable.deletedAt),
     ),
   })
 

@@ -4,10 +4,7 @@ import { toWebHeaders } from './http.helpers'
 import { AppError } from '~/core/error/app-error'
 import { ErrorEnum } from '~/core/error/app-error.dict'
 
-export async function getSessionOrThrow(
-  req: Request,
-  authService: AuthService,
-) {
+export async function getSessionOrThrow(req: Request, authService: AuthService) {
   const session = await authService.auth.api.getSession({
     headers: toWebHeaders(req),
   })

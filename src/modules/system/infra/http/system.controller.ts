@@ -11,13 +11,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import {
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
 import {
   SystemGetSampleQueryDto,
   SystemGetSampleResponse,
@@ -57,10 +51,10 @@ export class SystemController {
     const num = Math.random()
 
     if (num > 0.4) {
-      throw new AppError(ERROR.INVALID_DATA, this.logger).log(
-        'ping was wrong',
-        { context: { num }, scope: 'SystemPing' },
-      )
+      throw new AppError(ERROR.INVALID_DATA, this.logger).log('ping was wrong', {
+        context: { num },
+        scope: 'SystemPing',
+      })
     }
 
     const { skip, take } = this.paginator.config({ limit: 15, page: 1 })

@@ -7,9 +7,7 @@ import { eq } from 'drizzle-orm'
 import { members } from '~/infra/drizzle/schemas'
 import { env } from '~/core/env'
 
-export async function getInitialOrganizationId(
-  userId: string,
-): Promise<string | null> {
+export async function getInitialOrganizationId(userId: string): Promise<string | null> {
   const member = await db.query.members.findFirst({
     where: eq(members.userId, userId),
   })

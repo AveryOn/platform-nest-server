@@ -9,9 +9,7 @@ const FORBIDDEN_KEYS = new Set([
   'headers',
 ])
 
-export function sanitizeContext(
-  input?: Record<string, any>,
-): Record<string, any> | undefined {
+export function sanitizeContext(input?: Record<string, any>): Record<string, any> | undefined {
   if (!input) return undefined
 
   const out: Record<string, any> = {}

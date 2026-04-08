@@ -1,40 +1,33 @@
-import { sql } from 'drizzle-orm'
-import {
-  index,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-} from 'drizzle-orm/pg-core'
+import { index, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
 
 import { organizations } from './auth-schema'
-import { templateSnapshots } from './templates'
+import { templateSnapshotsTable } from '~/infra/drizzle/schemas'
+import {
+  deletedAt,
+  id,
+  updatedAt,
+  createdAt,
+  referenceOn,
+  name,
+  description,
+} from '~/infra/drizzle/drizzle.helpers'
 
-export const projects = pgTable(
+export const projectsTable = pgTable(
   'projects',
   {
-    id: text('id').primaryKey(),
-    organizationId: text('organization_id')
-      .notNull()
-      .references(() => organizations.id, { onDelete: 'cascade' }),
-    name: text('name').notNull(),
+    id: id(),
+    name: name(),
+    description: description(),
     slug: text('slug').notNull(),
-    description: text('description'),
-    templateSnapshotId: text('template_snapshot_id').references(
-      () => templateSnapshots.id,
-      { onDelete: 'set null' },
-    ),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at')
-      .defaultNow()
-      .notNull()
-      .$onUpdate(() => new Date()),
-    deletedAt: timestamp('deleted_at'),
+    organizationId: referenceOn('organization_id', () => organizations).notNull(),
+    templateSnapshotId: referenceOn('template_snapshot_id', () => templateSnapshotsTable),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+    deletedAt: deletedAt(),
   },
   (t) => [
-    index('projects_org_idx').on(t.organizationId),
-    uniqueIndex('projects_org_slug_uidx')
-      .on(t.organizationId, t.slug)
-      .where(sql`deleted_at IS NULL`),
+    uniqueIndex('projects_slug_unique').on(t.slug),
+    index('projects_organization_deleted_idx').on(t.organizationId, t.deletedAt),
+    index('projects_template_snapshot_idx').on(t.templateSnapshotId),
   ],
 )

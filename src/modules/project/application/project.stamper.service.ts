@@ -1,10 +1,10 @@
 import { desc, eq } from 'drizzle-orm'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
 import {
-  projects,
-  ruleGroups,
+  projectsTable,
+  ruleGroupsTable,
   rules,
-  templates,
+  templatesTable,
   templateSnapshots,
 } from '~/infra/drizzle/schemas'
 import { createId } from '~/shared/crypto/hash.crypto'
@@ -38,7 +38,7 @@ export async function stampTemplate(
   drizzle: DrizzleService,
 ) {
   const template = await drizzle.db.query.templates.findFirst({
-    where: eq(templates.slug, templateSlug),
+    where: eq(templatesTable.slug, templateSlug),
   })
   if (!template) {
     throw new Error(`Template '${templateSlug}' not found`)
@@ -54,7 +54,7 @@ export async function stampTemplate(
 
   const definition = snapshot.definition as TemplateDefinition
 
-  const groupInserts: (typeof ruleGroups.$inferInsert)[] = []
+  const groupInserts: (typeof ruleGroupsTable.$inferInsert)[] = []
   const ruleInserts: (typeof rules.$inferInsert)[] = []
 
   function processGroup(group: TemplateGroupDef, parentId: string | null) {
@@ -100,15 +100,15 @@ export async function stampTemplate(
 
   await drizzle.db.transaction(async (tx) => {
     if (groupInserts.length > 0) {
-      await tx.insert(ruleGroups).values(groupInserts)
+      await tx.insert(ruleGroupsTable).values(groupInserts)
     }
     if (ruleInserts.length > 0) {
       await tx.insert(rules).values(ruleInserts)
     }
     await tx
-      .update(projects)
+      .update(projectsTable)
       .set({ templateSnapshotId: snapshot.id })
-      .where(eq(projects.id, projectId))
+      .where(eq(projectsTable.id, projectId))
   })
 
   return {

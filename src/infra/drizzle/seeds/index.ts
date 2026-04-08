@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm'
 import { randomUUID } from 'node:crypto'
 
 import { db, pool } from '~/infra/drizzle/client'
-import { templates, templateSnapshots } from '~/infra/drizzle/schemas'
+import { templatesTable, templateSnapshots } from '~/infra/drizzle/schemas'
 import { shadcnTemplateDefinition } from './shadcn-template'
 
 const createId = () => randomUUID()
@@ -11,7 +11,7 @@ async function seed() {
   const slug = 'shadcn-ui'
 
   const existingTemplate = await db.query.templates.findFirst({
-    where: eq(templates.slug, slug),
+    where: eq(templatesTable.slug, slug),
   })
 
   let templateId = existingTemplate?.id
@@ -19,7 +19,7 @@ async function seed() {
   if (!templateId) {
     templateId = createId()
 
-    await db.insert(templates).values({
+    await db.insert(templatesTable).values({
       id: templateId,
       slug,
       name: 'shadcn/ui',
