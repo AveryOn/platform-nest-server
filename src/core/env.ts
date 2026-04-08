@@ -23,6 +23,18 @@ export const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+
+  // SUPABASE VARIABLES
+  SUPABASE_URL: z.url().optional(),
+  SUPABASE_REST_URL: z.url().optional(),
+  SUPABASE_GRAPHQL_URL: z.url().optional(),
+  SUPABASE_FUNCTIONS_URL: z.url().optional(),
+  SUPABASE_ANON_KEY: z.string().min(1).optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
+  SUPABASE_STORAGE_URL: z.url().optional(),
+  SUPABASE_STORAGE_ACCESS_KEY: z.string().min(1).optional(),
+  SUPABASE_STORAGE_SECRET_KEY: z.string().min(1).optional(),
+  SUPABASE_STORAGE_REGION: z.enum(['local', 'us-east-1', 'us-east-1', 'eu-central-1', 'ap-southeast-1']).default('local').optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)
