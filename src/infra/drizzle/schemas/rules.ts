@@ -1,16 +1,15 @@
-import { integer, jsonb, pgTable } from 'drizzle-orm/pg-core'
+import { integer, jsonb, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
 
-import { ruleGroupsTable } from './rule-groups'
 import {
-  deletedAt,
-  id,
-  updatedAt,
   createdAt,
-  referenceOn,
-  name,
+  deletedAt,
   description,
+  id,
+  name,
+  referenceOn,
+  updatedAt,
 } from '~/infra/drizzle/drizzle.helpers'
-import { uniqueIndex } from 'drizzle-orm/pg-core'
+import { ruleGroupsTable } from './rule-groups'
 
 export const rules = pgTable(
   'rules',

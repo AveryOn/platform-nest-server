@@ -2,15 +2,15 @@ import { eq } from 'drizzle-orm'
 import { randomUUID } from 'node:crypto'
 
 import { db, pool } from '~/infra/drizzle/client'
-import { templatesTable, templateSnapshots } from '~/infra/drizzle/schemas'
-import { shadcnTemplateDefinition } from './shadcn-template'
+import { templatesTable } from '~/infra/drizzle/schemas'
+// import { shadcnTemplateDefinition } from './shadcn-template'
 
 const createId = () => randomUUID()
 
 async function seed() {
   const slug = 'shadcn-ui'
 
-  const existingTemplate = await db.query.templates.findFirst({
+  const existingTemplate = await db.query.templatesTable.findFirst({
     where: eq(templatesTable.slug, slug),
   })
 
@@ -27,17 +27,17 @@ async function seed() {
     })
   }
 
-  const latestSnapshot = await db.query.templateSnapshots.findFirst({
-    where: eq(templateSnapshots.templateId, templateId),
-    orderBy: (table, { desc }) => [desc(table.version)],
-  })
+  // const latestSnapshot = await db.query.templateSnapshotsTable.findFirst({
+  //   where: eq(templateSnapshotsTable.templateId, templateId),
+  //   orderBy: (table, { desc }) => [desc(table.version)],
+  // })
 
-  await db.insert(templateSnapshots).values({
-    id: createId(),
-    templateId,
-    version: (latestSnapshot?.version ?? 0) + 1,
-    definition: shadcnTemplateDefinition,
-  })
+  // await db.insert(templateSnapshotsTable).values({
+  //   id: createId(),
+  //   templateId,
+  //   version: (latestSnapshot?.version ?? 0) + 1,
+  //   definition: shadcnTemplateDefinition,
+  // })
 }
 
 seed()

@@ -1,10 +1,11 @@
 import { Global, Module, Scope } from '@nestjs/common'
-import pino, { Logger } from 'pino'
-import { AppLoggerService } from './logger.service'
-import { AsyncContextService } from './async-context.service'
-import { env } from '~/core/env'
-import { LOGGER_PORT } from './logger.port'
 import { INQUIRER } from '@nestjs/core'
+import pino, { Logger } from 'pino'
+import { env } from '~/core/env'
+import { NodeEnv } from '~/shared/const/app.const'
+import { AsyncContextService } from './async-context.service'
+import { LOGGER_PORT } from './logger.port'
+import { AppLoggerService } from './logger.service'
 
 @Global()
 @Module({
@@ -12,7 +13,7 @@ import { INQUIRER } from '@nestjs/core'
     {
       provide: LOGGER_PORT,
       useFactory: () => {
-        const isProd = env.NODE_ENV === 'production'
+        const isProd = env.NODE_ENV === NodeEnv.production
 
         return pino({
           level: env.LOG_LEVEL,

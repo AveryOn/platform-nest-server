@@ -1,12 +1,13 @@
 import { desc, eq } from 'drizzle-orm'
-import { DrizzleService } from '~/infra/drizzle/drizzle.service'
+import { type DrizzleService } from '~/infra/drizzle/drizzle.service'
 import {
   projectsTable,
   ruleGroupsTable,
   rules,
+  templateSnapshotsTable,
   templatesTable,
-  templateSnapshots,
 } from '~/infra/drizzle/schemas'
+import type { RuleGroupKind } from '~/modules/rule-group/infra/http/rule-group.dto'
 import { createId } from '~/shared/crypto/hash.crypto'
 
 interface TemplateGroupDef {
@@ -28,31 +29,28 @@ interface TemplateRuleDef {
   order_index: number
 }
 
-interface TemplateDefinition {
-  groups: TemplateGroupDef[]
-}
-
 export async function stampTemplate(
   projectId: string,
   templateSlug: string,
   drizzle: DrizzleService,
 ) {
-  const template = await drizzle.db.query.templates.findFirst({
+  const template = await drizzle.db.query.templatesTable.findFirst({
     where: eq(templatesTable.slug, templateSlug),
   })
   if (!template) {
     throw new Error(`Template '${templateSlug}' not found`)
   }
 
-  const snapshot = await drizzle.db.query.templateSnapshots.findFirst({
-    where: eq(templateSnapshots.templateId, template.id),
-    orderBy: desc(templateSnapshots.version),
+  const snapshot = await drizzle.db.query.templateSnapshotsTable.findFirst({
+    where: eq(templateSnapshotsTable.templateId, template.id),
+    orderBy: desc(templateSnapshotsTable.version),
   })
   if (!snapshot) {
     throw new Error('No snapshot found for template')
   }
 
-  const definition = snapshot.definition as TemplateDefinition
+  // const definition = snapshot.definition as TemplateDefinition
+  const definition = { groups: [] }
 
   const groupInserts: (typeof ruleGroupsTable.$inferInsert)[] = []
   const ruleInserts: (typeof rules.$inferInsert)[] = []
@@ -66,26 +64,19 @@ export async function stampTemplate(
       parentGroupId: parentId,
       name: group.name,
       description: group.description ?? null,
-      kind: group.kind,
+      type: group.kind as RuleGroupKind,
       metadata: group.metadata ?? null,
       orderIndex: group.order_index,
-      isFromTemplate: true,
-      templateRef: group.ref,
-      enabled: true,
     })
 
     for (const rule of group.rules ?? []) {
       ruleInserts.push({
         id: createId(),
-        projectId,
-        groupId,
-        title: rule.title ?? null,
+        ruleGroupId: groupId,
+        name: rule.title ?? '',
         body: rule.body,
-        metadata: rule.metadata ?? null,
+        metadata: rule.metadata ?? '',
         orderIndex: rule.order_index,
-        isFromTemplate: true,
-        templateRef: rule.ref,
-        enabled: true,
       })
     }
 

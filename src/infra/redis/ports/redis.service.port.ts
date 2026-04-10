@@ -1,4 +1,4 @@
-import { DATE_KEY } from '~/shared/utils/datetime'
+import { type DATE_KEY } from '~/shared/utils/datetime'
 
 export const REDIS_PORT = Symbol('REDIS_PORT')
 

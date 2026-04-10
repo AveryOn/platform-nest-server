@@ -1,6 +1,6 @@
 import { type ErrorKey, ERRORS, ErrorEnum } from '~/core/error/app-error.dict'
-import { AppLoggerService } from '~/core/logger/logger.service'
-import { LogMeta } from '~/core/logger/logger.types'
+import { type AppLoggerService } from '~/core/logger/logger.service'
+import { type LogMeta } from '~/core/logger/logger.types'
 
 export class AppError extends Error {
   constructor(

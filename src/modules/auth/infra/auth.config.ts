@@ -2,10 +2,9 @@ import { type BetterAuthOptions } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { organization } from 'better-auth/plugins'
 
-import { db } from '~/infra/drizzle/client'
 import { eq } from 'drizzle-orm'
+import { db } from '~/infra/drizzle/client'
 import { members } from '~/infra/drizzle/schemas'
-import { env } from '~/core/env'
 
 export async function getInitialOrganizationId(userId: string): Promise<string | null> {
   const member = await db.query.members.findFirst({

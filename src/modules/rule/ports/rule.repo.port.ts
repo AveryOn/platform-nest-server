@@ -1,4 +1,8 @@
-import { CreateRuleRecord, Rule, UpdateRuleRecord } from '~/modules/rule/application/rule.types'
+import {
+  type CreateRuleRecord,
+  type Rule,
+  type UpdateRuleRecord,
+} from '~/modules/rule/application/rule.types'
 
 export const RULE_REPO_PORT = Symbol('RULE_REPO_PORT')
 

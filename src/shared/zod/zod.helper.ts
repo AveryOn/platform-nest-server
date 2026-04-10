@@ -19,7 +19,7 @@ export const zJson = () =>
   z.string().transform((v) => {
     try {
       return JSON.parse(v)
-    } catch (err) {}
+    } catch {}
   })
 
 export const zNumberSoft = () => z.coerce.number()

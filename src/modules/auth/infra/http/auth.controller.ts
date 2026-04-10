@@ -1,7 +1,11 @@
 import { Body, Controller, HttpStatus, Post, Req, Res } from '@nestjs/common'
-import { AuthService } from '~/modules/auth/auth.service'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { type Request, type Response } from 'express'
+import { AppError } from '~/core/error/app-error'
+import { ErrorEnum } from '~/core/error/app-error.dict'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import { AppLoggerService } from '~/core/logger/logger.service'
+import { AuthService } from '~/modules/auth/auth.service'
 import {
   EnsureOrganizationResponse,
   SignInDto,
@@ -12,11 +16,7 @@ import {
   SignUpResponse,
 } from '~/modules/auth/infra/http/auth.dto'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
-import { type Response, type Request } from 'express'
 import { toWebHeaders } from '~/shared/helpers/http.helpers'
-import { AppError } from '~/core/error/app-error'
-import { ErrorEnum } from '~/core/error/app-error.dict'
-import { AppLoggerService } from '~/core/logger/logger.service'
 
 @Controller({ path: 'auth', version: '1' })
 @ApiTags(ApiSwaggerTag.Auth)
@@ -44,8 +44,8 @@ export class AuthController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  async ensureOrganization(@Req() req: Request) {
-    return await this.authService.ensureOrganization(req)
+  ensureOrganization(@Req() _req: Request) {
+    // return await this.authService.ensureOrganization(req)
   }
 
   @Post('sign-up')

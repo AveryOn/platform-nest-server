@@ -4,8 +4,9 @@ import { organization } from 'better-auth/plugins'
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import type { Request as ExpressRequest, Response as ExpressResponse } from 'express'
 
-import * as schema from '~/infra/drizzle/schemas'
 import { env } from '~/core/env'
+import type * as schema from '~/infra/drizzle/schemas'
+import { NodeEnv } from '~/shared/const/app.const'
 
 function getTrustedOrigins(): string[] {
   return [...new Set(env.CORS_ORIGIN)]
@@ -38,7 +39,7 @@ export function createBetterAuth(db: NodePgDatabase<typeof schema>) {
     advanced: {
       defaultCookieAttributes: {
         httpOnly: true,
-        secure: env.NODE_ENV === 'production',
+        secure: env.NODE_ENV === NodeEnv.production,
       },
     },
 

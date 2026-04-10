@@ -1,4 +1,8 @@
-import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator'
+import {
+  registerDecorator,
+  type ValidationArguments,
+  type ValidationOptions,
+} from 'class-validator'
 
 export function IsNotEmptyBody(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {

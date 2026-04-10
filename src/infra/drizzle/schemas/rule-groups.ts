@@ -1,16 +1,24 @@
-import { index, integer, jsonb, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
-
-import { projectsTable } from '~/infra/drizzle/schemas'
-import { pgEnum } from 'drizzle-orm/pg-core'
 import {
-  deletedAt,
-  id,
-  updatedAt,
+  foreignKey,
+  index,
+  integer,
+  jsonb,
+  pgEnum,
+  pgTable,
+  uniqueIndex,
+  uuid,
+} from 'drizzle-orm/pg-core'
+
+import {
   createdAt,
-  referenceOn,
-  name,
+  deletedAt,
   description,
+  id,
+  name,
+  referenceOn,
+  updatedAt,
 } from '~/infra/drizzle/drizzle.helpers'
+import { projectsTable } from '~/infra/drizzle/schemas'
 
 export const ruleGroupScopeEnum = pgEnum('rule_group_scope', ['template', 'project'])
 
@@ -27,7 +35,7 @@ export const ruleGroupsTable = pgTable(
   {
     id: id(),
     projectId: referenceOn('project_id', () => projectsTable),
-    parentGroupId: referenceOn('parent_group_id', () => ruleGroupsTable),
+    parentGroupId: uuid('parent_group_id'),
     scope: ruleGroupScopeEnum('scope').default('project').notNull(),
     name: name(),
     description: description(),
@@ -40,6 +48,11 @@ export const ruleGroupsTable = pgTable(
     deletedAt: deletedAt(),
   },
   (t) => [
+    foreignKey({
+      columns: [t.parentGroupId],
+      foreignColumns: [t.id],
+      name: 'rule_groups_parent_group_id_fkey',
+    }),
     uniqueIndex('rule_groups_parent_order_unique').on(t.parentGroupId, t.orderIndex),
     index('rule_groups_project_parent_order_idx').on(t.projectId, t.parentGroupId, t.orderIndex),
   ],

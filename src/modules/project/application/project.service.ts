@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common'
-import { ProjectServicePort } from '~/modules/project/ports/project.service.port'
+import { and, eq, isNull } from 'drizzle-orm'
+import { DrizzleService } from '~/infra/drizzle/drizzle.service'
+import { projectsTable } from '~/infra/drizzle/schemas'
+import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { Project, UpdateProjectInput } from '~/modules/project/application/project.types'
+import { ProjectServicePort } from '~/modules/project/ports/project.service.port'
 import { createId } from '~/shared/crypto/hash.crypto'
 import { slugify } from '~/shared/utils/string'
 import { CreateProjectDto } from '../infra/http/project.dto'
-import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import { projectsTable } from '~/infra/drizzle/schemas'
 import { stampTemplate } from './project.stamper.service'
-import { and, eq, isNull } from 'drizzle-orm'
-import { requireProjectAccess } from '~/modules/auth/auth.utils'
 
 @Injectable()
 export class ProjectService implements ProjectServicePort {
@@ -32,7 +32,7 @@ export class ProjectService implements ProjectServicePort {
       await stampTemplate(projectId, data.templateSlug, this.drizzle)
     }
 
-    const project = await this.drizzle.db.query.projects.findFirst({
+    const project = await this.drizzle.db.query.projectsTable.findFirst({
       where: eq(projectsTable.id, projectId),
     })
 
@@ -40,7 +40,7 @@ export class ProjectService implements ProjectServicePort {
   }
 
   async list(activeOrganizationId: string): Promise<Project[]> {
-    const projectsList = await this.drizzle.db.query.projects.findMany({
+    const projectsList = await this.drizzle.db.query.projectsTable.findMany({
       where: and(
         eq(projectsTable.organizationId, activeOrganizationId),
         isNull(projectsTable.deletedAt),
@@ -76,7 +76,7 @@ export class ProjectService implements ProjectServicePort {
       .set(updateData)
       .where(eq(projectsTable.id, projectId))
 
-    const project = await this.drizzle.db.query.projects.findFirst({
+    const project = await this.drizzle.db.query.projectsTable.findFirst({
       where: eq(projectsTable.id, projectId),
     })
 

@@ -1,8 +1,8 @@
 import {
-  ConfigPaginatorInput,
-  ConfigPaginatorData,
-  PaginationMeta,
-  ResponsePaginatorInput,
+  type ConfigPaginatorInput,
+  type ConfigPaginatorData,
+  type PaginationMeta,
+  type ResponsePaginatorInput,
 } from '~/shared/paginator/application/paginator.types'
 
 export const PAGINATOR_PORT = Symbol('PAGINATOR_PORT')

@@ -53,7 +53,7 @@ export class RedisService implements RedisServicePort {
       return +response as T
     }
 
-    let formatted = response.toLowerCase()
+    const formatted = response.toLowerCase()
     if (['false', 'true'].includes(formatted)) {
       return formatted as T
     }

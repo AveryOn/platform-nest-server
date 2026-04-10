@@ -1,12 +1,12 @@
 export interface Project {
   id: string
-  organizationId: string
   name: string
-  slug: string
   description: string | null
-  templateSnapshotId: string | null
+  slug: string
   createdAt: Date
-  updatedAt: Date
+  organizationId: string
+  templateSnapshotId: string | null
+  updatedAt: Date | null
   deletedAt: Date | null
 }
 

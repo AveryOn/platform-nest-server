@@ -26,21 +26,43 @@ export default tseslint.config(
   },
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn',
-      'prettier/prettier': ['error', { endOfLine: 'auto', semi: 'auto' }],
-      '@typescript-eslint/consistent-type-imports': 'error',
-      '@typescript-eslint/no-misused-promises': 'error',
-      '@typescript-eslint/require-await': 'error',
-      '@typescript-eslint/no-unused-vars': [
-        'warn',
-        { argsIgnorePattern: '^_' },
-      ],
-      'no-console': 'off', // backend, логи нужны
-      '@typescript-eslint/no-unsafe-assignment': 'warn',
-      '@typescript-eslint/no-unsafe-member-access': 'warn',
-      '@typescript-eslint/no-unsafe-call': 'warn',
+      // TYPESCRIPT
+      ...{
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-floating-promises': 'warn',
+        '@typescript-eslint/no-unsafe-argument': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-empty-object-type': [
+          'error',
+          { allowInterfaces: 'always' },
+        ],
+        '@typescript-eslint/no-misused-promises': 'error',
+        '@typescript-eslint/require-await': 'error',
+        '@typescript-eslint/no-unused-vars': [
+          'warn',
+          { argsIgnorePattern: '^_' },
+        ],
+        '@typescript-eslint/consistent-type-imports': [
+          'error',
+          {
+            prefer: 'type-imports',
+            fixStyle: 'inline-type-imports',
+          },
+        ],
+      },
+      // BASE RULES
+      ...{
+        'no-duplicate-imports': 'error',
+        'no-console': 'off',
+        'no-empty': ['error', { allowEmptyCatch: true }],
+      },
+      // OTHER
+      ...{
+        'prettier/prettier': ['error', { endOfLine: 'auto' }],
+      },
     },
   },
 )

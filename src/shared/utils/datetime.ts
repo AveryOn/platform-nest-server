@@ -17,10 +17,9 @@ type Num = `${number}`
 export type DATE_KEY = `${Num}${DateUnit}`
 
 function excludeNumberOfFactor(value: DATE_KEY) {
-  const chunks = value.split('')
-  const word = chunks.pop()
-  const num = +chunks.join('')
-  const factor = DATE_FACTOR[word!]
+  const word = value.slice(-1) as DateUnit
+  const num = Number(value.slice(0, -1))
+  const factor = DATE_FACTOR[word]
 
   if (Object.is(num, Number.NaN)) return null
   if (!factor) return null

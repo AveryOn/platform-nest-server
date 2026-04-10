@@ -1,34 +1,31 @@
+import type { RuleGroupKind } from '~/modules/rule-group/infra/http/rule-group.dto'
+
 export interface RuleGroupNode {
   group: {
     id: string
-    projectId: string
-    parentGroupId: string | null
+    projectId: string | null
     name: string
     description: string | null
-    kind: string
-    metadata: unknown
     orderIndex: number
-    isFromTemplate: boolean
-    templateRef: string | null
-    enabled: boolean
-    createdAt: Date
-    updatedAt: Date
-    deletedAt: Date | null
+    parentGroupId: string | null
+    metadata: unknown
+    scope: string
+    type: RuleGroupKind | null
+    createdAt: string | Date
+    updatedAt: string | Date | null
+    deletedAt: string | Date | null
   }
   rules: Array<{
     id: string
-    projectId: string
-    groupId: string
-    title: string | null
-    body: string
-    metadata: unknown
-    orderIndex: number
-    isFromTemplate: boolean
-    templateRef: string | null
-    enabled: boolean
+    name: string
     createdAt: Date
-    updatedAt: Date
+    updatedAt: Date | null
+    metadata: unknown
+    description: string | null
     deletedAt: Date | null
+    orderIndex: number
+    ruleGroupId: string
+    body: unknown
   }>
   children: RuleGroupNode[]
 }

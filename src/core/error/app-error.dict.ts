@@ -1,4 +1,4 @@
-import { HttpStatus } from '@nestjs/common'
+import { type HttpStatus } from '@nestjs/common'
 
 export enum ErrorEnum {
   USER_NOT_FOUND = 'USER_NOT_FOUND',

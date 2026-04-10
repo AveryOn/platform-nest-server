@@ -12,6 +12,9 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { AppError, ERROR } from '~/core/error/app-error'
+import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import { AppLoggerService } from '~/core/logger/logger.service'
 import {
   SystemGetSampleQueryDto,
   SystemGetSampleResponse,
@@ -21,9 +24,6 @@ import {
   SystemPostSampleResponse,
 } from '~/modules/system/infra/http/system.dto'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
-import { AppLoggerService } from '~/core/logger/logger.service'
-import { AppError, ERROR } from '~/core/error/app-error'
-import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import {
   PAGINATOR_PORT,
   type PaginatorServicePort,
@@ -46,7 +46,7 @@ export class SystemController {
     operationId: 'system_ping',
     tags: [ApiSwaggerTag.System],
   })
-  async ping() {
+  ping() {
     this.logger.info('Example log INFO', { scope: 'SystemPing' })
     const num = Math.random()
 
@@ -58,6 +58,7 @@ export class SystemController {
     }
 
     const { skip, take } = this.paginator.config({ limit: 15, page: 1 })
+    console.debug(skip, take)
     const paginator = this.paginator.response({ data: [], total: -1 })
     return { msg: 'ok', paginator }
   }
@@ -95,7 +96,7 @@ export class SystemController {
   })
   getSample(
     @Param('uuid', new ParseUUIDPipe()) uuid: string,
-    @Query() query: SystemGetSampleQueryDto,
+    @Query() _query: SystemGetSampleQueryDto,
   ): SystemGetSampleResponse {
     // console.debug('query', query)
     return {
@@ -183,8 +184,8 @@ export class SystemController {
     description: 'Validation failed',
   })
   patchSample(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() body: SystemPatchSampleDto,
+    @Param('id', ParseUUIDPipe) _id: string,
+    @Body() _body: SystemPatchSampleDto,
   ): SystemPatchSampleResponse {
     return {
       status: 'success',

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common'
-import { RuleGroupServicePort } from '~/modules/rule-group/ports/rule-group.service.port'
-import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
+import { ruleGroupsTable } from '~/infra/drizzle/schemas'
+import { requireProjectAccess } from '~/modules/auth/auth.utils'
+import { RuleGroupServicePort } from '~/modules/rule-group/ports/rule-group.service.port'
+import { createId } from '~/shared/crypto/hash.crypto'
 import {
   RuleGroupCreateInput,
   RuleGroupReorderInput,
   RuleGroupUpdateInput,
 } from './rule-group.types'
-import { createId } from '~/shared/crypto/hash.crypto'
-import { ruleGroupsTable } from '~/infra/drizzle/schemas'
 
 import { and, eq, isNull } from 'drizzle-orm'
 import { AppError } from '~/core/error/app-error'
@@ -21,23 +21,23 @@ export class RuleGroupService implements RuleGroupServicePort {
     private readonly drizzle: DrizzleService,
   ) {}
 
-  async create(activeOrganizationId: string, projectId: string, data: RuleGroupCreateInput) {
+  async create(activeOrganizationId: string, projectId: string, _data: RuleGroupCreateInput) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
     const groupId = createId()
 
-    await this.drizzle.db.insert(ruleGroupsTable).values({
-      id: groupId,
-      projectId,
-      parentGroupId: data.parentGroupId ?? null,
-      name: data.name,
-      description: data.description ?? null,
-      kind: data.kind,
-      metadata: data.metadata ?? null,
-      orderIndex: data.orderIndex ?? 0,
-    })
+    // await this.drizzle.db.insert(ruleGroupsTable).values({
+    //   id: groupId,
+    //   projectId,
+    //   parentGroupId: data.parentGroupId ?? null,
+    //   name: data.name,
+    //   description: data.description ?? null,
+    //   kind: data.kind,
+    //   metadata: data.metadata ?? null,
+    //   orderIndex: data.orderIndex ?? 0,
+    // })
 
-    const group = await this.drizzle.db.query.ruleGroups.findFirst({
+    const group = await this.drizzle.db.query.ruleGroupsTable.findFirst({
       where: eq(ruleGroupsTable.id, groupId),
     })
 
@@ -55,18 +55,18 @@ export class RuleGroupService implements RuleGroupServicePort {
     const updateData: Partial<typeof ruleGroupsTable.$inferInsert> = {}
     if (data.name !== undefined) updateData.name = data.name
     if (data.description !== undefined) updateData.description = data.description
-    if (data.kind !== undefined) updateData.kind = data.kind
+    if (data.kind !== undefined) updateData.type = data.kind
     if (data.parentGroupId !== undefined) updateData.parentGroupId = data.parentGroupId
     if (data.metadata !== undefined) updateData.metadata = data.metadata
     if (data.orderIndex !== undefined) updateData.orderIndex = data.orderIndex
-    if (data.enabled !== undefined) updateData.enabled = data.enabled
+    // if (data.enabled !== undefined) updateData.enabled = data.enabled
 
     await this.drizzle.db
       .update(ruleGroupsTable)
       .set(updateData)
       .where(and(eq(ruleGroupsTable.id, groupId), eq(ruleGroupsTable.projectId, projectId)))
 
-    const group = await this.drizzle.db.query.ruleGroups.findFirst({
+    const group = await this.drizzle.db.query.ruleGroupsTable.findFirst({
       where: eq(ruleGroupsTable.id, groupId),
     })
 

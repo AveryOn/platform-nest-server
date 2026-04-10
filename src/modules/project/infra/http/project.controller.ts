@@ -11,31 +11,17 @@ import {
   Patch,
   Post,
   Req,
-  UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { ApiSwaggerTag } from '~/shared/const/app.const'
-import { PROJECT_PORT, type ProjectServicePort } from '~/modules/project/ports/project.service.port'
+import { type Request } from 'express'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
-import {
-  CreateProjectDto,
-  DeleteProjectResponse,
-  ProjectResponse,
-  UpdateProjectDto,
-} from './project.dto'
-import { Project } from '../../application/project.types'
-import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
-import {
-  CreateRuleDto,
-  DeleteRuleResponse,
-  ReorderBodyDto,
-  ReorderRuleResponse,
-  RuleResponse,
-  UpdateRuleDto,
-} from '~/modules/rule/infra/http/rule.dto'
-import { DeleteRuleRes, Rule } from '~/modules/rule/application/rule.types'
-import { RULE_PORT } from '~/modules/rule/ports/rule.service.port'
-import { RuleService } from '~/modules/rule/application/rule.service'
+import { ExportService } from '~/modules/export/application/export.service'
+import { ResolvedRule } from '~/modules/export/application/export.types'
+import { ExportRulesetResponse } from '~/modules/export/infra/http/export.dto'
+import { EXPORT_PORT } from '~/modules/export/ports/export.service.port'
+import { PROJECT_PORT, type ProjectServicePort } from '~/modules/project/ports/project.service.port'
+import { RuleGroupService } from '~/modules/rule-group/application/rule-group.service'
+import { RuleGroup } from '~/modules/rule-group/application/rule-group.types'
 import {
   CreateRuleGroupDto,
   DeleteRuleGroupResponse,
@@ -44,21 +30,31 @@ import {
   RuleGroupResponse,
   UpdateRuleGroupDto,
 } from '~/modules/rule-group/infra/http/rule-group.dto'
-import { RuleGroup } from '~/modules/rule-group/application/rule-group.types'
-import { RuleGroupService } from '~/modules/rule-group/application/rule-group.service'
 import { RULE_GROUP_PORT } from '~/modules/rule-group/ports/rule-group.service.port'
-import { GetProjectTreeResponse } from '~/modules/tree/infra/http/tree.dto'
-import { GetProjectTreeOutput } from '~/modules/tree/application/tree.types'
-import { TREE_PORT } from '~/modules/tree/ports/tree.service.port'
+import { RuleService } from '~/modules/rule/application/rule.service'
+import { DeleteRuleRes, Rule } from '~/modules/rule/application/rule.types'
+import {
+  CreateRuleDto,
+  DeleteRuleResponse,
+  ReorderBodyDto,
+  ReorderRuleResponse,
+  RuleResponse,
+  UpdateRuleDto,
+} from '~/modules/rule/infra/http/rule.dto'
+import { RULE_PORT } from '~/modules/rule/ports/rule.service.port'
 import { TreeService } from '~/modules/tree/application/tree.service'
-import { ExportRulesetResponse } from '~/modules/export/infra/http/export.dto'
-import { ResolvedRule } from '~/modules/export/application/export.types'
-import { EXPORT_PORT } from '~/modules/export/ports/export.service.port'
-import { ExportService } from '~/modules/export/application/export.service'
-import { getSessionOrThrow } from '~/shared/helpers/auth.helpers'
-import { type Request } from 'express'
-import { AuthService } from '~/modules/auth/auth.service'
-// import { SessionGuard } from '~/core/guards/auth.guards'
+import { GetProjectTreeOutput } from '~/modules/tree/application/tree.types'
+import { GetProjectTreeResponse } from '~/modules/tree/infra/http/tree.dto'
+import { TREE_PORT } from '~/modules/tree/ports/tree.service.port'
+import { ApiSwaggerTag } from '~/shared/const/app.const'
+import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
+import { Project } from '../../application/project.types'
+import {
+  CreateProjectDto,
+  DeleteProjectResponse,
+  ProjectResponse,
+  UpdateProjectDto,
+} from './project.dto'
 
 @Controller({ path: 'projects', version: '1' })
 export class ProjectController {
@@ -107,7 +103,7 @@ export class ProjectController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  async createProject(@Body() body: CreateProjectDto, @Req() req: Request): Promise<Project> {
+  async createProject(@Body() body: CreateProjectDto, @Req() _req: Request): Promise<Project> {
     // const { activeOrganizationId } = await getSessionOrThrow(
     //   req,
     //   // this.authService,
@@ -332,7 +328,8 @@ export class ProjectController {
     @Body() body: UpdateRuleDto,
     @Req() req: Request,
   ): Promise<Rule> {
-    return await this.ruleService.update(req.activeOrganizationId, projectId, ruleId, body)
+    const rule = await this.ruleService.update(req.activeOrganizationId, projectId, ruleId, body)
+    return rule
   }
 
   @ApiTags(ApiSwaggerTag.Rule)
@@ -449,11 +446,11 @@ export class ProjectController {
     description: 'Validation failed',
   })
   async createRuleGroup(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('projectId', ParseUUIDPipe) _projectId: string,
     @Body() body: CreateRuleGroupDto,
     @Req() req: Request,
   ): Promise<RuleGroup> {
-    return await this.ruleGroupService.create(req.activeOrganizationId, projectId, body)
+    return await this.ruleGroupService.create(req.activeOrganizationId, _projectId, body)
   }
 
   @ApiTags(ApiSwaggerTag.RuleGroup)

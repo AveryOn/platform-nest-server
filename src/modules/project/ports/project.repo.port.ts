@@ -1,4 +1,4 @@
-import { CreateProjectInput, Project } from '~/modules/project/application/project.types'
+import { type CreateProjectInput, type Project } from '~/modules/project/application/project.types'
 
 export const PROJECT_REPO_PORT = Symbol('PROJECT_REPO_PORT')
 

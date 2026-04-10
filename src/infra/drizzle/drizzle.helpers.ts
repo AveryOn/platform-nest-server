@@ -1,8 +1,11 @@
-import { PgColumn } from 'drizzle-orm/pg-core'
-import { text } from 'drizzle-orm/pg-core'
-import { varchar } from 'drizzle-orm/pg-core'
-import { PgTableWithColumns } from 'drizzle-orm/pg-core'
-import { uuid, timestamp } from 'drizzle-orm/pg-core'
+import {
+  text,
+  timestamp,
+  uuid,
+  varchar,
+  type PgColumn,
+  type PgTableWithColumns,
+} from 'drizzle-orm/pg-core'
 
 export const id = () => uuid('id').primaryKey()
 export const createdAt = () =>

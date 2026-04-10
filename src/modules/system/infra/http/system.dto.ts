@@ -52,7 +52,7 @@ export class SystemGetSampleQueryDto {
     description: 'Description',
   })
   @IsOptional()
-  @Transform(({ value }) => (Array.isArray(value) ? value : value?.split(',')))
+  @Transform(({ value }) => (Array.isArray(value) ? value : (value as string)?.split(',')))
   tags?: string[]
 
   @ApiPropertyOptional({

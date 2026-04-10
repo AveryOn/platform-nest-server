@@ -1,5 +1,5 @@
-import { Request } from 'express'
-import { AuthService } from '~/modules/auth/auth.service'
+import { type Request } from 'express'
+import { type AuthService } from '~/modules/auth/auth.service'
 import { toWebHeaders } from './http.helpers'
 import { AppError } from '~/core/error/app-error'
 import { ErrorEnum } from '~/core/error/app-error.dict'

@@ -1,26 +1,38 @@
 import {
-  ColorTokenMetadataDto,
-  RadiusTokenMetadataDto,
-  RuleGroupKind,
-  ShadowTokenMetadataDto,
-  TypographyTokenMetadataDto,
-} from '../infra/http/rule-group.dto'
+  type ColorTokenMetadataDto,
+  type RadiusTokenMetadataDto,
+  type RuleGroupKind,
+  type ShadowTokenMetadataDto,
+  type TypographyTokenMetadataDto,
+} from '~/modules/rule-group/infra/http/rule-group.dto'
 
 export interface RuleGroup {
+  // id: string
+  // projectId: string
+  // parentGroupId: string | null
+  // name: string
+  // description: string | null
+  // kind: string
+  // metadata: unknown
+  // orderIndex: number
+  // isFromTemplate: boolean
+  // templateRef: string | null
+  // enabled: boolean
+  // createdAt: Date
+  // updatedAt: Date
+  // deletedAt: Date | null
   id: string
-  projectId: string
-  parentGroupId: string | null
+  projectId: string | null
   name: string
   description: string | null
-  kind: string
-  metadata: unknown
   orderIndex: number
-  isFromTemplate: boolean
-  templateRef: string | null
-  enabled: boolean
-  createdAt: Date
-  updatedAt: Date
-  deletedAt: Date | null
+  parentGroupId: string | null
+  metadata: unknown
+  scope: string
+  type: RuleGroupKind | null
+  createdAt: string | Date
+  updatedAt: string | Date | null
+  deletedAt: string | Date | null
 }
 
 export interface RuleGroupCreateInput {

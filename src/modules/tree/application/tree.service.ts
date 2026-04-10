@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { TreeServicePort } from '~/modules/tree/ports/tree.service.port'
+import { InferSelectModel } from 'drizzle-orm'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import { requireProjectAccess } from '~/modules/auth/auth.utils'
-import { and, eq, InferSelectModel, isNull } from 'drizzle-orm'
 import { ruleGroupsTable, rules } from '~/infra/drizzle/schemas'
+import { requireProjectAccess } from '~/modules/auth/auth.utils'
+import { TreeServicePort } from '~/modules/tree/ports/tree.service.port'
 
 type RuleGroupRow = InferSelectModel<typeof ruleGroupsTable>
 type RuleRow = InferSelectModel<typeof rules>
@@ -21,9 +21,9 @@ export class TreeService implements TreeServicePort {
   buildTree(groups: RuleGroupRow[], allRules: RuleRow[]): RuleGroupNode[] {
     const rulesByGroup = new Map<string, RuleRow[]>()
     for (const rule of allRules) {
-      const existing = rulesByGroup.get(rule.groupId) ?? []
+      const existing = rulesByGroup.get(rule.ruleGroupId) ?? []
       existing.push(rule)
-      rulesByGroup.set(rule.groupId, existing)
+      rulesByGroup.set(rule.ruleGroupId, existing)
     }
 
     const childrenByParent = new Map<string | null, RuleGroupRow[]>()
@@ -55,13 +55,15 @@ export class TreeService implements TreeServicePort {
   async getProjectTree(activeOrganizationId: string, projectId: string) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
-    const groups = await this.drizzle.db.query.ruleGroups.findMany({
-      where: and(eq(ruleGroupsTable.projectId, projectId), isNull(ruleGroupsTable.deletedAt)),
-    })
+    // const groups = await this.drizzle.db.query.ruleGroups.findMany({
+    //   where: and(eq(ruleGroupsTable.projectId, projectId), isNull(ruleGroupsTable.deletedAt)),
+    // })
 
-    const allRules = await this.drizzle.db.query.rules.findMany({
-      where: and(eq(rules.projectId, projectId), isNull(rules.deletedAt)),
-    })
+    const groups = []
+    // const allRules = await this.drizzle.db.query.rules.findMany({
+    //   where: and(eq(rules.projectId, projectId), isNull(rules.deletedAt)),
+    // })
+    const allRules = []
 
     const tree = this.buildTree(groups, allRules)
 
