@@ -1,14 +1,12 @@
-import helmet from 'helmet'
-import express from 'express'
-import { NestFactory } from '@nestjs/core'
 import { ValidationPipe, VersioningType } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import express from 'express'
+import helmet from 'helmet'
 
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from '~/app.module'
 import { env } from '~/core/env'
-import { AuthService } from '~/modules/auth/auth.service'
-import { betterAuthExpressHandler } from '~/modules/auth/auth.instance'
 import { GlobalExceptionFilter } from './core/filters/global-exception-filter'
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { NodeEnv } from './shared/const/app.const'
 
 const isProduction = env.NODE_ENV === NodeEnv.production
@@ -54,13 +52,6 @@ async function bootstrap() {
       jsonDocumentUrl: 'docs/json',
     })
   }
-
-  const authService = app.get(AuthService)
-  const server = app.getHttpAdapter().getInstance()
-
-  server.all(/^\/api\/v1\/auth(\/.*)?$/, async (req, res) => {
-    await betterAuthExpressHandler(req, res, authService.auth)
-  })
 
   await app.listen(env.PORT)
 }

@@ -1,5 +1,5 @@
 import { Injectable, NestMiddleware } from '@nestjs/common'
-import { Request, Response, NextFunction } from 'express'
+import { NextFunction, Request, Response } from 'express'
 // import * as jwt from 'jsonwebtoken';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class JwtMiddleware implements NestMiddleware {
       const payload = { userId: '550e8400-e29b-41d4-a716-446655440000' }
 
       if (payload && typeof payload === 'object') {
-        req.user = { id: payload.userId }
+        // req.user = { id: payload.userId }
       }
     } catch {
       // ignore errors in the stub

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
 import { ruleGroupsTable } from '~/infra/drizzle/schemas'
-import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { RuleGroupServicePort } from '~/modules/rule-group/ports/rule-group.service.port'
 import { createId } from '~/shared/crypto/hash.crypto'
 import {
@@ -21,9 +20,7 @@ export class RuleGroupService implements RuleGroupServicePort {
     private readonly drizzle: DrizzleService,
   ) {}
 
-  async create(activeOrganizationId: string, projectId: string, _data: RuleGroupCreateInput) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
+  async create(_activeOrganizationId: string, _projectId: string, _data: RuleGroupCreateInput) {
     const groupId = createId()
 
     // await this.drizzle.db.insert(ruleGroupsTable).values({
@@ -45,13 +42,11 @@ export class RuleGroupService implements RuleGroupServicePort {
   }
 
   async update(
-    activeOrganizationId: string,
+    _activeOrganizationId: string,
     projectId: string,
     groupId: string,
     data: RuleGroupUpdateInput,
   ) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
     const updateData: Partial<typeof ruleGroupsTable.$inferInsert> = {}
     if (data.name !== undefined) updateData.name = data.name
     if (data.description !== undefined) updateData.description = data.description
@@ -73,9 +68,7 @@ export class RuleGroupService implements RuleGroupServicePort {
     return group!
   }
 
-  async delete(activeOrganizationId: string, projectId: string, groupId: string) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
+  async delete(_activeOrganizationId: string, projectId: string, groupId: string) {
     await this.drizzle.db
       .update(ruleGroupsTable)
       .set({ deletedAt: new Date() })
@@ -84,9 +77,7 @@ export class RuleGroupService implements RuleGroupServicePort {
     return { success: true }
   }
 
-  async reorder(activeOrganizationId: string, projectId: string, body: RuleGroupReorderInput) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
+  async reorder(_activeOrganizationId: string, projectId: string, body: RuleGroupReorderInput) {
     const { parentGroupId, orderedIds } = body
 
     if (!Array.isArray(orderedIds) || orderedIds.length === 0) {

@@ -4,7 +4,6 @@ import { AppError } from '~/core/error/app-error'
 import { ErrorEnum } from '~/core/error/app-error.dict'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
 import { ruleGroupsTable, rulesTable } from '~/infra/drizzle/schemas'
-import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { RuleServicePort } from '~/modules/rule/ports/rule.service.port'
 import { createId } from '~/shared/crypto/hash.crypto'
 import { CreateRuleRecord, ReorderInput, UpdateRuleRecord } from './rule.types'
@@ -17,9 +16,7 @@ export class RuleService implements RuleServicePort {
     private readonly drizzle: DrizzleService,
   ) {}
 
-  async create(activeOrganizationId: string, projectId: string, data: CreateRuleRecord) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
+  async create(_activeOrganizationId: string, projectId: string, data: CreateRuleRecord) {
     const group = await this.drizzle.db.query.ruleGroupsTable.findFirst({
       where: and(eq(ruleGroupsTable.id, data.groupId), eq(ruleGroupsTable.projectId, projectId)),
     })
@@ -40,7 +37,7 @@ export class RuleService implements RuleServicePort {
     //   orderIndex: data.orderIndex ?? 0,
     // })
 
-    const rule = await this.drizzle.db.query.rules.findFirst({
+    const rule = await this.drizzle.db.query.rulesTable.findFirst({
       where: eq(rulesTable.id, ruleId),
     })
 
@@ -48,13 +45,11 @@ export class RuleService implements RuleServicePort {
   }
 
   async update(
-    activeOrganizationId: string,
-    projectId: string,
+    _activeOrganizationId: string,
+    _projectId: string,
     ruleId: string,
     data: UpdateRuleRecord,
   ) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
     const updateData: Partial<typeof rulesTable.$inferInsert> = {}
     if (data.title !== undefined) updateData.name = data.title || ''
     if (data.body !== undefined) updateData.body = data.body
@@ -68,16 +63,14 @@ export class RuleService implements RuleServicePort {
     //   .set(updateData)
     //   .where(and(eq(rules.id, ruleId), eq(rules.projectId, projectId)))
 
-    const rule = await this.drizzle.db.query.rules.findFirst({
+    const rule = await this.drizzle.db.query.rulesTable.findFirst({
       where: eq(rulesTable.id, ruleId),
     })
 
     return rule!
   }
 
-  async delete(activeOrganizationId: string, projectId: string, _ruleId: string) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
+  delete(_activeOrganizationId: string, _projectId: string, _ruleId: string) {
     // await this.drizzle.db
     //   .update(rules)
     //   .set({ deletedAt: new Date() })
@@ -86,9 +79,7 @@ export class RuleService implements RuleServicePort {
     return { success: true }
   }
 
-  async reorder(activeOrganizationId: string, projectId: string, body: ReorderInput) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
+  async reorder(_activeOrganizationId: string, _projectId: string, body: ReorderInput) {
     const { orderedIds } = body
 
     if (!Array.isArray(orderedIds) || orderedIds.length === 0) {

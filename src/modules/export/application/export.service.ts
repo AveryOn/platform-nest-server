@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { ExportServicePort } from '~/modules/export/ports/export.service.port'
 import { TreeService } from '~/modules/tree/application/tree.service'
 import { RuleGroupNode } from '~/modules/tree/application/tree.types'
@@ -48,9 +47,7 @@ export class ExportService implements ExportServicePort {
     return resolved
   }
 
-  async exportProjectRuleset(activeOrganizationId: string, projectId: string) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
+  exportProjectRuleset(_activeOrganizationId: string, _projectId: string) {
     // const groups = await this.drizzle.db.query.ruleGroups.findMany({
     //   where: and(eq(ruleGroupsTable.projectId, projectId), isNull(ruleGroupsTable.deletedAt)),
     // })

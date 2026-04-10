@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { InferSelectModel } from 'drizzle-orm'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
 import { ruleGroupsTable, rulesTable } from '~/infra/drizzle/schemas'
-import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { TreeServicePort } from '~/modules/tree/ports/tree.service.port'
 
 type RuleGroupRow = InferSelectModel<typeof ruleGroupsTable>
@@ -52,9 +51,7 @@ export class TreeService implements TreeServicePort {
     return roots.map(buildNode)
   }
 
-  async getProjectTree(activeOrganizationId: string, projectId: string) {
-    await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
-
+  getProjectTree(_activeOrganizationId: string, _projectId: string) {
     // const groups = await this.drizzle.db.query.ruleGroups.findMany({
     //   where: and(eq(ruleGroupsTable.projectId, projectId), isNull(ruleGroupsTable.deletedAt)),
     // })
