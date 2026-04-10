@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import { RuleRepoPort } from '~/modules/rule/ports/rule.repo.port'
-import { CreateRuleRecord, Rule, UpdateRuleRecord } from '~/modules/rule/application/rule.types'
-import { rules } from '~/infra/drizzle/schemas'
 import { and, eq } from 'drizzle-orm'
+import { DrizzleService } from '~/infra/drizzle/drizzle.service'
+import { rulesTable } from '~/infra/drizzle/schemas'
+import { CreateRuleRecord, Rule, UpdateRuleRecord } from '~/modules/rule/application/rule.types'
+import { RuleRepoPort } from '~/modules/rule/ports/rule.repo.port'
 import { createId } from '~/shared/crypto/hash.crypto'
 
 @Injectable()
@@ -12,7 +12,7 @@ export class RuleDrizzleRepo implements RuleRepoPort {
   async create(input: CreateRuleRecord): Promise<Rule> {
     const id = createId()
 
-    await this.drizzle.db.insert(rules).values({
+    await this.drizzle.db.insert(rulesTable).values({
       id,
       projectId: input.projectId,
       groupId: input.groupId,
@@ -23,7 +23,7 @@ export class RuleDrizzleRepo implements RuleRepoPort {
     })
 
     const rule = await this.drizzle.db.query.rules.findFirst({
-      where: eq(rules.id, id),
+      where: eq(rulesTable.id, id),
     })
 
     if (!rule) {
@@ -35,9 +35,9 @@ export class RuleDrizzleRepo implements RuleRepoPort {
 
   async update(projectId: string, ruleId: string, input: UpdateRuleRecord): Promise<Rule | null> {
     await this.drizzle.db
-      .update(rules)
+      .update(rulesTable)
       .set(input)
-      .where(and(eq(rules.id, ruleId), eq(rules.projectId, projectId)))
+      .where(and(eq(rulesTable.id, ruleId), eq(rulesTable.projectId, projectId)))
 
     return this.findById(projectId, ruleId)
   }
@@ -45,29 +45,29 @@ export class RuleDrizzleRepo implements RuleRepoPort {
   async findById(projectId: string, ruleId: string): Promise<Rule | null> {
     return (
       (await this.drizzle.db.query.rules.findFirst({
-        where: and(eq(rules.id, ruleId), eq(rules.projectId, projectId)),
+        where: and(eq(rulesTable.id, ruleId), eq(rulesTable.projectId, projectId)),
       })) ?? null
     )
   }
 
   async softDelete(projectId: string, ruleId: string): Promise<void> {
     await this.drizzle.db
-      .update(rules)
+      .update(rulesTable)
       .set({ deletedAt: new Date() })
-      .where(and(eq(rules.id, ruleId), eq(rules.projectId, projectId)))
+      .where(and(eq(rulesTable.id, ruleId), eq(rulesTable.projectId, projectId)))
   }
 
   async reorder(projectId: string, groupId: string, orderedIds: string[]): Promise<void> {
     await this.drizzle.db.transaction(async (tx) => {
       for (let i = 0; i < orderedIds.length; i++) {
         await tx
-          .update(rules)
+          .update(rulesTable)
           .set({ orderIndex: i })
           .where(
             and(
-              eq(rules.id, orderedIds[i]),
-              eq(rules.projectId, projectId),
-              eq(rules.groupId, groupId),
+              eq(rulesTable.id, orderedIds[i]),
+              eq(rulesTable.projectId, projectId),
+              eq(rulesTable.groupId, groupId),
             ),
           )
       }

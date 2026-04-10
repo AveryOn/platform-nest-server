@@ -21,3 +21,6 @@ export enum NodeEnv {
   production = 'production',
   test = 'test',
 }
+
+/** undefined placeholder for values */
+export const _ = void undefined

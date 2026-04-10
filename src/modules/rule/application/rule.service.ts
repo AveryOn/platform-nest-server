@@ -3,7 +3,7 @@ import { and, eq } from 'drizzle-orm'
 import { AppError } from '~/core/error/app-error'
 import { ErrorEnum } from '~/core/error/app-error.dict'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import { ruleGroupsTable, rules } from '~/infra/drizzle/schemas'
+import { ruleGroupsTable, rulesTable } from '~/infra/drizzle/schemas'
 import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { RuleServicePort } from '~/modules/rule/ports/rule.service.port'
 import { createId } from '~/shared/crypto/hash.crypto'
@@ -41,7 +41,7 @@ export class RuleService implements RuleServicePort {
     // })
 
     const rule = await this.drizzle.db.query.rules.findFirst({
-      where: eq(rules.id, ruleId),
+      where: eq(rulesTable.id, ruleId),
     })
 
     return rule!
@@ -55,7 +55,7 @@ export class RuleService implements RuleServicePort {
   ) {
     await requireProjectAccess(activeOrganizationId, projectId, this.drizzle)
 
-    const updateData: Partial<typeof rules.$inferInsert> = {}
+    const updateData: Partial<typeof rulesTable.$inferInsert> = {}
     if (data.title !== undefined) updateData.name = data.title || ''
     if (data.body !== undefined) updateData.body = data.body
     if (data.metadata !== undefined) updateData.metadata = data.metadata
@@ -69,7 +69,7 @@ export class RuleService implements RuleServicePort {
     //   .where(and(eq(rules.id, ruleId), eq(rules.projectId, projectId)))
 
     const rule = await this.drizzle.db.query.rules.findFirst({
-      where: eq(rules.id, ruleId),
+      where: eq(rulesTable.id, ruleId),
     })
 
     return rule!

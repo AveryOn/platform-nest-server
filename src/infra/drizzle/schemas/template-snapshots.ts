@@ -1,18 +1,18 @@
-import { pgTable, integer, jsonb, uniqueIndex, index } from 'drizzle-orm/pg-core'
+import { index, integer, jsonb, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
+import { createdAt, id, referenceOnUUID } from '~/infra/drizzle/drizzle.helpers'
 import { templatesTable } from '~/infra/drizzle/schemas'
-import { id, createdAt, referenceOn } from '~/infra/drizzle/drizzle.helpers'
 
 export const templateSnapshotsTable = pgTable(
   'template_snapshots',
   {
     id: id(),
-    templateId: referenceOn('template_id', () => templatesTable).notNull(),
+    templateId: referenceOnUUID('template_id', () => templatesTable).notNull(),
     version: integer('version').notNull(),
     payload: jsonb('payload').notNull(),
     createdAt: createdAt(),
   },
-  (table) => [
-    uniqueIndex('ts_t_version_unique').on(table.templateId, table.version),
-    index('ts_t_idx').on(table.templateId),
+  (t) => [
+    uniqueIndex('ts_t_version_unique').on(t.templateId, t.version),
+    index('ts_t_idx').on(t.templateId),
   ],
 )

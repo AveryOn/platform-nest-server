@@ -1,5 +1,5 @@
 import { pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
-import { id, createdAt, name, description, updatedAt } from '~/infra/drizzle/drizzle.helpers'
+import { createdAt, description, id, name, updatedAt } from '~/infra/drizzle/drizzle.helpers'
 
 export const templatesTable = pgTable(
   'templates',
@@ -12,5 +12,5 @@ export const templatesTable = pgTable(
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
-  (table) => [uniqueIndex('templates_slug_unique').on(table.slug)],
+  (t) => [uniqueIndex('templates_slug_unique').on(t.slug)],
 )

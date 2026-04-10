@@ -3,7 +3,7 @@ import { type DrizzleService } from '~/infra/drizzle/drizzle.service'
 import {
   projectsTable,
   ruleGroupsTable,
-  rules,
+  rulesTable,
   templateSnapshotsTable,
   templatesTable,
 } from '~/infra/drizzle/schemas'
@@ -53,7 +53,7 @@ export async function stampTemplate(
   const definition = { groups: [] }
 
   const groupInserts: (typeof ruleGroupsTable.$inferInsert)[] = []
-  const ruleInserts: (typeof rules.$inferInsert)[] = []
+  const ruleInserts: (typeof rulesTable.$inferInsert)[] = []
 
   function processGroup(group: TemplateGroupDef, parentId: string | null) {
     const groupId = createId()
@@ -94,7 +94,7 @@ export async function stampTemplate(
       await tx.insert(ruleGroupsTable).values(groupInserts)
     }
     if (ruleInserts.length > 0) {
-      await tx.insert(rules).values(ruleInserts)
+      await tx.insert(rulesTable).values(ruleInserts)
     }
     await tx
       .update(projectsTable)

@@ -1,4 +1,4 @@
-import { integer, jsonb, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
+import { integer, jsonb, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
 
 import {
   createdAt,
@@ -6,21 +6,21 @@ import {
   description,
   id,
   name,
-  referenceOn,
+  referenceOnUUID,
   updatedAt,
 } from '~/infra/drizzle/drizzle.helpers'
-import { ruleGroupsTable } from './rule-groups'
+import { ruleGroupsTable } from '~/infra/drizzle/schemas/rule-groups'
 
-export const rules = pgTable(
+export const rulesTable = pgTable(
   'rules',
   {
     id: id(),
-    ruleGroupId: referenceOn('rule_group_id', () => ruleGroupsTable).notNull(),
+    ruleGroupId: referenceOnUUID('rule_group_id', () => ruleGroupsTable).notNull(),
     orderIndex: integer('order_index').notNull(),
     name: name(),
     description: description(),
     metadata: jsonb('metadata'),
-    body: jsonb('body').notNull(),
+    body: text('body').notNull(),
 
     createdAt: createdAt(),
     updatedAt: updatedAt(),

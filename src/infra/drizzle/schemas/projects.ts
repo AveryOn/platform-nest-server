@@ -1,16 +1,17 @@
 import { index, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
 
-import { organizations } from './auth-schema'
-import { templateSnapshotsTable } from '~/infra/drizzle/schemas'
 import {
-  deletedAt,
-  id,
-  updatedAt,
   createdAt,
-  referenceOn,
-  name,
+  deletedAt,
   description,
+  id,
+  name,
+  referenceOnText,
+  referenceOnUUID,
+  updatedAt,
 } from '~/infra/drizzle/drizzle.helpers'
+import { brandsTable, organizations, templateSnapshotsTable } from '~/infra/drizzle/schemas'
+import { _ } from '~/shared/const/app.const'
 
 export const projectsTable = pgTable(
   'projects',
@@ -19,8 +20,11 @@ export const projectsTable = pgTable(
     name: name(),
     description: description(),
     slug: text('slug').notNull(),
-    organizationId: referenceOn('organization_id', () => organizations).notNull(),
-    templateSnapshotId: referenceOn('template_snapshot_id', () => templateSnapshotsTable),
+    brandId: referenceOnUUID('brand_id', () => brandsTable, _, { onDelete: 'set null' }),
+    organizationId: referenceOnText('organization_id', () => organizations, undefined, {
+      onDelete: 'cascade',
+    }).notNull(),
+    templateSnapshotId: referenceOnUUID('template_snapshot_id', () => templateSnapshotsTable),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
     deletedAt: deletedAt(),

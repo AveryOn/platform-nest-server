@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InferSelectModel } from 'drizzle-orm'
 import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import { ruleGroupsTable, rules } from '~/infra/drizzle/schemas'
+import { ruleGroupsTable, rulesTable } from '~/infra/drizzle/schemas'
 import { requireProjectAccess } from '~/modules/auth/auth.utils'
 import { TreeServicePort } from '~/modules/tree/ports/tree.service.port'
 
 type RuleGroupRow = InferSelectModel<typeof ruleGroupsTable>
-type RuleRow = InferSelectModel<typeof rules>
+type RuleRow = InferSelectModel<typeof rulesTable>
 
 export interface RuleGroupNode {
   group: RuleGroupRow
