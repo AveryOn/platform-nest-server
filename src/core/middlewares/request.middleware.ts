@@ -1,12 +1,15 @@
-import { Injectable, NestMiddleware } from '@nestjs/common'
-import { randomUUID } from 'node:crypto'
-import { Request, Response, NextFunction } from 'express'
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common'
 import { ModuleRef } from '@nestjs/core'
+import { NextFunction, Request, Response } from 'express'
+import { randomUUID } from 'node:crypto'
 import { AsyncContextService } from '~/core/logger/async-context.service'
 
 @Injectable()
 export class RequestContextMiddleware implements NestMiddleware {
-  constructor(private readonly moduleRef: ModuleRef) {}
+  constructor(
+    @Inject(ModuleRef)
+    private readonly moduleRef: ModuleRef,
+  ) {}
 
   use(req: Request, res: Response, next: NextFunction) {
     const context = this.moduleRef.get(AsyncContextService, {

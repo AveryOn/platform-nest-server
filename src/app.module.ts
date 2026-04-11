@@ -2,11 +2,11 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { UserContextInterceptor } from '~/core/interceptors/user-context.interceptor'
 import { LoggerModule } from '~/core/logger/logger.module'
-import { JwtMiddleware } from '~/core/middlewares/jwt.middleware'
 import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 import { AuthModule } from '~/modules/auth/auth.module'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
+import { SystemModule } from './modules/system/system.module'
 // import { RedisModule } from '@nestjs-modules/ioredis'
 // import { RedisWrapperModule } from '~/infra/redis/redis.module'
 
@@ -16,6 +16,7 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     PaginatorModule,
     DrizzleModule,
     AuthModule,
+    SystemModule,
     // ProjectModule,
     // RuleGroupModule,
     // RuleModule,
@@ -33,6 +34,6 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware, RequestContextMiddleware).forRoutes('*')
+    consumer.apply(RequestContextMiddleware).forRoutes('*')
   }
 }

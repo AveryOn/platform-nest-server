@@ -1,10 +1,13 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
+import { CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { AsyncContextService } from '~/core/logger/async-context.service'
 
 @Injectable()
 export class UserContextInterceptor implements NestInterceptor {
-  constructor(private readonly ctx: AsyncContextService) {}
+  constructor(
+    @Inject(AsyncContextService)
+    private readonly ctx: AsyncContextService,
+  ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest<any>()
