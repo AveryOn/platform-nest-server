@@ -2,10 +2,10 @@ import { Global, Module, Scope } from '@nestjs/common'
 import { INQUIRER } from '@nestjs/core'
 import pino, { Logger } from 'pino'
 import { env } from '~/core/env'
+import { AsyncContextService } from '~/core/logger/async-context.service'
+import { LOGGER_PORT } from '~/core/logger/logger.port'
+import { AppLoggerService } from '~/core/logger/logger.service'
 import { NodeEnv } from '~/shared/const/app.const'
-import { AsyncContextService } from './async-context.service'
-import { LOGGER_PORT } from './logger.port'
-import { AppLoggerService } from './logger.service'
 
 @Global()
 @Module({
@@ -49,6 +49,6 @@ import { AppLoggerService } from './logger.service'
     },
     AsyncContextService,
   ],
-  exports: [AppLoggerService, AsyncContextService],
+  exports: [LOGGER_PORT, AppLoggerService, AsyncContextService],
 })
 export class LoggerModule {}

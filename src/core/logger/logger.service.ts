@@ -3,7 +3,7 @@ import type { Logger } from 'pino'
 import { AsyncContextService } from './async-context.service'
 import { LOGGER_PORT } from './logger.port'
 import { sanitizeContext } from './logger.sanitize'
-import { LogLevel, LogMeta, LogEntry } from './logger.types'
+import { LogEntry, LogLevel, LogMeta } from './logger.types'
 
 @Injectable()
 export class AppLoggerService implements LoggerService {
