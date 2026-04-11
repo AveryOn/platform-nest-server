@@ -1,8 +1,8 @@
-import { z } from 'zod'
 import 'dotenv/config'
-import { zBool, zJson, zNumberSoft } from '~/shared/zod/zod.helper'
+import { z } from 'zod'
 import { LogLevel } from '~/core/logger/logger.types'
 import { NodeEnv } from '~/shared/const/app.const'
+import { zBool, zJson, zNumberSoft } from '~/shared/zod/zod.helper'
 
 export const envSchema = z.object({
   NODE_ENV: z.enum([NodeEnv.development, NodeEnv.production, NodeEnv.test]),
@@ -20,6 +20,7 @@ export const envSchema = z.object({
   CLEAR_CONSOLE_BY_START: zBool().default(false),
   REDIS_URL: z.url(),
   BETTER_AUTH_URL: z.url(),
+  BETTER_AUTH_BASE_PATH: z.string(),
   BETTER_AUTH_SECRET: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),

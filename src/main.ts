@@ -6,14 +6,20 @@ import helmet from 'helmet'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from '~/app.module'
 import { env } from '~/core/env'
-import { GlobalExceptionFilter } from './core/filters/global-exception-filter'
-import { NodeEnv } from './shared/const/app.const'
+import { GlobalExceptionFilter } from '~/core/filters/global-exception-filter'
+import { betterAuthHandler } from '~/modules/auth/infra/better-auth.handler'
+import { NodeEnv } from '~/shared/const/app.const'
 
 const isProduction = env.NODE_ENV === NodeEnv.production
 
 async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule)
+
+    // INIT BETTER AUTH
+    const server = app.getHttpAdapter().getInstance()
+    server.use(env.BETTER_AUTH_BASE_PATH, betterAuthHandler)
+
     // Enabled helmet gaurd by prod flag
     if (isProduction) {
       app.use(helmet())
