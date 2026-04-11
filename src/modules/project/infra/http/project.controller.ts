@@ -104,10 +104,6 @@ export class ProjectController {
     description: 'Validation failed',
   })
   async createProject(@Body() body: CreateProjectDto, @Req() _req: Request): Promise<Project> {
-    // const { activeOrganizationId } = await getSessionOrThrow(
-    //   req,
-    //   // this.authService,
-    // )
     return await this.projectService.create(body, 'activeOrganizationId')
   }
 
