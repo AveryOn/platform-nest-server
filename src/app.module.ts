@@ -5,8 +5,9 @@ import { LoggerModule } from '~/core/logger/logger.module'
 import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 import { AuthModule } from '~/modules/auth/auth.module'
+import { ProjectModule } from '~/modules/project/project.module'
+import { SystemModule } from '~/modules/system/system.module'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
-import { SystemModule } from './modules/system/system.module'
 // import { RedisModule } from '@nestjs-modules/ioredis'
 // import { RedisWrapperModule } from '~/infra/redis/redis.module'
 
@@ -17,7 +18,7 @@ import { SystemModule } from './modules/system/system.module'
     DrizzleModule,
     AuthModule,
     SystemModule,
-    // ProjectModule,
+    ProjectModule,
     // RuleGroupModule,
     // RuleModule,
     // TreeModule,
