@@ -6,7 +6,7 @@ export enum ApiSwaggerTag {
   Auth = 'Auth',
   User = 'User',
   Profile = 'Profile',
-  Session = 'Session',
+  ResolvedRuleset = 'ResolvedRuleset',
   Project = 'Project',
   RuleGroup = 'Rule Group',
   Rule = 'Rule',

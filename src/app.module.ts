@@ -6,6 +6,7 @@ import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 import { AuthModule } from '~/modules/auth/auth.module'
 import { ProjectModule } from '~/modules/project/project.module'
+import { ResolvedRulesetModule } from '~/modules/resolved-ruleset/resolved-ruleset.module'
 import { RuleGroupModule } from '~/modules/rule-group/rule-group.module'
 import { RuleModule } from '~/modules/rule/rule.module'
 import { SystemModule } from '~/modules/system/system.module'
@@ -25,6 +26,7 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     RuleGroupModule,
     RuleModule,
     TreeModule,
+    ResolvedRulesetModule,
     // ExportModule,
 
     // RedisModule.forRoot({
