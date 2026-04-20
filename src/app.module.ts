@@ -12,6 +12,7 @@ import { RuleGroupModule } from '~/modules/rule-group/rule-group.module'
 import { RuleModule } from '~/modules/rule/rule.module'
 import { SnapshotModule } from '~/modules/snapshot/snapshot.module'
 import { SystemModule } from '~/modules/system/system.module'
+import { TemplateModule } from '~/modules/template/template.module'
 import { TreeModule } from '~/modules/tree/tree.module'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
 // import { RedisModule } from '@nestjs-modules/ioredis'
@@ -31,6 +32,7 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     ResolvedRulesetModule,
     SnapshotModule,
     ProjectConfigModule,
+    TemplateModule,
     // ExportModule,
 
     // RedisModule.forRoot({
