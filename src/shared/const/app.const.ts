@@ -15,6 +15,7 @@ export enum ApiSwaggerTag {
   Tree = 'Tree',
   Export = 'Export',
   Snapshot = 'Snapshot',
+  ProjectConfig = 'ProjectConfig',
 }
 
 export enum NodeEnv {
