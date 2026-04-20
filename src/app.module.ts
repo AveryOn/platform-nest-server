@@ -6,6 +6,7 @@ import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 import { AuthModule } from '~/modules/auth/auth.module'
 import { ProjectModule } from '~/modules/project/project.module'
+import { RuleGroupModule } from '~/modules/rule-group/rule-group.module'
 import { SystemModule } from '~/modules/system/system.module'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
 // import { RedisModule } from '@nestjs-modules/ioredis'
@@ -19,7 +20,7 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     AuthModule,
     SystemModule,
     ProjectModule,
-    // RuleGroupModule,
+    RuleGroupModule,
     // RuleModule,
     // TreeModule,
     // ExportModule,
