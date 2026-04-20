@@ -9,6 +9,7 @@ import { ProjectModule } from '~/modules/project/project.module'
 import { RuleGroupModule } from '~/modules/rule-group/rule-group.module'
 import { RuleModule } from '~/modules/rule/rule.module'
 import { SystemModule } from '~/modules/system/system.module'
+import { TreeModule } from '~/modules/tree/tree.module'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
 // import { RedisModule } from '@nestjs-modules/ioredis'
 // import { RedisWrapperModule } from '~/infra/redis/redis.module'
@@ -23,7 +24,7 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     ProjectModule,
     RuleGroupModule,
     RuleModule,
-    // TreeModule,
+    TreeModule,
     // ExportModule,
 
     // RedisModule.forRoot({
