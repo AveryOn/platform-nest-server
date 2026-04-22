@@ -12,17 +12,11 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator'
+import {
+  RuleGroupType,
+  type RuleGroupTypeKey,
+} from '~/modules/rule-group/application/rule-group.type'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
-
-export enum RuleGroupType {
-  category = 'category',
-  token = 'token',
-  section = 'section',
-  component = 'component',
-  variant = 'variant',
-}
-
-export type RuleGroupTypeKey = keyof typeof RuleGroupType
 
 export class RuleGroupCreateDto {
   @ApiProperty({

@@ -8,4 +8,3 @@ export * from './rule-groups'
 export * from './rules'
 export * from './template-snapshots'
 export * from './templates'
-
