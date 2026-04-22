@@ -61,7 +61,7 @@ export default tseslint.config(
       },
       // OTHER
       ...{
-        'prettier/prettier': ['error', { endOfLine: 'auto' }],
+        'prettier/prettier': ['error', { endOfLine: 'off' }],
       },
     },
   },

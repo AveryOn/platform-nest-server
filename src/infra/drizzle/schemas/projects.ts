@@ -30,7 +30,7 @@ export const projectsTable = pgTable(
     deletedAt: deletedAt(),
   },
   (t) => [
-    uniqueIndex('projects_slug_unique').on(t.slug),
+    uniqueIndex('projects_slug_unique').on(t.slug, t.brandId),
     index('projects_organization_deleted_idx').on(t.organizationId, t.deletedAt),
     index('projects_template_snapshot_idx').on(t.templateSnapshotId),
   ],

@@ -72,3 +72,23 @@ At minimum, a regular index on `rule_group_id` is required.
 In many cases, a partial index on `deleted_at IS NULL` is also needed, especially for editor tree / resolved ruleset queries.
 
 This is not a critical blocker, but a production-level weakness.
+
+---
+
+5. `project_rule_configs.replaced_by`
+
+Logically, it's worth checking that `replaced_by` points to a rule in the same project.
+The database doesn't guarantee this FK.
+
+---
+
+6. `project_rule_group_configs` and `project_rule_configs`
+
+The database doesn't guarantee that the `project_id` matches the project in the `rule_group` / `rule`
+This must be validated in the application layer
+
+---
+
+7. `rule_groups.scope`
+
+After switching to copy-on-create templates, scope may become controversial

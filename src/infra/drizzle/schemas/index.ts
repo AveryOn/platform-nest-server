@@ -1,9 +1,11 @@
 export * from './auth-schema'
 export * from './brands'
-export * from './project-rule-groups'
+export * from './project-rule-configs'
+export * from './project-rule-group-configs'
 export * from './project-rule-snapshots'
 export * from './projects'
 export * from './rule-groups'
 export * from './rules'
 export * from './template-snapshots'
 export * from './templates'
+
