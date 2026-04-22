@@ -1,4 +1,5 @@
-CREATE TYPE "public"."project_rule_group_status" AS ENUM('active', 'hidden');--> statement-breakpoint
+CREATE TYPE "public"."project_rule_config_status" AS ENUM('active', 'hidden');--> statement-breakpoint
+CREATE TYPE "public"."project_rule_group_config_status" AS ENUM('active', 'hidden');--> statement-breakpoint
 CREATE TYPE "public"."rule_group_scope" AS ENUM('template', 'project');--> statement-breakpoint
 CREATE TYPE "public"."rule_group_type" AS ENUM('category', 'token', 'section', 'component', 'variant');--> statement-breakpoint
 CREATE TABLE "accounts" (
@@ -86,10 +87,23 @@ CREATE TABLE "brands" (
 	"updated_at" timestamp with time zone
 );
 --> statement-breakpoint
-CREATE TABLE "project_rule_groups" (
+CREATE TABLE "project_rule_configs" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"project_id" uuid NOT NULL,
+	"rule_id" uuid NOT NULL,
+	"status" "project_rule_config_status" DEFAULT 'active' NOT NULL,
+	"replaced_by" uuid,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone
+);
+--> statement-breakpoint
+CREATE TABLE "project_rule_group_configs" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"project_id" uuid NOT NULL,
 	"rule_group_id" uuid NOT NULL,
-	"status" "project_rule_group_status" DEFAULT 'active' NOT NULL
+	"status" "project_rule_group_config_status" DEFAULT 'active' NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE "project_rule_snapshots" (
@@ -152,7 +166,7 @@ CREATE TABLE "template_snapshots" (
 --> statement-breakpoint
 CREATE TABLE "templates" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"slug" text NOT NULL,
+	"slug" varchar(255),
 	"name" varchar(255) NOT NULL,
 	"description" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -166,8 +180,11 @@ ALTER TABLE "members" ADD CONSTRAINT "members_organization_id_organizations_id_f
 ALTER TABLE "members" ADD CONSTRAINT "members_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "brands" ADD CONSTRAINT "brands_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "project_rule_groups" ADD CONSTRAINT "project_rule_groups_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "project_rule_groups" ADD CONSTRAINT "project_rule_groups_rule_group_id_rule_groups_id_fk" FOREIGN KEY ("rule_group_id") REFERENCES "public"."rule_groups"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "project_rule_configs" ADD CONSTRAINT "project_rule_configs_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "project_rule_configs" ADD CONSTRAINT "project_rule_configs_rule_id_rules_id_fk" FOREIGN KEY ("rule_id") REFERENCES "public"."rules"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "project_rule_configs" ADD CONSTRAINT "project_rule_configs_replaced_by_rules_id_fk" FOREIGN KEY ("replaced_by") REFERENCES "public"."rules"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "project_rule_group_configs" ADD CONSTRAINT "project_rule_group_configs_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "project_rule_group_configs" ADD CONSTRAINT "project_rule_group_configs_rule_group_id_rule_groups_id_fk" FOREIGN KEY ("rule_group_id") REFERENCES "public"."rule_groups"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "project_rule_snapshots" ADD CONSTRAINT "project_rule_snapshots_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "projects" ADD CONSTRAINT "projects_brand_id_brands_id_fk" FOREIGN KEY ("brand_id") REFERENCES "public"."brands"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "projects" ADD CONSTRAINT "projects_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -188,11 +205,13 @@ CREATE INDEX "sessions_userId_idx" ON "sessions" USING btree ("user_id");--> sta
 CREATE INDEX "verifications_identifier_idx" ON "verifications" USING btree ("identifier");--> statement-breakpoint
 CREATE INDEX "brands_organization_id_idx" ON "brands" USING btree ("organization_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "brands_organization_id_title_uidx" ON "brands" USING btree ("organization_id","name");--> statement-breakpoint
-CREATE UNIQUE INDEX "prg_pg_unique" ON "project_rule_groups" USING btree ("project_id","rule_group_id");--> statement-breakpoint
-CREATE INDEX "prg_p_status_idx" ON "project_rule_groups" USING btree ("project_id","status");--> statement-breakpoint
+CREATE UNIQUE INDEX "prc_project_rule_unique" ON "project_rule_configs" USING btree ("project_id","rule_id");--> statement-breakpoint
+CREATE INDEX "prc_project_status_idx" ON "project_rule_configs" USING btree ("project_id","status");--> statement-breakpoint
+CREATE UNIQUE INDEX "prgc_project_rule_group_unique" ON "project_rule_group_configs" USING btree ("project_id","rule_group_id");--> statement-breakpoint
+CREATE INDEX "prgc_project_status_idx" ON "project_rule_group_configs" USING btree ("project_id","status");--> statement-breakpoint
 CREATE UNIQUE INDEX "p_r_snapshots_p_ver_unique" ON "project_rule_snapshots" USING btree ("project_id","version");--> statement-breakpoint
 CREATE INDEX "p_r_snapshots_p_idx" ON "project_rule_snapshots" USING btree ("project_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "projects_slug_unique" ON "projects" USING btree ("slug");--> statement-breakpoint
+CREATE UNIQUE INDEX "projects_slug_unique" ON "projects" USING btree ("slug","brand_id");--> statement-breakpoint
 CREATE INDEX "projects_organization_deleted_idx" ON "projects" USING btree ("organization_id","deleted_at");--> statement-breakpoint
 CREATE INDEX "projects_template_snapshot_idx" ON "projects" USING btree ("template_snapshot_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "rule_groups_project_parent_order_unique" ON "rule_groups" USING btree ("project_id","parent_group_id","order_index");--> statement-breakpoint
