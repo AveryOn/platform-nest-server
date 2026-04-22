@@ -6,7 +6,7 @@ export enum ApiSwaggerTag {
   Auth = 'Auth',
   User = 'User',
   Profile = 'Profile',
-  ResolvedRuleset = 'ResolvedRuleset',
+  ResolvedRuleset = 'Resolved Ruleset',
   Project = 'Project',
   RuleGroup = 'Rule Group',
   Rule = 'Rule',
@@ -15,7 +15,7 @@ export enum ApiSwaggerTag {
   Tree = 'Tree',
   Export = 'Export',
   Snapshot = 'Snapshot',
-  ProjectConfig = 'ProjectConfig',
+  ProjectConfig = 'Project Config',
 }
 
 export enum NodeEnv {
