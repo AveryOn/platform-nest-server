@@ -4,7 +4,7 @@ import {
   RuleGroupServiceResult,
 } from '~/modules/rule-group/application/rule-group.type'
 import {
-  RULE_GROUP_REPO,
+  RULE_GROUP_REPO_PORT,
   type RuleGroupRepoPort,
 } from '~/modules/rule-group/ports/rule-group.repo.port'
 import { RuleGroupServicePort } from '~/modules/rule-group/ports/rule-group.service.port'
@@ -12,7 +12,7 @@ import { RuleGroupServicePort } from '~/modules/rule-group/ports/rule-group.serv
 @Injectable()
 export class RuleGroupService implements RuleGroupServicePort {
   constructor(
-    @Inject(RULE_GROUP_REPO)
+    @Inject(RULE_GROUP_REPO_PORT)
     private readonly ruleGroupRepo: RuleGroupRepoPort,
   ) {}
 
@@ -57,9 +57,7 @@ export class RuleGroupService implements RuleGroupServicePort {
     }
   }
 
-  async reorderRoot(
-    cmd: RuleGroupServiceCmd.ReorderRoot,
-  ): Promise<RuleGroupServiceResult.Update> {
+  async reorderRoot(cmd: RuleGroupServiceCmd.ReorderRoot): Promise<RuleGroupServiceResult.Update> {
     await this.ruleGroupRepo.reorderRoot(cmd)
 
     return {

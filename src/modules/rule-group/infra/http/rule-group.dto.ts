@@ -12,10 +12,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator'
-import {
-  RuleGroupType,
-  type RuleGroupTypeKey,
-} from '~/modules/rule-group/application/rule-group.type'
+import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
 
 export class RuleGroupCreateDto {
@@ -47,7 +44,7 @@ export class RuleGroupCreateDto {
   })
   @IsOptional()
   @IsEnum(RuleGroupType)
-  type?: RuleGroupTypeKey
+  type?: RuleGroupType
 
   @ApiPropertyOptional({
     example: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
@@ -100,7 +97,7 @@ export class RuleGroupPatchBaseDto {
   })
   @IsOptional()
   @IsEnum(RuleGroupType)
-  type?: RuleGroupTypeKey
+  type?: RuleGroupType
 }
 
 export class RuleGroupPatchDto extends PartialType(RuleGroupPatchBaseDto) {
@@ -182,7 +179,7 @@ export class RuleGroupReorderRootDto {
   items: RuleGroupReorderItemDto[]
 }
 
-export class RuleGroupItemResponseDto {
+export class RuleGroupItemResponse {
   @ApiProperty({
     example: '5c0f7db5-cf42-4f0d-95a7-e8c0f2d96f0f',
     description: 'Rule group UUID',
@@ -228,8 +225,9 @@ export class RuleGroupItemResponseDto {
     description: 'Rule group semantic type',
     enum: RuleGroupType,
     type: String,
+    nullable: true,
   })
-  type: RuleGroupType
+  type: RuleGroupType | null
 
   @ApiProperty({
     example: 1,
@@ -251,11 +249,12 @@ export class RuleGroupItemResponseDto {
     description: 'Update timestamp in ISO-8601 format',
     format: 'date-time',
     type: String,
+    nullable: true,
   })
-  updatedAt: string
+  updatedAt: string | null
 }
 
-export class RuleGroupUpdateResponseDto {
+export class RuleGroupUpdateResponse {
   @ApiProperty({
     example: 'success',
     description: 'Operation status',
@@ -273,7 +272,7 @@ export class RuleGroupUpdateResponseDto {
   groupId: string
 }
 
-export class RuleGroupRemoveResponseDto {
+export class RuleGroupRemoveResponse {
   @ApiProperty({
     example: 'success',
     description: 'Archive operation status',

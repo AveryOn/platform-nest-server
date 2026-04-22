@@ -5,28 +5,37 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
 } from '@nestjs/common'
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
 import {
   RuleGroupCreateDto,
-  RuleGroupItemResponseDto,
+  RuleGroupItemResponse,
   RuleGroupMoveDto,
   RuleGroupPatchDto,
-  RuleGroupRemoveResponseDto,
+  RuleGroupRemoveResponse,
   RuleGroupReorderChildrenDto,
   RuleGroupReorderRootDto,
-  RuleGroupUpdateResponseDto,
+  RuleGroupUpdateResponse,
 } from '~/modules/rule-group/infra/http/rule-group.dto'
+import {
+  RULE_GROUP_SERVICE_PORT,
+  type RuleGroupServicePort,
+} from '~/modules/rule-group/ports/rule-group.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.RuleGroup)
 @Controller({ version: '1' })
 export class RuleGroupController {
+  constructor(
+    @Inject(RULE_GROUP_SERVICE_PORT)
+    private readonly ruleGroupService: RuleGroupServicePort,
+  ) {}
+
   @Post('projects/:projectId/rule-groups')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
@@ -50,7 +59,7 @@ export class RuleGroupController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Rule group successfully created',
-    type: RuleGroupItemResponseDto,
+    type: RuleGroupItemResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -76,21 +85,18 @@ export class RuleGroupController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  createRuleGroup(
+  async createRuleGroup(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() body: RuleGroupCreateDto,
-  ): RuleGroupItemResponseDto {
-    return {
-      id: crypto.randomUUID(),
-      projectId,
-      parentGroupId: body.parentGroupId ?? null,
+  ): Promise<RuleGroupItemResponse> {
+    return await this.ruleGroupService.create({
       name: body.name,
-      description: body.description ?? null,
-      type: body.type || (RuleGroupType as any).section,
       orderIndex: body.orderIndex,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
+      projectId: projectId,
+      description: body.description,
+      parentGroupId: body.parentGroupId,
+      type: body.type,
+    })
   }
 
   @Get('rule-groups/:groupId')
@@ -111,7 +117,7 @@ export class RuleGroupController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully returned',
-    type: RuleGroupItemResponseDto,
+    type: RuleGroupItemResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -129,18 +135,10 @@ export class RuleGroupController {
     status: HttpStatus.NOT_FOUND,
     description: 'Rule group not found',
   })
-  getRuleGroupById(@Param('groupId', ParseUUIDPipe) groupId: string): RuleGroupItemResponseDto {
-    return {
-      id: groupId,
-      projectId: '550e8400-e29b-41d4-a716-446655440000',
-      parentGroupId: null,
-      name: 'Button',
-      description: 'Rules for button component',
-      type: RuleGroupType.component,
-      orderIndex: 1,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-    }
+  async getRuleGroupById(
+    @Param('groupId', ParseUUIDPipe) groupId: string,
+  ): Promise<RuleGroupItemResponse> {
+    return await this.ruleGroupService.getById({ groupId })
   }
 
   @Patch('rule-groups/:groupId')
@@ -165,7 +163,7 @@ export class RuleGroupController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully updated',
-    type: RuleGroupUpdateResponseDto,
+    type: RuleGroupUpdateResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -191,14 +189,16 @@ export class RuleGroupController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  patchRuleGroup(
+  async patchRuleGroup(
     @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() _body: RuleGroupPatchDto,
-  ): RuleGroupUpdateResponseDto {
-    return {
-      status: 'success',
-      groupId,
-    }
+    @Body() body: RuleGroupPatchDto,
+  ): Promise<RuleGroupUpdateResponse> {
+    return await this.ruleGroupService.patch({
+      groupId: groupId,
+      description: body.description,
+      name: body.name,
+      type: body.type,
+    })
   }
 
   @Post('rule-groups/:groupId/move')
@@ -224,7 +224,7 @@ export class RuleGroupController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully moved',
-    type: RuleGroupUpdateResponseDto,
+    type: RuleGroupUpdateResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -250,14 +250,15 @@ export class RuleGroupController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  moveRuleGroup(
+  async moveRuleGroup(
     @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() _body: RuleGroupMoveDto,
-  ): RuleGroupUpdateResponseDto {
-    return {
-      status: 'success',
-      groupId,
-    }
+    @Body() body: RuleGroupMoveDto,
+  ): Promise<RuleGroupUpdateResponse> {
+    return await this.ruleGroupService.move({
+      groupId: groupId,
+      orderIndex: body.orderIndex,
+      parentGroupId: body.parentGroupId,
+    })
   }
 
   @Post('rule-groups/:groupId/reorder-children')
@@ -283,7 +284,7 @@ export class RuleGroupController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Child rule groups successfully reordered',
-    type: RuleGroupUpdateResponseDto,
+    type: RuleGroupUpdateResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -309,14 +310,14 @@ export class RuleGroupController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  reorderChildren(
+  async reorderChildren(
     @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() _body: RuleGroupReorderChildrenDto,
-  ): RuleGroupUpdateResponseDto {
-    return {
-      status: 'success',
-      groupId,
-    }
+    @Body() body: RuleGroupReorderChildrenDto,
+  ): Promise<RuleGroupUpdateResponse> {
+    return await this.ruleGroupService.reorderChildren({
+      groupId: groupId,
+      items: body.items,
+    })
   }
 
   @Post('projects/:projectId/rule-groups/reorder-root')
@@ -342,7 +343,7 @@ export class RuleGroupController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Root rule groups successfully reordered',
-    type: RuleGroupUpdateResponseDto,
+    type: RuleGroupUpdateResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -368,14 +369,14 @@ export class RuleGroupController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  reorderRootGroups(
+  async reorderRootGroups(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Body() body: RuleGroupReorderRootDto,
-  ): RuleGroupUpdateResponseDto {
-    return {
-      status: 'success',
-      groupId: body.items[0]?.id ?? crypto.randomUUID(),
-    }
+  ): Promise<RuleGroupUpdateResponse> {
+    return await this.ruleGroupService.reorderRoot({
+      projectId: projectId,
+      items: body.items,
+    })
   }
 
   @Delete('rule-groups/:groupId')
@@ -397,7 +398,7 @@ export class RuleGroupController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully archived',
-    type: RuleGroupRemoveResponseDto,
+    type: RuleGroupRemoveResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -415,11 +416,11 @@ export class RuleGroupController {
     status: HttpStatus.NOT_FOUND,
     description: 'Rule group not found',
   })
-  deleteRuleGroup(@Param('groupId', ParseUUIDPipe) groupId: string): RuleGroupRemoveResponseDto {
-    return {
-      status: 'success',
-      groupId,
-      archivedAt: new Date().toISOString(),
-    }
+  async deleteRuleGroup(
+    @Param('groupId', ParseUUIDPipe) groupId: string,
+  ): Promise<RuleGroupRemoveResponse> {
+    return await this.ruleGroupService.remove({
+      groupId: groupId,
+    })
   }
 }

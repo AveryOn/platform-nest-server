@@ -1,7 +1,9 @@
 import {
-  RuleGroupServiceCmd,
-  RuleGroupServiceResult,
-} from '~/modules/rule-group/application/rule-group.type';
+  type RuleGroupServiceCmd,
+  type RuleGroupServiceResult,
+} from '~/modules/rule-group/application/rule-group.type'
+
+export const RULE_GROUP_SERVICE_PORT = Symbol('RULE_GROUP_SERVICE_PORT')
 
 export abstract class RuleGroupServicePort {
   abstract create(cmd: RuleGroupServiceCmd.Create): Promise<RuleGroupServiceResult.Item>
@@ -16,9 +18,7 @@ export abstract class RuleGroupServicePort {
     cmd: RuleGroupServiceCmd.ReorderChildren,
   ): Promise<RuleGroupServiceResult.Update>
 
-  abstract reorderRoot(
-    cmd: RuleGroupServiceCmd.ReorderRoot,
-  ): Promise<RuleGroupServiceResult.Update>
+  abstract reorderRoot(cmd: RuleGroupServiceCmd.ReorderRoot): Promise<RuleGroupServiceResult.Update>
 
   abstract remove(cmd: RuleGroupServiceCmd.Remove): Promise<RuleGroupServiceResult.Remove>
 }

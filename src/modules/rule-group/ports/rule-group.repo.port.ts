@@ -3,7 +3,7 @@ import type {
   RuleGroupServiceCmd,
 } from '~/modules/rule-group/application/rule-group.type'
 
-export const RULE_GROUP_REPO = Symbol('RULE_GROUP_REPO')
+export const RULE_GROUP_REPO_PORT = Symbol('RULE_GROUP_REPO_PORT')
 
 export abstract class RuleGroupRepoPort {
   abstract create(cmd: RuleGroupServiceCmd.Create): Promise<RuleGroupEntity>
