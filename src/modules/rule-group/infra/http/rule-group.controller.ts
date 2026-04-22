@@ -11,6 +11,7 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
 import {
   RuleGroupCreateDto,
   RuleGroupItemResponseDto,
@@ -19,7 +20,6 @@ import {
   RuleGroupRemoveResponseDto,
   RuleGroupReorderChildrenDto,
   RuleGroupReorderRootDto,
-  RuleGroupType,
   RuleGroupUpdateResponseDto,
 } from '~/modules/rule-group/infra/http/rule-group.dto'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
