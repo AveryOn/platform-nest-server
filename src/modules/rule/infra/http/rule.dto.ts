@@ -208,8 +208,9 @@ export class RuleItemResponseDto {
     description: 'Update timestamp in ISO-8601 format',
     type: String,
     format: 'date-time',
+    nullable: true,
   })
-  updatedAt: string
+  updatedAt: string | null
 }
 
 export class RuleUpdateResponseDto {

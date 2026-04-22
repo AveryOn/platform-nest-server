@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -20,11 +21,17 @@ import {
   RuleReorderInGroupDto,
   RuleUpdateResponseDto,
 } from '~/modules/rule/infra/http/rule.dto'
+import { RULE_SERVICE_PORT, type RuleServicePort } from '~/modules/rule/ports/rule.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.Rule)
 @Controller({ version: '1' })
 export class RuleController {
+  constructor(
+    @Inject(RULE_SERVICE_PORT)
+    private readonly ruleService: RuleServicePort,
+  ) {}
+
   @Post('rule-groups/:groupId/rules')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
@@ -75,20 +82,17 @@ export class RuleController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  createRule(
+  async createRule(
     @Param('groupId', ParseUUIDPipe) groupId: string,
     @Body() body: RuleCreateDto,
-  ): RuleItemResponseDto {
-    return {
-      id: crypto.randomUUID(),
-      ruleGroupId: groupId,
-      title: body.title ?? '',
+  ): Promise<RuleItemResponseDto> {
+    return await this.ruleService.create({
+      title: body.title,
       body: body.body,
-      metadata: body.metadata ?? null,
       orderIndex: body.orderIndex,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
+      ruleGroupId: groupId,
+      metadata: body.metadata,
+    })
   }
 
   @Get('rules/:ruleId')
@@ -127,17 +131,10 @@ export class RuleController {
     status: HttpStatus.NOT_FOUND,
     description: 'Rule not found',
   })
-  getRuleById(@Param('ruleId', ParseUUIDPipe) ruleId: string): RuleItemResponseDto {
-    return {
-      id: ruleId,
-      ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      title: 'When to use',
-      body: 'Use button for primary actions.',
-      metadata: { tags: ['button', 'usage'] },
-      orderIndex: 1,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-    }
+  async getRuleById(@Param('ruleId', ParseUUIDPipe) ruleId: string): Promise<RuleItemResponseDto> {
+    return await this.ruleService.getById({
+      ruleId: ruleId,
+    })
   }
 
   @Patch('rules/:ruleId')
@@ -189,14 +186,16 @@ export class RuleController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  patchRule(
+  async patchRule(
     @Param('ruleId', ParseUUIDPipe) ruleId: string,
-    @Body() _body: RulePatchDto,
-  ): RuleUpdateResponseDto {
-    return {
-      status: 'success',
-      ruleId,
-    }
+    @Body() body: RulePatchDto,
+  ): Promise<RuleUpdateResponseDto> {
+    return await this.ruleService.patch({
+      ruleId: ruleId,
+      body: body.body,
+      metadata: body.metadata,
+      title: body.title,
+    })
   }
 
   @Post('rules/:ruleId/move')
@@ -249,14 +248,15 @@ export class RuleController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  moveRule(
+  async moveRule(
     @Param('ruleId', ParseUUIDPipe) ruleId: string,
-    @Body() _body: RuleMoveDto,
-  ): RuleUpdateResponseDto {
-    return {
-      status: 'success',
-      ruleId,
-    }
+    @Body() body: RuleMoveDto,
+  ): Promise<RuleUpdateResponseDto> {
+    return await this.ruleService.move({
+      orderIndex: body.orderIndex,
+      targetGroupId: body.targetGroupId,
+      ruleId: ruleId,
+    })
   }
 
   @Post('rule-groups/:groupId/reorder-rules')
@@ -309,14 +309,14 @@ export class RuleController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  reorderRulesInGroup(
+  async reorderRulesInGroup(
     @Param('groupId', ParseUUIDPipe) groupId: string,
     @Body() body: RuleReorderInGroupDto,
-  ): RuleUpdateResponseDto {
-    return {
-      status: 'success',
-      ruleId: body.items[0]?.id ?? crypto.randomUUID(),
-    }
+  ): Promise<RuleUpdateResponseDto> {
+    return await this.ruleService.reorderInGroup({
+      groupId: groupId,
+      items: body.items,
+    })
   }
 
   @Delete('rules/:ruleId')
@@ -356,11 +356,7 @@ export class RuleController {
     status: HttpStatus.NOT_FOUND,
     description: 'Rule not found',
   })
-  deleteRule(@Param('ruleId', ParseUUIDPipe) ruleId: string): RuleRemoveResponseDto {
-    return {
-      status: 'success',
-      ruleId,
-      archivedAt: new Date().toISOString(),
-    }
+  async deleteRule(@Param('ruleId', ParseUUIDPipe) ruleId: string): Promise<RuleRemoveResponseDto> {
+    return await this.ruleService.remove({ ruleId })
   }
 }

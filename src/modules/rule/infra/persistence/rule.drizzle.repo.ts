@@ -5,14 +5,32 @@ import { RuleRepoPort } from '~/modules/rule/ports/rule.repo.port'
 
 @Injectable()
 export class RuleDrizzleRepo implements RuleRepoPort {
-  async create(_cmd: RuleServiceCmd.Create): Promise<RuleEntity> {
-    await Promise.resolve()
-    throw new Error('Not implemented')
+  async create(cmd: RuleServiceCmd.Create): Promise<RuleEntity> {
+    return await Promise.resolve({
+      id: crypto.randomUUID(),
+      ruleGroupId: cmd.ruleGroupId,
+      title: cmd.title ?? '',
+      body: cmd.body,
+      metadata: cmd.metadata ?? null,
+      orderIndex: cmd.orderIndex,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+    })
   }
 
-  async getByIdOrFail(_ruleId: string): Promise<RuleEntity> {
-    await Promise.resolve()
-    throw new Error('Not implemented')
+  async getByIdOrFail(ruleId: string): Promise<RuleEntity> {
+    return await Promise.resolve({
+      id: ruleId,
+      ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
+      title: 'When to use',
+      body: 'Use button for primary actions.',
+      metadata: { tags: ['button', 'usage'] },
+      orderIndex: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+    })
   }
 
   async patch(_cmd: RuleServiceCmd.Patch): Promise<void> {
