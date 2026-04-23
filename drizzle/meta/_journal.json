@@ -8,6 +8,13 @@
       "when": 1776875439776,
       "tag": "0000_sloppy_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776959453770,
+      "tag": "0001_foamy_giant_girl",
+      "breakpoints": true
     }
   ]
 }

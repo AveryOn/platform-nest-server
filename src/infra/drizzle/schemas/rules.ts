@@ -9,12 +9,13 @@ import {
   referenceOnUUID,
   updatedAt,
 } from '~/infra/drizzle/drizzle.helpers'
-import { ruleGroupsTable } from '~/infra/drizzle/schemas/rule-groups'
+import { projectsTable, ruleGroupsTable } from '~/infra/drizzle/schemas'
 
 export const rulesTable = pgTable(
   'rules',
   {
     id: id(),
+    projectId: referenceOnUUID('project_id', () => projectsTable),
     ruleGroupId: referenceOnUUID('rule_group_id', () => ruleGroupsTable).notNull(),
     orderIndex: integer('order_index').notNull(),
     name: name(),

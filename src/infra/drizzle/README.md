@@ -92,3 +92,19 @@ This must be validated in the application layer
 7. `rule_groups.scope`
 
 After switching to copy-on-create templates, scope may become controversial
+
+---
+
+8. Enforce rules.projectId consistency
+
+- rules.projectId must always match the projectId of its parent rule_group
+- On rule create:
+  - set projectId from rule_group.projectId
+- On rule move:
+  - update projectId to match target group
+- Validate on write:
+  - prevent cross-project inconsistencies
+
+This invariant must be enforced at the application/service layer.
+
+---
