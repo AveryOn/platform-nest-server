@@ -1,17 +1,17 @@
-import { Controller, Get, HttpStatus, Param, ParseUUIDPipe, Query } from '@nestjs/common'
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
-import {
-  ProjectTreeDto,
-  ProjectTreeNodeResponse,
-  ProjectTreeResponse,
-  RuleTreeItemResponse,
-} from '~/modules/tree/infra/http/tree.dto'
+import { Controller, Get, HttpStatus, Inject, Param, ParseUUIDPipe, Query } from '@nestjs/common'
+import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ProjectTreeDto, ProjectTreeResponse } from '~/modules/tree/infra/http/tree.dto'
+import { TREE_SERVICE_PORT, type TreeServicePort } from '~/modules/tree/ports/tree.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.Tree)
 @Controller({ path: 'projects', version: '1' })
 export class TreeController {
+  constructor(
+    @Inject(TREE_SERVICE_PORT)
+    private readonly treeService: TreeServicePort,
+  ) {}
+
   @Get(':projectId/tree')
   @ApiOperation({
     summary: 'Get project editor tree',
@@ -27,6 +27,20 @@ export class TreeController {
     type: String,
     format: 'uuid',
     description: 'Project UUID',
+  })
+  @ApiQuery({
+    name: 'includeHidden',
+    required: false,
+    type: Boolean,
+    example: false,
+    description: 'Include hidden rule groups and rules in the tree',
+  })
+  @ApiQuery({
+    name: 'includeMetadata',
+    required: false,
+    type: Boolean,
+    example: true,
+    description: 'Include metadata field in rule groups and rules',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -53,55 +67,14 @@ export class TreeController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  getProjectTree(
+  async getProjectTree(
     @Param('projectId', ParseUUIDPipe) projectId: string,
     @Query() query: ProjectTreeDto,
-  ): ProjectTreeResponse {
-    const rule: RuleTreeItemResponse = {
-      id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-      ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      name: 'When to use',
-      body: 'Use button for primary actions.',
-      metadata: { tags: ['button', 'usage'] },
-      orderIndex: 0,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-    }
-
-    const childNode: ProjectTreeNodeResponse = {
-      id: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      projectId,
-      parentGroupId: '7c917903-d8f3-445b-bec8-122c4cf3a411',
-      name: 'Button',
-      description: 'Rules for button component',
-      type: RuleGroupType.component,
-      orderIndex: 0,
-      isHidden: false,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-      rules: [rule],
-      children: [],
-    }
-
-    const rootNode: ProjectTreeNodeResponse = {
-      id: '7c917903-d8f3-445b-bec8-122c4cf3a411',
-      projectId,
-      parentGroupId: null,
-      name: 'Components',
-      description: 'Component rules',
-      type: RuleGroupType.category,
-      orderIndex: 0,
-      isHidden: false,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-      rules: [],
-      children: [childNode],
-    }
-
-    return {
-      projectId,
-      includeHidden: query.includeHidden ?? true,
-      tree: [rootNode],
-    }
+  ): Promise<ProjectTreeResponse> {
+    return await this.treeService.getEditorTree({
+      projectId: projectId,
+      includeHidden: query.includeHidden,
+      includeMetadata: query.includeMetadata,
+    })
   }
 }

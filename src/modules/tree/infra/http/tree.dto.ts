@@ -205,6 +205,13 @@ export class ProjectTreeResponse {
   includeHidden: boolean
 
   @ApiProperty({
+    example: true,
+    description: 'Whether metadata field were included in the rule groups and rules',
+    type: Boolean,
+  })
+  includeMetadata: boolean
+
+  @ApiProperty({
     type: () => ProjectTreeNodeResponse,
     isArray: true,
     description: 'Ordered list of root rule groups with nested children and direct rules',
