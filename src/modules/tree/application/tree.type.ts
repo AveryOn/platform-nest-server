@@ -20,6 +20,9 @@ export interface RuleTreeLeaf {
   /** Order index inside rule group */
   orderIndex: number
 
+  /** Whether this leaf is hidden at project configuration level */
+  isHidden: boolean
+
   /** Creation timestamp in ISO-8601 format */
   createdAt: string
 

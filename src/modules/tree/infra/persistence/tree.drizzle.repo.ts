@@ -30,7 +30,10 @@ export class TreeDrizzleRepo implements TreeRepoPort {
     tx?: Tx,
   ): Promise<RuleTreeNodeBase[]> {
     const res = await defineDb(this.drizzle.db, tx)
-      .select()
+      .select({
+        config: projectRuleGroupConfigsTable,
+        group: ruleGroupsTable,
+      })
       .from(ruleGroupsTable)
       .leftJoin(
         projectRuleGroupConfigsTable,
@@ -50,17 +53,17 @@ export class TreeDrizzleRepo implements TreeRepoPort {
         ),
       )
 
-    return res.map((data) => ({
-      id: data.rule_groups.id,
-      name: data.rule_groups.name,
-      orderIndex: data.rule_groups.orderIndex,
-      parentGroupId: data.rule_groups.parentGroupId,
-      type: data.rule_groups.type,
-      description: data.rule_groups.description,
+    return res.map(({ config, group }) => ({
+      id: group.id,
+      name: group.name,
+      orderIndex: group.orderIndex,
+      parentGroupId: group.parentGroupId,
+      type: group.type,
+      description: group.description,
       projectId: projectId,
-      createdAt: data.rule_groups.createdAt.toISOString(),
-      updatedAt: data.rule_groups.updatedAt?.toISOString() ?? null,
-      isHidden: !!data.project_rule_group_configs?.status,
+      createdAt: group.createdAt.toISOString(),
+      updatedAt: group.updatedAt?.toISOString() ?? null,
+      isHidden: !!config?.status,
     }))
   }
 
@@ -70,7 +73,10 @@ export class TreeDrizzleRepo implements TreeRepoPort {
     tx?: Tx,
   ): Promise<RuleTreeLeaf[]> {
     const res = await defineDb(this.drizzle.db, tx)
-      .select()
+      .select({
+        rule: rulesTable,
+        config: projectRuleConfigsTable,
+      })
       .from(rulesTable)
       .leftJoin(
         projectRuleConfigsTable,
@@ -85,15 +91,16 @@ export class TreeDrizzleRepo implements TreeRepoPort {
           isNull(rulesTable.deletedAt),
         ),
       )
-    return res.map((data) => ({
-      id: data.rules.id,
-      body: data.rules.body,
-      metadata: data.rules.metadata as RuleMetadata,
-      name: data.rules.name,
-      orderIndex: data.rules.orderIndex,
-      ruleGroupId: data.rules.ruleGroupId,
-      createdAt: data.rules.createdAt.toISOString(),
-      updatedAt: data.rules.updatedAt?.toISOString() ?? null,
+    return res.map(({ rule, config }) => ({
+      id: rule.id,
+      body: rule.body,
+      metadata: rule.metadata as RuleMetadata,
+      name: rule.name,
+      orderIndex: rule.orderIndex,
+      ruleGroupId: rule.ruleGroupId,
+      createdAt: rule.createdAt.toISOString(),
+      updatedAt: rule.updatedAt?.toISOString() ?? null,
+      isHidden: !!config?.status,
     }))
   }
 }
