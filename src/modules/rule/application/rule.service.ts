@@ -18,9 +18,7 @@ export class RuleService implements RuleServicePort {
     private readonly ruleRepo: RuleRepoPort,
   ) {}
 
-  async create(
-    cmd: RuleServiceCmd.Create,
-  ): Promise<RuleServiceRes.Item> {
+  async create(cmd: RuleServiceCmd.Create): Promise<RuleServiceRes.Item> {
     const created = await this.ruleRepo.create(cmd)
 
     return this.toItemRes(created)
@@ -34,9 +32,7 @@ export class RuleService implements RuleServicePort {
     return this.toItemRes(rule)
   }
 
-  async patch(
-    cmd: RuleServiceCmd.Patch,
-  ): Promise<RuleServiceRes.Update> {
+  async patch(cmd: RuleServiceCmd.Patch): Promise<RuleServiceRes.Update> {
     await this.ruleRepo.patch(cmd)
 
     return {
@@ -45,9 +41,7 @@ export class RuleService implements RuleServicePort {
     }
   }
 
-  async move(
-    cmd: RuleServiceCmd.Move,
-  ): Promise<RuleServiceRes.Update> {
+  async move(cmd: RuleServiceCmd.Move): Promise<RuleServiceRes.Update> {
     await this.ruleRepo.move(cmd)
 
     return {

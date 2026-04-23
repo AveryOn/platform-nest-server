@@ -1,11 +1,4 @@
-export enum RuleGroupType {
-  category,
-  token,
-  section,
-  component,
-  variant,
-}
-export type RuleGroupTypeKey = keyof typeof RuleGroupType
+import type { RuleGroupTypeKey } from '~/infra/drizzle/schemas'
 
 export type JsonBody<T> = Record<string, T>
 

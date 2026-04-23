@@ -14,9 +14,7 @@ export abstract class RuleServicePort {
   abstract patch(
     cmd: RuleServiceCmd.Patch,
   ): Promise<RuleServiceRes.Update>
-  abstract move(
-    cmd: RuleServiceCmd.Move,
-  ): Promise<RuleServiceRes.Update>
+  abstract move(cmd: RuleServiceCmd.Move): Promise<RuleServiceRes.Update>
   abstract reorderInGroup(
     cmd: RuleServiceCmd.ReorderInGroup,
   ): Promise<RuleServiceRes.Update>

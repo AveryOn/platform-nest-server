@@ -1,8 +1,4 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-} from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
 import { UserContextInterceptor } from '~/core/interceptors/user-context.interceptor'
 import { LoggerModule } from '~/core/logger/logger.module'

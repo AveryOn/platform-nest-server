@@ -16,7 +16,10 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator'
-import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
+import {
+  RuleGroupType,
+  type RuleGroupTypeKey,
+} from '~/infra/drizzle/schemas'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
 
 export class RuleGroupCreateDto {
@@ -48,7 +51,7 @@ export class RuleGroupCreateDto {
   })
   @IsOptional()
   @IsEnum(RuleGroupType)
-  type?: RuleGroupType
+  type?: RuleGroupTypeKey
 
   @ApiPropertyOptional({
     example: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
@@ -101,7 +104,7 @@ export class RuleGroupPatchBaseDto {
   })
   @IsOptional()
   @IsEnum(RuleGroupType)
-  type?: RuleGroupType
+  type?: RuleGroupTypeKey
 }
 
 export class RuleGroupPatchDto extends PartialType(
@@ -116,8 +119,7 @@ export class RuleGroupPatchDto extends PartialType(
 export class RuleGroupMoveDto {
   @ApiPropertyOptional({
     example: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-    description:
-      'New parent rule group UUID. Null means move to root',
+    description: 'New parent rule group UUID. Null means move to root',
     format: 'uuid',
     nullable: true,
     type: String,
@@ -238,7 +240,7 @@ export class RuleGroupItemResponse {
     type: String,
     nullable: true,
   })
-  type: RuleGroupType | null
+  type: RuleGroupTypeKey | null
 
   @ApiProperty({
     example: 1,

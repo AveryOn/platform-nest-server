@@ -1,9 +1,4 @@
-import {
-  index,
-  pgEnum,
-  pgTable,
-  uniqueIndex,
-} from 'drizzle-orm/pg-core'
+import { index, pgEnum, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
 
 import {
   createdAt,
@@ -11,10 +6,7 @@ import {
   referenceOnUUID,
   updatedAt,
 } from '~/infra/drizzle/drizzle.helpers'
-import {
-  projectsTable,
-  ruleGroupsTable,
-} from '~/infra/drizzle/schemas'
+import { projectsTable, ruleGroupsTable } from '~/infra/drizzle/schemas'
 
 export const projectRuleGroupConfigStatus = pgEnum(
   'project_rule_group_config_status',

@@ -1,9 +1,4 @@
-import {
-  index,
-  pgTable,
-  text,
-  uniqueIndex,
-} from 'drizzle-orm/pg-core'
+import { index, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
 
 import {
   createdAt,

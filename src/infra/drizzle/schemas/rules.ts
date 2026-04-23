@@ -15,10 +15,7 @@ import {
   referenceOnUUID,
   updatedAt,
 } from '~/infra/drizzle/drizzle.helpers'
-import {
-  projectsTable,
-  ruleGroupsTable,
-} from '~/infra/drizzle/schemas'
+import { projectsTable, ruleGroupsTable } from '~/infra/drizzle/schemas'
 
 export const rulesTable = pgTable(
   'rules',

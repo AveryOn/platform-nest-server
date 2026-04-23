@@ -311,8 +311,7 @@ export class SnapshotController {
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description:
-      'Forbidden. No access to this project snapshot payload',
+    description: 'Forbidden. No access to this project snapshot payload',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,

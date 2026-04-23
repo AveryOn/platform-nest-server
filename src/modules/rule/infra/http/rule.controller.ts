@@ -286,8 +286,7 @@ export class RuleController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder rules in group',
-    description:
-      'Reorders direct rules inside the specified rule group',
+    description: 'Reorders direct rules inside the specified rule group',
     operationId: 'reorder_rules_in_group',
     tags: [ApiSwaggerTag.Rule],
   })

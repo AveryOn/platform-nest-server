@@ -48,8 +48,7 @@ export class RuleGroupController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create rule group',
-    description:
-      'Creates a new rule group inside the specified project',
+    description: 'Creates a new rule group inside the specified project',
     operationId: 'create_rule_group',
     tags: [ApiSwaggerTag.RuleGroup],
   })
@@ -219,8 +218,7 @@ export class RuleGroupController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Move rule group',
-    description:
-      'Moves a rule group to another parent and/or position',
+    description: 'Moves a rule group to another parent and/or position',
     operationId: 'move_rule_group',
     tags: [ApiSwaggerTag.RuleGroup],
   })
@@ -346,8 +344,7 @@ export class RuleGroupController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder root rule groups',
-    description:
-      'Reorders root rule groups inside the specified project',
+    description: 'Reorders root rule groups inside the specified project',
     operationId: 'reorder_root_rule_groups',
     tags: [ApiSwaggerTag.RuleGroup],
   })

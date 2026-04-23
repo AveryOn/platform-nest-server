@@ -75,8 +75,7 @@ export class ResolvedRuleItemResponseDto {
 
   @ApiProperty({
     example: '0001.0001.0001',
-    description:
-      'Stable deterministic order key of the resolved rule',
+    description: 'Stable deterministic order key of the resolved rule',
     type: String,
   })
   orderKey: string

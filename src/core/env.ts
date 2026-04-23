@@ -18,9 +18,7 @@ export const envSchema = z.object({
   EMAIL_NO_REPLY: z.string(),
   EMAIL_COMPANY_NAME: z.string(),
   ENABLED_REAL_EMAIL: zBool(),
-  LOG_LEVEL: z
-    .enum([...Object.keys(LogLevel)])
-    .default(LogLevel.info),
+  LOG_LEVEL: z.enum([...Object.keys(LogLevel)]).default(LogLevel.info),
   NEST_LOGGER_ENABLED: zBool(),
   MAX_SESSIONS_PER_USER: zNumberSoft(),
   CLEAR_CONSOLE_BY_START: zBool().default(false),

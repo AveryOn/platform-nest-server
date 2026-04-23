@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  Req,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Get, Inject, Req, UseGuards } from '@nestjs/common'
 import type { Request } from 'express'
 
 import { SessionGuard } from '../auth/infra/session.guard'

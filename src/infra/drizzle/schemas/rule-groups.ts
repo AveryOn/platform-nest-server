@@ -69,3 +69,24 @@ export const ruleGroupsTable = pgTable(
     ),
   ],
 )
+
+export type RuleGroupScopeKey =
+  (typeof ruleGroupScopeEnum.enumValues)[number]
+export type RuleGroupTypeKey =
+  (typeof ruleGroupTypeEnum.enumValues)[number]
+
+export const RuleGroupScope: Record<
+  RuleGroupScopeKey,
+  RuleGroupScopeKey
+> = {
+  project: 'project',
+  template: 'template',
+} as const
+
+export const RuleGroupType: Record<RuleGroupTypeKey, RuleGroupTypeKey> = {
+  category: 'category',
+  component: 'component',
+  section: 'section',
+  token: 'token',
+  variant: 'variant',
+} as const

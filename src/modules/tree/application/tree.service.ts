@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
+import { RuleGroupType } from '~/infra/drizzle/schemas'
 import type {
   RuleTreeLeaf,
   RuleTreeNode,

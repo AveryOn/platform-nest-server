@@ -4,8 +4,7 @@ import { ALSKey, AsyncLocalStorageType } from './logger.types'
 
 @Injectable()
 export class AsyncContextService {
-  private readonly als =
-    new AsyncLocalStorage<AsyncLocalStorageType>()
+  private readonly als = new AsyncLocalStorage<AsyncLocalStorageType>()
 
   readonly ALSKey = ALSKey
 

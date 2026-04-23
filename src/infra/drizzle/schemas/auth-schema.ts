@@ -84,9 +84,7 @@ export const verifications = pgTable(
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
   },
-  (table) => [
-    index('verifications_identifier_idx').on(table.identifier),
-  ],
+  (table) => [index('verifications_identifier_idx').on(table.identifier)],
 )
 
 export const organizations = pgTable(
@@ -197,16 +195,13 @@ export const membersRelations = relations(members, ({ one }) => ({
   }),
 }))
 
-export const invitationsRelations = relations(
-  invitations,
-  ({ one }) => ({
-    organizations: one(organizations, {
-      fields: [invitations.organizationId],
-      references: [organizations.id],
-    }),
-    users: one(users, {
-      fields: [invitations.inviterId],
-      references: [users.id],
-    }),
+export const invitationsRelations = relations(invitations, ({ one }) => ({
+  organizations: one(organizations, {
+    fields: [invitations.organizationId],
+    references: [organizations.id],
   }),
-)
+  users: one(users, {
+    fields: [invitations.inviterId],
+    references: [users.id],
+  }),
+}))

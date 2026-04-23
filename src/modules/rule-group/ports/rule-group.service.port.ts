@@ -3,9 +3,7 @@ import {
   type RuleGroupServiceResult,
 } from '~/modules/rule-group/application/rule-group.type'
 
-export const RULE_GROUP_SERVICE_PORT = Symbol(
-  'RULE_GROUP_SERVICE_PORT',
-)
+export const RULE_GROUP_SERVICE_PORT = Symbol('RULE_GROUP_SERVICE_PORT')
 
 export abstract class RuleGroupServicePort {
   abstract create(

@@ -31,8 +31,7 @@ export class ProjectConfigController {
   @Patch(':projectId/rule-groups/:groupId/config')
   @ApiOperation({
     summary: 'Patch project rule group config',
-    description:
-      'Updates project-level config for a specific rule group',
+    description: 'Updates project-level config for a specific rule group',
     operationId: 'patch_project_rule_group_config',
     tags: [ApiSwaggerTag.ProjectConfig],
   })

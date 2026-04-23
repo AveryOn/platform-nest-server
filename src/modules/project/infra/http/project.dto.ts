@@ -110,8 +110,7 @@ export class ProjectCreateDto {
 
   @ApiPropertyOptional({
     example: '2c0c5af8-7d26-4dd4-a8d6-2f8b0658f1a2',
-    description:
-      'Optional template snapshot UUID used as project base',
+    description: 'Optional template snapshot UUID used as project base',
     format: 'uuid',
     nullable: true,
     type: String,
@@ -164,9 +163,7 @@ export class ProjectPatchBaseDto {
   templateSnapshotId?: string | null
 }
 
-export class ProjectPatchDto extends PartialType(
-  ProjectPatchBaseDto,
-) {
+export class ProjectPatchDto extends PartialType(ProjectPatchBaseDto) {
   @IsNotEmptyBody({
     message: 'At least one field must be provided',
   })

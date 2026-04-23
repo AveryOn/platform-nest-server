@@ -1,4 +1,4 @@
-import type { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
+import type { RuleGroupTypeKey } from '~/infra/drizzle/schemas'
 
 /** Tree leaf (rules) */
 export interface RuleTreeLeaf {
@@ -24,7 +24,7 @@ export interface RuleTreeLeaf {
   createdAt: string
 
   /** Update timestamp in ISO-8601 format */
-  updatedAt: string
+  updatedAt: string | null
 }
 
 /** Tree node (rule group) */
@@ -48,7 +48,7 @@ export interface RuleTreeNode {
    * Rule group semantic type
    * @example `category` | `component`| `section` | `token` | `variant`
    * */
-  type: RuleGroupType
+  type: RuleGroupTypeKey | null
 
   /** Order index within sibling list */
   orderIndex: number
@@ -60,7 +60,7 @@ export interface RuleTreeNode {
   createdAt: string
 
   /** Update timestamp in ISO-8601 format */
-  updatedAt: string
+  updatedAt: string | null
 
   /** Direct rules that belong to this rule group */
   rules: RuleTreeLeaf[]
@@ -68,6 +68,10 @@ export interface RuleTreeNode {
   /** Direct child rule groups */
   children: RuleTreeNode[]
 }
+
+export type RuleTreeNodeBase = Omit<RuleTreeNode, 'rules' | 'children'>
+
+export type RuleMetadata = Record<string, any> | null
 
 export namespace TreeServiceCmd {
   export interface GetTree {

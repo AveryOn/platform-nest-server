@@ -31,6 +31,6 @@
     "resolveFullPaths": true,
     "resolveFullExtension": ".js"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "test", "test/**/*.ts"],
   "exclude": ["node_modules", "dist", "test", "drizzle.config.ts"]
 }

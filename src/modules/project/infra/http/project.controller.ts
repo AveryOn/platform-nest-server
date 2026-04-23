@@ -274,8 +274,7 @@ export class ProjectController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Archive project',
-    description:
-      'Performs soft delete of project by marking it archived',
+    description: 'Performs soft delete of project by marking it archived',
     operationId: 'delete_project',
     tags: [ApiSwaggerTag.Project],
   })

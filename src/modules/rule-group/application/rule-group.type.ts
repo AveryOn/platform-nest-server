@@ -1,11 +1,4 @@
-export enum RuleGroupType {
-  category = 'category',
-  token = 'token',
-  section = 'section',
-  component = 'component',
-  variant = 'variant',
-}
-export type RuleGroupTypeKey = keyof typeof RuleGroupType
+import { type RuleGroupTypeKey } from '~/infra/drizzle/schemas'
 
 export type RuleGroupEntity = {
   id: string
@@ -13,7 +6,7 @@ export type RuleGroupEntity = {
   parentGroupId: string | null
   name: string
   description: string | null
-  type: RuleGroupType | null
+  type: RuleGroupTypeKey | null
   orderIndex: number
   createdAt: Date
   updatedAt: Date | null
@@ -25,7 +18,7 @@ export namespace RuleGroupServiceCmd {
     projectId: string
     name: string
     description?: string | null
-    type?: RuleGroupType | null
+    type?: RuleGroupTypeKey | null
     parentGroupId?: string | null
     orderIndex: number
   }
@@ -38,7 +31,7 @@ export namespace RuleGroupServiceCmd {
     groupId: string
     name?: string
     description?: string | null
-    type?: RuleGroupType | null
+    type?: RuleGroupTypeKey | null
   }
 
   export type Move = {
@@ -74,7 +67,7 @@ export namespace RuleGroupServiceResult {
     parentGroupId: string | null
     name: string
     description: string | null
-    type: RuleGroupType | null
+    type: RuleGroupTypeKey | null
     orderIndex: number
     createdAt: string
     updatedAt: string | null

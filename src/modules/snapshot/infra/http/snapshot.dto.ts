@@ -22,8 +22,7 @@ export class ProjectSnapshotCreateDto {
 
   @ApiPropertyOptional({
     example: 'Manual snapshot before export',
-    description:
-      'Optional human-readable reason for snapshot creation',
+    description: 'Optional human-readable reason for snapshot creation',
     type: String,
     maxLength: 255,
   })
@@ -132,8 +131,7 @@ export class SnapshotPayloadRuleItemResponseDto {
 
   @ApiProperty({
     example: '0001.0001.0001',
-    description:
-      'Stable deterministic order key of the resolved rule',
+    description: 'Stable deterministic order key of the resolved rule',
     type: String,
   })
   orderKey: string
@@ -223,8 +221,7 @@ export class ProjectSnapshotStatusResponseDto {
 
   @ApiProperty({
     example: '2026-04-20T12:45:00.000Z',
-    description:
-      'Latest snapshot creation timestamp in ISO-8601 format',
+    description: 'Latest snapshot creation timestamp in ISO-8601 format',
     type: String,
     format: 'date-time',
     nullable: true,

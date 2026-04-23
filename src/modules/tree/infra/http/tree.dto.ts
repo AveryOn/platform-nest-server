@@ -1,11 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Transform, Type } from 'class-transformer'
+import { IsBoolean, IsOptional, ValidateNested } from 'class-validator'
 import {
-  IsBoolean,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator'
-import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
+  RuleGroupType,
+  type RuleGroupTypeKey,
+} from '~/infra/drizzle/schemas'
 
 export class ProjectTreeDto {
   @ApiPropertyOptional({
@@ -145,7 +144,7 @@ export class ProjectTreeNodeResponse {
     type: String,
     enum: Object.values(RuleGroupType),
   })
-  type: RuleGroupType
+  type: RuleGroupTypeKey
 
   @ApiProperty({
     example: 0,

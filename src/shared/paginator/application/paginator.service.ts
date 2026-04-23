@@ -31,10 +31,7 @@ export class PaginatorService implements PaginatorServicePort {
     this.page = page
     this.limit = limit
 
-    if (
-      !numCheck(this.page).success ||
-      !numCheck(this.limit).success
-    ) {
+    if (!numCheck(this.page).success || !numCheck(this.limit).success) {
       throw new AppError(ERROR.INVALID_DATA, this.logger).log('', {
         scope: 'paginator.BuildConfig',
         context: {

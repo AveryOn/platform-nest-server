@@ -27,10 +27,7 @@ export const projectRuleSnapshotsTable = pgTable(
     createdAt: createdAt(),
   },
   (t) => [
-    uniqueIndex('p_r_snapshots_p_ver_unique').on(
-      t.projectId,
-      t.version,
-    ),
+    uniqueIndex('p_r_snapshots_p_ver_unique').on(t.projectId, t.version),
     index('p_r_snapshots_p_idx').on(t.projectId),
   ],
 )

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
+import { RuleGroupType } from '~/infra/drizzle/schemas'
 
 import {
-  RuleGroupType,
   type RuleGroupEntity,
   type RuleGroupServiceCmd,
 } from '~/modules/rule-group/application/rule-group.type'
