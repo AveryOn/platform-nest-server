@@ -1,5 +1,18 @@
-import { Body, Controller, HttpStatus, Param, ParseUUIDPipe, Patch } from '@nestjs/common'
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+} from '@nestjs/common'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import {
   ProjectConfigStatus,
   ProjectRuleConfigPatchDto,
@@ -10,12 +23,16 @@ import {
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.ProjectConfig)
-@Controller({ path: 'projects', version: '1' })
+@Controller({
+  path: 'projects',
+  version: '1',
+})
 export class ProjectConfigController {
   @Patch(':projectId/rule-groups/:groupId/config')
   @ApiOperation({
     summary: 'Patch project rule group config',
-    description: 'Updates project-level config for a specific rule group',
+    description:
+      'Updates project-level config for a specific rule group',
     operationId: 'patch_project_rule_group_config',
     tags: [ApiSwaggerTag.ProjectConfig],
   })
@@ -66,9 +83,12 @@ export class ProjectConfigController {
     description: 'Validation failed',
   })
   patchRuleGroupConfig(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() body: ProjectRuleGroupConfigPatchDto,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+    @Body()
+    body: ProjectRuleGroupConfigPatchDto,
   ): ProjectRuleGroupConfigResponseDto {
     return {
       projectId,
@@ -134,9 +154,12 @@ export class ProjectConfigController {
     description: 'Validation failed',
   })
   patchRuleConfig(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Param('ruleId', ParseUUIDPipe) ruleId: string,
-    @Body() body: ProjectRuleConfigPatchDto,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Param('ruleId', ParseUUIDPipe)
+    ruleId: string,
+    @Body()
+    body: ProjectRuleConfigPatchDto,
   ): ProjectRuleConfigResponseDto {
     return {
       projectId,

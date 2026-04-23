@@ -11,7 +11,8 @@ import { computeAppendTime, DATE_KEY } from '~/shared/utils/datetime'
 export class RedisService implements RedisServicePort {
   constructor(
     private readonly logger: AppLoggerService,
-    @InjectRedis() private readonly redis: Redis,
+    @InjectRedis()
+    private readonly redis: Redis,
   ) {}
 
   async set<T>(
@@ -21,7 +22,11 @@ export class RedisService implements RedisServicePort {
     ttl?: DATE_KEY,
   ) {
     const ms = computeAppendTime(ttl ? ttl : '1h')
-    this.logger.info('LALA', { context: { ms } })
+    this.logger.info('LALA', {
+      context: {
+        ms,
+      },
+    })
     if (isObject(value) || Array.isArray(value)) {
       try {
         const args = [key, JSON.stringify(value), 'PX', ms!] as const
@@ -30,7 +35,9 @@ export class RedisService implements RedisServicePort {
         // An error may occur due to a circular reference in the object
         throw new AppError(ERROR.INVALID_DATA, this.logger).log('', {
           scope: 'RedisSetValue',
-          context: { err },
+          context: {
+            err,
+          },
         })
       }
     }

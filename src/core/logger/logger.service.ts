@@ -8,7 +8,8 @@ import { LogEntry, LogLevel, LogMeta } from './logger.types'
 @Injectable()
 export class AppLoggerService implements LoggerService {
   constructor(
-    @Inject(LOGGER_PORT) private readonly pino: Logger,
+    @Inject(LOGGER_PORT)
+    private readonly pino: Logger,
     private readonly ctx: AsyncContextService,
   ) {}
 
@@ -25,7 +26,11 @@ export class AppLoggerService implements LoggerService {
     this.write(LogLevel.fatal, message, meta)
   }
 
-  error(message: string, traceOrMeta?: string | LogMeta, metaMaybe?: LogMeta) {
+  error(
+    message: string,
+    traceOrMeta?: string | LogMeta,
+    metaMaybe?: LogMeta,
+  ) {
     if (typeof traceOrMeta === 'string') {
       this.write(LogLevel.error, message, {
         ...(metaMaybe ?? {}),
@@ -48,7 +53,8 @@ export class AppLoggerService implements LoggerService {
   private write(level: LogLevel, message: string, meta?: LogMeta) {
     if (!meta) return
 
-    const requestId = this.ctx.getValue(this.ctx.ALSKey['requestId']) ?? 'no-request'
+    const requestId =
+      this.ctx.getValue(this.ctx.ALSKey['requestId']) ?? 'no-request'
     const userId = this.ctx.getValue(this.ctx.ALSKey['userId'])
 
     const entry: LogEntry = {

@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger'
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  PartialType,
+} from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
@@ -34,7 +38,10 @@ export class RuleCreateDto {
   body: string
 
   @ApiPropertyOptional({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Optional flexible metadata payload',
     type: Object,
     nullable: true,
@@ -75,7 +82,10 @@ export class RulePatchBaseDto {
   body?: string
 
   @ApiPropertyOptional({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Updated flexible metadata payload',
     type: Object,
     nullable: true,
@@ -144,7 +154,9 @@ export class RuleReorderInGroupDto {
   })
   @IsArray()
   @ArrayMinSize(1)
-  @ValidateNested({ each: true })
+  @ValidateNested({
+    each: true,
+  })
   @Type(() => RuleReorderItemDto)
   items: RuleReorderItemDto[]
 }
@@ -181,7 +193,10 @@ export class RuleItemResponseDto {
   body: string
 
   @ApiProperty({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Flexible metadata payload',
     type: Object,
     nullable: true,

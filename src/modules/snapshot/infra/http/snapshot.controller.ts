@@ -9,7 +9,13 @@ import {
   ParseUUIDPipe,
   Post,
 } from '@nestjs/common'
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import {
   ProjectSnapshotCreateDto,
   ProjectSnapshotItemResponseDto,
@@ -20,12 +26,16 @@ import {
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.Snapshot)
-@Controller({ path: 'projects', version: '1' })
+@Controller({
+  path: 'projects',
+  version: '1',
+})
 export class SnapshotController {
   @Get(':projectId/snapshots')
   @ApiOperation({
     summary: 'Get project snapshots list',
-    description: 'Returns the list of immutable snapshots for the specified project',
+    description:
+      'Returns the list of immutable snapshots for the specified project',
     operationId: 'get_project_snapshots_list',
     tags: [ApiSwaggerTag.Snapshot],
   })
@@ -59,7 +69,8 @@ export class SnapshotController {
     description: 'Project not found',
   })
   getProjectSnapshots(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
   ): ProjectSnapshotsListResponseDto {
     return {
       projectId,
@@ -121,15 +132,18 @@ export class SnapshotController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Snapshot creation failed due to versioning or hashing conflict',
+    description:
+      'Conflict. Snapshot creation failed due to versioning or hashing conflict',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
   createProjectSnapshot(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Body() _body: ProjectSnapshotCreateDto,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Body()
+    _body: ProjectSnapshotCreateDto,
   ): ProjectSnapshotItemResponseDto {
     return {
       id: crypto.randomUUID(),
@@ -185,8 +199,10 @@ export class SnapshotController {
     description: 'Project or snapshot not found',
   })
   getProjectSnapshotById(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Param('snapshotId', ParseUUIDPipe) snapshotId: string,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Param('snapshotId', ParseUUIDPipe)
+    snapshotId: string,
   ): ProjectSnapshotItemResponseDto {
     return {
       id: snapshotId,
@@ -200,7 +216,8 @@ export class SnapshotController {
   @Get(':projectId/snapshots/version/:version')
   @ApiOperation({
     summary: 'Get project snapshot by version',
-    description: 'Returns snapshot metadata by project-local snapshot version',
+    description:
+      'Returns snapshot metadata by project-local snapshot version',
     operationId: 'get_project_snapshot_by_version',
     tags: [ApiSwaggerTag.Snapshot],
   })
@@ -241,8 +258,10 @@ export class SnapshotController {
     description: 'Project or snapshot version not found',
   })
   getProjectSnapshotByVersion(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Param('version', ParseIntPipe) version: number,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Param('version', ParseIntPipe)
+    version: number,
   ): ProjectSnapshotItemResponseDto {
     return {
       id: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
@@ -256,7 +275,8 @@ export class SnapshotController {
   @Get(':projectId/snapshots/:snapshotId/payload')
   @ApiOperation({
     summary: 'Get project snapshot payload',
-    description: 'Returns the materialized snapshot payload for external consumption',
+    description:
+      'Returns the materialized snapshot payload for external consumption',
     operationId: 'get_project_snapshot_payload',
     tags: [ApiSwaggerTag.Snapshot],
   })
@@ -291,15 +311,18 @@ export class SnapshotController {
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden. No access to this project snapshot payload',
+    description:
+      'Forbidden. No access to this project snapshot payload',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'Project or snapshot not found',
   })
   getProjectSnapshotPayload(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Param('snapshotId', ParseUUIDPipe) snapshotId: string,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Param('snapshotId', ParseUUIDPipe)
+    snapshotId: string,
   ): ProjectSnapshotPayloadResponseDto {
     return {
       snapshotId,
@@ -322,7 +345,8 @@ export class SnapshotController {
   @Get(':projectId/snapshots/status')
   @ApiOperation({
     summary: 'Get project snapshot status',
-    description: 'Returns snapshot freshness status for the specified project',
+    description:
+      'Returns snapshot freshness status for the specified project',
     operationId: 'get_project_snapshot_status',
     tags: [ApiSwaggerTag.Snapshot],
   })
@@ -356,7 +380,8 @@ export class SnapshotController {
     description: 'Project not found',
   })
   getProjectSnapshotStatus(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
   ): ProjectSnapshotStatusResponseDto {
     return {
       projectId,

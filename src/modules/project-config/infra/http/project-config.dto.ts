@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger'
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  PartialType,
+} from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { IsBoolean, IsOptional } from 'class-validator'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
@@ -11,7 +15,8 @@ export enum ProjectConfigStatus {
 export class ProjectRuleGroupConfigPatchBaseDto {
   @ApiPropertyOptional({
     example: false,
-    description: 'Whether the rule group is hidden in project context',
+    description:
+      'Whether the rule group is hidden in project context',
     type: Boolean,
     nullable: true,
   })
@@ -22,7 +27,8 @@ export class ProjectRuleGroupConfigPatchBaseDto {
 
   @ApiPropertyOptional({
     example: true,
-    description: 'Whether the rule group is active in project context',
+    description:
+      'Whether the rule group is active in project context',
     type: Boolean,
     nullable: true,
   })
@@ -65,7 +71,9 @@ export class ProjectRuleConfigPatchBaseDto {
   isActive?: boolean
 }
 
-export class ProjectRuleConfigPatchDto extends PartialType(ProjectRuleConfigPatchBaseDto) {
+export class ProjectRuleConfigPatchDto extends PartialType(
+  ProjectRuleConfigPatchBaseDto,
+) {
   @IsNotEmptyBody({
     message: 'At least one field must be provided',
   })
@@ -91,14 +99,16 @@ export class ProjectRuleGroupConfigResponseDto {
 
   @ApiProperty({
     example: false,
-    description: 'Whether the rule group is hidden in project context',
+    description:
+      'Whether the rule group is hidden in project context',
     type: Boolean,
   })
   isHidden: boolean
 
   @ApiProperty({
     example: true,
-    description: 'Whether the rule group is active in project context',
+    description:
+      'Whether the rule group is active in project context',
     type: Boolean,
   })
   isActive: boolean

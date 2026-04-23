@@ -11,7 +11,13 @@ import {
   Patch,
   Post,
 } from '@nestjs/common'
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import {
   RuleCreateDto,
   RuleItemResponseDto,
@@ -21,11 +27,16 @@ import {
   RuleReorderInGroupDto,
   RuleUpdateResponseDto,
 } from '~/modules/rule/infra/http/rule.dto'
-import { RULE_SERVICE_PORT, type RuleServicePort } from '~/modules/rule/ports/rule.service.port'
+import {
+  RULE_SERVICE_PORT,
+  type RuleServicePort,
+} from '~/modules/rule/ports/rule.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.Rule)
-@Controller({ version: '1' })
+@Controller({
+  version: '1',
+})
 export class RuleController {
   constructor(
     @Inject(RULE_SERVICE_PORT)
@@ -76,15 +87,18 @@ export class RuleController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Invalid ordering or cross-project operation detected',
+    description:
+      'Conflict. Invalid ordering or cross-project operation detected',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
   async createRule(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() body: RuleCreateDto,
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+    @Body()
+    body: RuleCreateDto,
   ): Promise<RuleItemResponseDto> {
     return await this.ruleService.create({
       title: body.title,
@@ -131,7 +145,10 @@ export class RuleController {
     status: HttpStatus.NOT_FOUND,
     description: 'Rule not found',
   })
-  async getRuleById(@Param('ruleId', ParseUUIDPipe) ruleId: string): Promise<RuleItemResponseDto> {
+  async getRuleById(
+    @Param('ruleId', ParseUUIDPipe)
+    ruleId: string,
+  ): Promise<RuleItemResponseDto> {
     return await this.ruleService.getById({
       ruleId: ruleId,
     })
@@ -180,15 +197,18 @@ export class RuleController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Update violates ordering or ownership constraints',
+    description:
+      'Conflict. Update violates ordering or ownership constraints',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
   async patchRule(
-    @Param('ruleId', ParseUUIDPipe) ruleId: string,
-    @Body() body: RulePatchDto,
+    @Param('ruleId', ParseUUIDPipe)
+    ruleId: string,
+    @Body()
+    body: RulePatchDto,
   ): Promise<RuleUpdateResponseDto> {
     return await this.ruleService.patch({
       ruleId: ruleId,
@@ -242,15 +262,18 @@ export class RuleController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Invalid move operation or cross-project move detected',
+    description:
+      'Conflict. Invalid move operation or cross-project move detected',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
   async moveRule(
-    @Param('ruleId', ParseUUIDPipe) ruleId: string,
-    @Body() body: RuleMoveDto,
+    @Param('ruleId', ParseUUIDPipe)
+    ruleId: string,
+    @Body()
+    body: RuleMoveDto,
   ): Promise<RuleUpdateResponseDto> {
     return await this.ruleService.move({
       orderIndex: body.orderIndex,
@@ -263,7 +286,8 @@ export class RuleController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder rules in group',
-    description: 'Reorders direct rules inside the specified rule group',
+    description:
+      'Reorders direct rules inside the specified rule group',
     operationId: 'reorder_rules_in_group',
     tags: [ApiSwaggerTag.Rule],
   })
@@ -303,15 +327,18 @@ export class RuleController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Reorder input contains duplicate ids or foreign rules',
+    description:
+      'Conflict. Reorder input contains duplicate ids or foreign rules',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
   async reorderRulesInGroup(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() body: RuleReorderInGroupDto,
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+    @Body()
+    body: RuleReorderInGroupDto,
   ): Promise<RuleUpdateResponseDto> {
     return await this.ruleService.reorderInGroup({
       groupId: groupId,
@@ -356,7 +383,10 @@ export class RuleController {
     status: HttpStatus.NOT_FOUND,
     description: 'Rule not found',
   })
-  async deleteRule(@Param('ruleId', ParseUUIDPipe) ruleId: string): Promise<RuleRemoveResponseDto> {
+  async deleteRule(
+    @Param('ruleId', ParseUUIDPipe)
+    ruleId: string,
+  ): Promise<RuleRemoveResponseDto> {
     return await this.ruleService.remove({ ruleId })
   }
 }

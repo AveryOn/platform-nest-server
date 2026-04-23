@@ -7,7 +7,10 @@ import {
 } from '@nestjs/common'
 import type { Request } from 'express'
 
-import { AUTH_SERVICE_PORT, type AuthServicePort } from '~/modules/auth/ports/auth.service.port'
+import {
+  AUTH_SERVICE_PORT,
+  type AuthServicePort,
+} from '~/modules/auth/ports/auth.service.port'
 import { toWebHeaders } from '~/shared/helpers/http.helpers'
 
 @Injectable()
@@ -28,8 +31,11 @@ export class SessionGuard implements CanActivate {
     }
 
     ;(request as Request & Record<string, unknown>).user = result.user
-    ;(request as Request & Record<string, unknown>).session = result.session
-    ;(request as Request & Record<string, unknown>).activeOrganizationId =
+    ;(request as Request & Record<string, unknown>).session =
+      result.session
+    ;(
+      request as Request & Record<string, unknown>
+    ).activeOrganizationId =
       result.session.activeOrganizationId ?? null
 
     return true

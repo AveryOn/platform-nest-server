@@ -11,7 +11,13 @@ import {
   Patch,
   Post,
 } from '@nestjs/common'
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import {
   RuleGroupCreateDto,
   RuleGroupItemResponse,
@@ -29,7 +35,9 @@ import {
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.RuleGroup)
-@Controller({ version: '1' })
+@Controller({
+  version: '1',
+})
 export class RuleGroupController {
   constructor(
     @Inject(RULE_GROUP_SERVICE_PORT)
@@ -40,7 +48,8 @@ export class RuleGroupController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create rule group',
-    description: 'Creates a new rule group inside the specified project',
+    description:
+      'Creates a new rule group inside the specified project',
     operationId: 'create_rule_group',
     tags: [ApiSwaggerTag.RuleGroup],
   })
@@ -86,8 +95,10 @@ export class RuleGroupController {
     description: 'Validation failed',
   })
   async createRuleGroup(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Body() body: RuleGroupCreateDto,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Body()
+    body: RuleGroupCreateDto,
   ): Promise<RuleGroupItemResponse> {
     return await this.ruleGroupService.create({
       name: body.name,
@@ -136,7 +147,8 @@ export class RuleGroupController {
     description: 'Rule group not found',
   })
   async getRuleGroupById(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
   ): Promise<RuleGroupItemResponse> {
     return await this.ruleGroupService.getById({ groupId })
   }
@@ -190,8 +202,10 @@ export class RuleGroupController {
     description: 'Validation failed',
   })
   async patchRuleGroup(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() body: RuleGroupPatchDto,
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+    @Body()
+    body: RuleGroupPatchDto,
   ): Promise<RuleGroupUpdateResponse> {
     return await this.ruleGroupService.patch({
       groupId: groupId,
@@ -205,7 +219,8 @@ export class RuleGroupController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Move rule group',
-    description: 'Moves a rule group to another parent and/or position',
+    description:
+      'Moves a rule group to another parent and/or position',
     operationId: 'move_rule_group',
     tags: [ApiSwaggerTag.RuleGroup],
   })
@@ -244,15 +259,18 @@ export class RuleGroupController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Invalid move operation or cross-project move detected',
+    description:
+      'Conflict. Invalid move operation or cross-project move detected',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
   async moveRuleGroup(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() body: RuleGroupMoveDto,
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+    @Body()
+    body: RuleGroupMoveDto,
   ): Promise<RuleGroupUpdateResponse> {
     return await this.ruleGroupService.move({
       groupId: groupId,
@@ -265,7 +283,8 @@ export class RuleGroupController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder child rule groups',
-    description: 'Reorders direct child rule groups of the specified parent group',
+    description:
+      'Reorders direct child rule groups of the specified parent group',
     operationId: 'reorder_rule_group_children',
     tags: [ApiSwaggerTag.RuleGroup],
   })
@@ -304,15 +323,18 @@ export class RuleGroupController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Reorder input contains invalid hierarchy or duplicate ids',
+    description:
+      'Conflict. Reorder input contains invalid hierarchy or duplicate ids',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
   async reorderChildren(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() body: RuleGroupReorderChildrenDto,
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+    @Body()
+    body: RuleGroupReorderChildrenDto,
   ): Promise<RuleGroupUpdateResponse> {
     return await this.ruleGroupService.reorderChildren({
       groupId: groupId,
@@ -324,7 +346,8 @@ export class RuleGroupController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder root rule groups',
-    description: 'Reorders root rule groups inside the specified project',
+    description:
+      'Reorders root rule groups inside the specified project',
     operationId: 'reorder_root_rule_groups',
     tags: [ApiSwaggerTag.RuleGroup],
   })
@@ -363,15 +386,18 @@ export class RuleGroupController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Reorder input contains non-root groups or duplicate ids',
+    description:
+      'Conflict. Reorder input contains non-root groups or duplicate ids',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
   async reorderRootGroups(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Body() body: RuleGroupReorderRootDto,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Body()
+    body: RuleGroupReorderRootDto,
   ): Promise<RuleGroupUpdateResponse> {
     return await this.ruleGroupService.reorderRoot({
       projectId: projectId,
@@ -417,7 +443,8 @@ export class RuleGroupController {
     description: 'Rule group not found',
   })
   async deleteRuleGroup(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
   ): Promise<RuleGroupRemoveResponse> {
     return await this.ruleGroupService.remove({
       groupId: groupId,

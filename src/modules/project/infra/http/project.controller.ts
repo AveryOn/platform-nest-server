@@ -11,7 +11,13 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import {
   ProjectCreateDto,
@@ -26,12 +32,16 @@ import { ApiSwaggerTag } from '~/shared/const/app.const'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
 
 @ApiTags(ApiSwaggerTag.Project)
-@Controller({ path: 'projects', version: '1' })
+@Controller({
+  path: 'projects',
+  version: '1',
+})
 export class ProjectController {
   @Get()
   @ApiOperation({
     summary: 'Get projects list',
-    description: 'Returns paginated list of projects available in current organization context',
+    description:
+      'Returns paginated list of projects available in current organization context',
     operationId: 'get_projects_list',
     tags: [ApiSwaggerTag.Project],
   })
@@ -56,7 +66,10 @@ export class ProjectController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  getProjects(@Query() query: ProjectGetListQueryDto): ProjectListResponseDto {
+  getProjects(
+    @Query()
+    query: ProjectGetListQueryDto,
+  ): ProjectListResponseDto {
     return {
       items: [
         {
@@ -117,7 +130,10 @@ export class ProjectController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  getProjectById(@Param('projectId', ParseUUIDPipe) projectId: string): ProjectItemResponseDto {
+  getProjectById(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+  ): ProjectItemResponseDto {
     return {
       id: projectId,
       name: 'Main Design System',
@@ -135,7 +151,8 @@ export class ProjectController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create project',
-    description: 'Creates a new project inside active organization context',
+    description:
+      'Creates a new project inside active organization context',
     operationId: 'create_project',
     tags: [ApiSwaggerTag.Project],
   })
@@ -158,7 +175,8 @@ export class ProjectController {
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden. No rights to create project in current organization',
+    description:
+      'Forbidden. No rights to create project in current organization',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -166,13 +184,17 @@ export class ProjectController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Project with same unique constraints already exists',
+    description:
+      'Conflict. Project with same unique constraints already exists',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  createProject(@Body() body: ProjectCreateDto): ProjectItemResponseDto {
+  createProject(
+    @Body()
+    body: ProjectCreateDto,
+  ): ProjectItemResponseDto {
     return {
       id: crypto.randomUUID(),
       name: body.name,
@@ -229,15 +251,18 @@ export class ProjectController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Update violates unique or ownership constraints',
+    description:
+      'Conflict. Update violates unique or ownership constraints',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
   patchProject(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Body() _body: ProjectPatchDto,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Body()
+    _body: ProjectPatchDto,
   ): ProjectPatchResponseDto {
     return {
       status: 'success',
@@ -249,7 +274,8 @@ export class ProjectController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Archive project',
-    description: 'Performs soft delete of project by marking it archived',
+    description:
+      'Performs soft delete of project by marking it archived',
     operationId: 'delete_project',
     tags: [ApiSwaggerTag.Project],
   })
@@ -282,7 +308,10 @@ export class ProjectController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project not found',
   })
-  deleteProject(@Param('projectId', ParseUUIDPipe) projectId: string): ProjectRemoveResponseDto {
+  deleteProject(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+  ): ProjectRemoveResponseDto {
     return {
       status: 'success',
       projectId,

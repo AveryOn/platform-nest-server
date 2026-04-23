@@ -27,7 +27,11 @@ async function bootstrap() {
     app
       .useGlobalFilters(new GlobalExceptionFilter())
       .use(express.json())
-      .use(express.urlencoded({ extended: true }))
+      .use(
+        express.urlencoded({
+          extended: true,
+        }),
+      )
       .setGlobalPrefix('api')
       .enableVersioning({
         type: VersioningType.URI,
@@ -53,7 +57,8 @@ async function bootstrap() {
         .setDescription('API for the backend')
         .setVersion('1.0')
         .build()
-      const documentFactory = () => SwaggerModule.createDocument(app, config)
+      const documentFactory = () =>
+        SwaggerModule.createDocument(app, config)
       SwaggerModule.setup('docs', app, documentFactory, {
         jsonDocumentUrl: 'docs/json',
       })

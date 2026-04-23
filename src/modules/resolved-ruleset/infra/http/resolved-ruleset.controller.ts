@@ -1,5 +1,17 @@
-import { Controller, Get, HttpStatus, Param, ParseUUIDPipe, Query } from '@nestjs/common'
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common'
+import {
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 import {
   ResolvedRuleItemResponseDto,
@@ -8,7 +20,10 @@ import {
 } from './resolved-ruleset.dto'
 
 @ApiTags(ApiSwaggerTag.ResolvedRuleset)
-@Controller({ path: 'projects', version: '1' })
+@Controller({
+  path: 'projects',
+  version: '1',
+})
 export class ResolvedRulesetController {
   @Get(':projectId/resolved-ruleset')
   @ApiOperation({
@@ -52,8 +67,10 @@ export class ResolvedRulesetController {
     description: 'Validation failed',
   })
   getResolvedRuleset(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Query() query: ResolvedRulesetQueryDto,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Query()
+    query: ResolvedRulesetQueryDto,
   ): ResolvedRulesetResponseDto {
     const rule: ResolvedRuleItemResponseDto = {
       id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
@@ -61,7 +78,12 @@ export class ResolvedRulesetController {
       ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
       title: 'When to use',
       body: 'Use button for primary actions.',
-      metadata: query.includeMetadata === false ? null : { tags: ['button', 'usage'] },
+      metadata:
+        query.includeMetadata === false
+          ? null
+          : {
+              tags: ['button', 'usage'],
+            },
       path: ['Components', 'Button', 'When to use'],
       orderKey: '0001.0001.0001',
       orderIndex: 0,

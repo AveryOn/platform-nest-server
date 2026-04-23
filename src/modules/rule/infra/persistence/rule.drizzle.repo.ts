@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common'
 
-import { RuleEntity, RuleServiceCmd } from '~/modules/rule/application/rule.type'
+import {
+  RuleEntity,
+  RuleServiceCmd,
+} from '~/modules/rule/application/rule.type'
 import { RuleRepoPort } from '~/modules/rule/ports/rule.repo.port'
 
 @Injectable()
@@ -25,7 +28,9 @@ export class RuleDrizzleRepo implements RuleRepoPort {
       ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
       title: 'When to use',
       body: 'Use button for primary actions.',
-      metadata: { tags: ['button', 'usage'] },
+      metadata: {
+        tags: ['button', 'usage'],
+      },
       orderIndex: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -43,7 +48,9 @@ export class RuleDrizzleRepo implements RuleRepoPort {
     throw new Error('Not implemented')
   }
 
-  async reorderInGroup(_cmd: RuleServiceCmd.ReorderInGroup): Promise<void> {
+  async reorderInGroup(
+    _cmd: RuleServiceCmd.ReorderInGroup,
+  ): Promise<void> {
     await Promise.resolve()
     throw new Error('Not implemented')
   }

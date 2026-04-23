@@ -16,19 +16,25 @@ export class RuleGroupService implements RuleGroupServicePort {
     private readonly ruleGroupRepo: RuleGroupRepoPort,
   ) {}
 
-  async create(cmd: RuleGroupServiceCmd.Create): Promise<RuleGroupServiceResult.Item> {
+  async create(
+    cmd: RuleGroupServiceCmd.Create,
+  ): Promise<RuleGroupServiceResult.Item> {
     const created = await this.ruleGroupRepo.create(cmd)
 
     return this.toItemResult(created)
   }
 
-  async getById(cmd: RuleGroupServiceCmd.GetById): Promise<RuleGroupServiceResult.Item> {
+  async getById(
+    cmd: RuleGroupServiceCmd.GetById,
+  ): Promise<RuleGroupServiceResult.Item> {
     const group = await this.ruleGroupRepo.getByIdOrFail(cmd.groupId)
 
     return this.toItemResult(group)
   }
 
-  async patch(cmd: RuleGroupServiceCmd.Patch): Promise<RuleGroupServiceResult.Update> {
+  async patch(
+    cmd: RuleGroupServiceCmd.Patch,
+  ): Promise<RuleGroupServiceResult.Update> {
     await this.ruleGroupRepo.patch(cmd)
 
     return {
@@ -37,7 +43,9 @@ export class RuleGroupService implements RuleGroupServicePort {
     }
   }
 
-  async move(cmd: RuleGroupServiceCmd.Move): Promise<RuleGroupServiceResult.Update> {
+  async move(
+    cmd: RuleGroupServiceCmd.Move,
+  ): Promise<RuleGroupServiceResult.Update> {
     await this.ruleGroupRepo.move(cmd)
 
     return {
@@ -57,7 +65,9 @@ export class RuleGroupService implements RuleGroupServicePort {
     }
   }
 
-  async reorderRoot(cmd: RuleGroupServiceCmd.ReorderRoot): Promise<RuleGroupServiceResult.Update> {
+  async reorderRoot(
+    cmd: RuleGroupServiceCmd.ReorderRoot,
+  ): Promise<RuleGroupServiceResult.Update> {
     await this.ruleGroupRepo.reorderRoot(cmd)
 
     return {
@@ -66,7 +76,9 @@ export class RuleGroupService implements RuleGroupServicePort {
     }
   }
 
-  async remove(cmd: RuleGroupServiceCmd.Remove): Promise<RuleGroupServiceResult.Remove> {
+  async remove(
+    cmd: RuleGroupServiceCmd.Remove,
+  ): Promise<RuleGroupServiceResult.Remove> {
     const archivedAt = await this.ruleGroupRepo.remove(cmd.groupId)
 
     return {

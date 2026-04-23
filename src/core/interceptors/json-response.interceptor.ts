@@ -7,13 +7,20 @@ import {
   NestInterceptor,
   Type,
 } from '@nestjs/common'
-import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger'
+import {
+  ApiExtraModels,
+  ApiResponse,
+  getSchemaPath,
+} from '@nestjs/swagger'
 import { map, Observable } from 'rxjs'
 import { PaginationMetaDto } from '~/shared/paginator/infra/http/paginator.dto'
 
 @Injectable()
 export class JsonResponseInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<any> {
     const http = context.switchToHttp()
     const res = http.getResponse()
 
@@ -30,7 +37,9 @@ export class JsonResponseInterceptor implements NestInterceptor {
         // не трогаем если это не объект
         if (typeof data !== 'object' || data === null) return data
 
-        return { data }
+        return {
+          data,
+        }
       }),
     )
   }
@@ -75,7 +84,9 @@ export const ApiDataResponse = <TModel extends Type<any>>({
             properties: {
               data: {
                 type: 'array',
-                items: { $ref: getSchemaPath(type) },
+                items: {
+                  $ref: getSchemaPath(type),
+                },
               },
               paginator: {
                 $ref: getSchemaPath(PaginationMetaDto),
@@ -85,7 +96,9 @@ export const ApiDataResponse = <TModel extends Type<any>>({
         : {
             type: 'object',
             properties: {
-              data: { $ref: getSchemaPath(type) },
+              data: {
+                $ref: getSchemaPath(type),
+              },
             },
           },
     }),

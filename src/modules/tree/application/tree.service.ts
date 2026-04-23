@@ -6,7 +6,10 @@ import type {
   TreeServiceCmd,
   TreeServiceResult,
 } from '~/modules/tree/application/tree.type'
-import { TREE_REPO_PORT, type TreeRepoPort } from '~/modules/tree/ports/tree.repo.port'
+import {
+  TREE_REPO_PORT,
+  type TreeRepoPort,
+} from '~/modules/tree/ports/tree.repo.port'
 import type { TreeServicePort } from '~/modules/tree/ports/tree.service.port'
 
 @Injectable()
@@ -16,13 +19,17 @@ export class TreeService implements TreeServicePort {
     private readonly treeRepo: TreeRepoPort,
   ) {}
 
-  async getEditorTree(cmd: TreeServiceCmd.GetTree): Promise<TreeServiceResult.GetTree> {
+  async getEditorTree(
+    cmd: TreeServiceCmd.GetTree,
+  ): Promise<TreeServiceResult.GetTree> {
     const rule: RuleTreeLeaf = {
       id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
       ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
       name: 'When to use',
       body: 'Use button for primary actions.',
-      metadata: { tags: ['button', 'usage'] },
+      metadata: {
+        tags: ['button', 'usage'],
+      },
       orderIndex: 0,
       createdAt: '2026-04-20T12:00:00.000Z',
       updatedAt: '2026-04-20T12:30:00.000Z',

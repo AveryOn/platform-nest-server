@@ -1,4 +1,6 @@
-export function toWebHeaders(input: Record<string, string | string[] | undefined>): Headers {
+export function toWebHeaders(
+  input: Record<string, string | string[] | undefined>,
+): Headers {
   const headers = new Headers()
 
   for (const [key, value] of Object.entries(input)) {

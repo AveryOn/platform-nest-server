@@ -83,15 +83,18 @@ export class TemplateSnapshotItemResponseDto {
 
   @ApiProperty({
     example: 1,
-    description: 'Monotonic template snapshot version inside template scope',
+    description:
+      'Monotonic template snapshot version inside template scope',
     type: Number,
     minimum: 1,
   })
   version: number
 
   @ApiProperty({
-    example: 'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
-    description: 'Deterministic content hash of template snapshot payload',
+    example:
+      'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
+    description:
+      'Deterministic content hash of template snapshot payload',
     type: String,
   })
   hash: string

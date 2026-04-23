@@ -5,7 +5,11 @@ import { NodeEnv } from '~/shared/const/app.const'
 import { zBool, zJson, zNumberSoft } from '~/shared/zod/zod.helper'
 
 export const envSchema = z.object({
-  NODE_ENV: z.enum([NodeEnv.development, NodeEnv.production, NodeEnv.test]),
+  NODE_ENV: z.enum([
+    NodeEnv.development,
+    NodeEnv.production,
+    NodeEnv.test,
+  ]),
   DATABASE_URL: z.string(),
   PORT: zNumberSoft().default(3000),
   SWAGGER_ENABLED: zBool(),
@@ -14,7 +18,9 @@ export const envSchema = z.object({
   EMAIL_NO_REPLY: z.string(),
   EMAIL_COMPANY_NAME: z.string(),
   ENABLED_REAL_EMAIL: zBool(),
-  LOG_LEVEL: z.enum([...Object.keys(LogLevel)]).default(LogLevel.info),
+  LOG_LEVEL: z
+    .enum([...Object.keys(LogLevel)])
+    .default(LogLevel.info),
   NEST_LOGGER_ENABLED: zBool(),
   MAX_SESSIONS_PER_USER: zNumberSoft(),
   CLEAR_CONSOLE_BY_START: zBool().default(false),
@@ -36,7 +42,13 @@ export const envSchema = z.object({
   SUPABASE_STORAGE_ACCESS_KEY: z.string().min(1).optional(),
   SUPABASE_STORAGE_SECRET_KEY: z.string().min(1).optional(),
   SUPABASE_STORAGE_REGION: z
-    .enum(['local', 'us-east-1', 'us-east-1', 'eu-central-1', 'ap-southeast-1'])
+    .enum([
+      'local',
+      'us-east-1',
+      'us-east-1',
+      'eu-central-1',
+      'ap-southeast-1',
+    ])
     .default('local')
     .optional(),
 })
@@ -56,10 +68,18 @@ if (!parsed.success) {
 
 {
   if (parsed.data.NODE_ENV === NodeEnv.development) {
-    console.debug({ LOG_LEVEL: parsed.data.LOG_LEVEL })
-    console.debug({ NODE_ENV: parsed.data.NODE_ENV })
-    console.debug({ NEST_LOGGER_ENABLED: parsed.data.NEST_LOGGER_ENABLED })
-    console.debug({ MAX_SESSIONS_PER_USER: parsed.data.MAX_SESSIONS_PER_USER })
+    console.debug({
+      LOG_LEVEL: parsed.data.LOG_LEVEL,
+    })
+    console.debug({
+      NODE_ENV: parsed.data.NODE_ENV,
+    })
+    console.debug({
+      NEST_LOGGER_ENABLED: parsed.data.NEST_LOGGER_ENABLED,
+    })
+    console.debug({
+      MAX_SESSIONS_PER_USER: parsed.data.MAX_SESSIONS_PER_USER,
+    })
     console.debug({
       CLEAR_CONSOLE_BY_START: parsed.data.CLEAR_CONSOLE_BY_START,
     })

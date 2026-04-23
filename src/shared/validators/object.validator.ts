@@ -4,7 +4,9 @@ import {
   type ValidationOptions,
 } from 'class-validator'
 
-export function IsNotEmptyBody(validationOptions?: ValidationOptions) {
+export function IsNotEmptyBody(
+  validationOptions?: ValidationOptions,
+) {
   return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isNotEmptyBody',

@@ -20,7 +20,10 @@ import {
 } from '~/infra/drizzle/drizzle.helpers'
 import { projectsTable } from '~/infra/drizzle/schemas'
 
-export const ruleGroupScopeEnum = pgEnum('rule_group_scope', ['template', 'project'])
+export const ruleGroupScopeEnum = pgEnum('rule_group_scope', [
+  'template',
+  'project',
+])
 
 export const ruleGroupTypeEnum = pgEnum('rule_group_type', [
   'category',
@@ -59,6 +62,10 @@ export const ruleGroupsTable = pgTable(
       t.parentGroupId,
       t.orderIndex,
     ),
-    index('rule_groups_project_parent_order_idx').on(t.projectId, t.parentGroupId, t.orderIndex),
+    index('rule_groups_project_parent_order_idx').on(
+      t.projectId,
+      t.parentGroupId,
+      t.orderIndex,
+    ),
   ],
 )

@@ -1,7 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { RuleEntity, RuleServiceCmd, RuleServiceRes } from '~/modules/rule/application/rule.type'
-import { RULE_REPO_PORT, RuleRepoPort } from '~/modules/rule/ports/rule.repo.port'
+import {
+  RuleEntity,
+  RuleServiceCmd,
+  RuleServiceRes,
+} from '~/modules/rule/application/rule.type'
+import {
+  RULE_REPO_PORT,
+  RuleRepoPort,
+} from '~/modules/rule/ports/rule.repo.port'
 import { RuleServicePort } from '~/modules/rule/ports/rule.service.port'
 
 @Injectable()
@@ -11,19 +18,25 @@ export class RuleService implements RuleServicePort {
     private readonly ruleRepo: RuleRepoPort,
   ) {}
 
-  async create(cmd: RuleServiceCmd.Create): Promise<RuleServiceRes.Item> {
+  async create(
+    cmd: RuleServiceCmd.Create,
+  ): Promise<RuleServiceRes.Item> {
     const created = await this.ruleRepo.create(cmd)
 
     return this.toItemRes(created)
   }
 
-  async getById(cmd: RuleServiceCmd.GetById): Promise<RuleServiceRes.Item> {
+  async getById(
+    cmd: RuleServiceCmd.GetById,
+  ): Promise<RuleServiceRes.Item> {
     const rule = await this.ruleRepo.getByIdOrFail(cmd.ruleId)
 
     return this.toItemRes(rule)
   }
 
-  async patch(cmd: RuleServiceCmd.Patch): Promise<RuleServiceRes.Update> {
+  async patch(
+    cmd: RuleServiceCmd.Patch,
+  ): Promise<RuleServiceRes.Update> {
     await this.ruleRepo.patch(cmd)
 
     return {
@@ -32,7 +45,9 @@ export class RuleService implements RuleServicePort {
     }
   }
 
-  async move(cmd: RuleServiceCmd.Move): Promise<RuleServiceRes.Update> {
+  async move(
+    cmd: RuleServiceCmd.Move,
+  ): Promise<RuleServiceRes.Update> {
     await this.ruleRepo.move(cmd)
 
     return {
@@ -41,7 +56,9 @@ export class RuleService implements RuleServicePort {
     }
   }
 
-  async reorderInGroup(cmd: RuleServiceCmd.ReorderInGroup): Promise<RuleServiceRes.Update> {
+  async reorderInGroup(
+    cmd: RuleServiceCmd.ReorderInGroup,
+  ): Promise<RuleServiceRes.Update> {
     await this.ruleRepo.reorderInGroup(cmd)
 
     return {
@@ -50,7 +67,9 @@ export class RuleService implements RuleServicePort {
     }
   }
 
-  async remove(cmd: RuleServiceCmd.Remove): Promise<RuleServiceRes.Remove> {
+  async remove(
+    cmd: RuleServiceCmd.Remove,
+  ): Promise<RuleServiceRes.Remove> {
     const archivedAt = await this.ruleRepo.remove(cmd.ruleId)
 
     return {

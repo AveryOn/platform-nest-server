@@ -9,7 +9,9 @@ import { RuleGroupRepoPort } from '~/modules/rule-group/ports/rule-group.repo.po
 
 @Injectable()
 export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
-  async create(cmd: RuleGroupServiceCmd.Create): Promise<RuleGroupEntity> {
+  async create(
+    cmd: RuleGroupServiceCmd.Create,
+  ): Promise<RuleGroupEntity> {
     return Promise.resolve({
       id: crypto.randomUUID(),
       projectId: cmd.projectId,
@@ -47,11 +49,15 @@ export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
     return Promise.resolve()
   }
 
-  async reorderChildren(_cmd: RuleGroupServiceCmd.ReorderChildren): Promise<void> {
+  async reorderChildren(
+    _cmd: RuleGroupServiceCmd.ReorderChildren,
+  ): Promise<void> {
     return Promise.resolve()
   }
 
-  async reorderRoot(_cmd: RuleGroupServiceCmd.ReorderRoot): Promise<void> {
+  async reorderRoot(
+    _cmd: RuleGroupServiceCmd.ReorderRoot,
+  ): Promise<void> {
     return Promise.resolve()
   }
 

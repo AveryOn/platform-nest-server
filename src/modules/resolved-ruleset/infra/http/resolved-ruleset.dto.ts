@@ -55,7 +55,10 @@ export class ResolvedRuleItemResponseDto {
   body: string
 
   @ApiProperty({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Optional flexible metadata payload',
     type: Object,
     nullable: true,
@@ -72,14 +75,16 @@ export class ResolvedRuleItemResponseDto {
 
   @ApiProperty({
     example: '0001.0001.0001',
-    description: 'Stable deterministic order key of the resolved rule',
+    description:
+      'Stable deterministic order key of the resolved rule',
     type: String,
   })
   orderKey: string
 
   @ApiProperty({
     example: 0,
-    description: 'Final order index of the resolved rule in the flat output',
+    description:
+      'Final order index of the resolved rule in the flat output',
     type: Number,
   })
   orderIndex: number
@@ -119,7 +124,8 @@ export class ResolvedRulesetResponseDto {
 
   @ApiProperty({
     example: true,
-    description: 'Whether metadata payloads were included in the response',
+    description:
+      'Whether metadata payloads were included in the response',
     type: Boolean,
   })
   includeMetadata: boolean

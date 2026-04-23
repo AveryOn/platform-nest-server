@@ -16,7 +16,8 @@ export class RequestContextMiddleware implements NestMiddleware {
       strict: false,
     })
 
-    const requestId = (req.headers['x-request-id'] as string) ?? randomUUID()
+    const requestId =
+      (req.headers['x-request-id'] as string) ?? randomUUID()
 
     context.run({ requestId }, next)
   }

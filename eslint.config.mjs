@@ -60,9 +60,9 @@ export default tseslint.config(
         'no-console': 'off',
         'no-empty': ['error', { allowEmptyCatch: true }],
       },
-      // OTHER
+      // PRETTIER
       ...{
-        'prettier/prettier': ['error', { endOfLine: 'auto' }],
+        'prettier/prettier': 'error',
       },
     },
   },

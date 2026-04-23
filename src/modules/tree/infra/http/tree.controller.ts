@@ -1,11 +1,34 @@
-import { Controller, Get, HttpStatus, Inject, Param, ParseUUIDPipe, Query } from '@nestjs/common'
-import { ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { ProjectTreeDto, ProjectTreeResponse } from '~/modules/tree/infra/http/tree.dto'
-import { TREE_SERVICE_PORT, type TreeServicePort } from '~/modules/tree/ports/tree.service.port'
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Inject,
+  Param,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common'
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
+import {
+  ProjectTreeDto,
+  ProjectTreeResponse,
+} from '~/modules/tree/infra/http/tree.dto'
+import {
+  TREE_SERVICE_PORT,
+  type TreeServicePort,
+} from '~/modules/tree/ports/tree.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.Tree)
-@Controller({ path: 'projects', version: '1' })
+@Controller({
+  path: 'projects',
+  version: '1',
+})
 export class TreeController {
   constructor(
     @Inject(TREE_SERVICE_PORT)
@@ -68,8 +91,10 @@ export class TreeController {
     description: 'Validation failed',
   })
   async getProjectTree(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Query() query: ProjectTreeDto,
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+    @Query()
+    query: ProjectTreeDto,
   ): Promise<ProjectTreeResponse> {
     return await this.treeService.getEditorTree({
       projectId: projectId,

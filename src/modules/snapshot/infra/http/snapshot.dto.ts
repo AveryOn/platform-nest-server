@@ -1,6 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator'
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator'
 
 export class ProjectSnapshotCreateDto {
   @ApiPropertyOptional({
@@ -17,7 +22,8 @@ export class ProjectSnapshotCreateDto {
 
   @ApiPropertyOptional({
     example: 'Manual snapshot before export',
-    description: 'Optional human-readable reason for snapshot creation',
+    description:
+      'Optional human-readable reason for snapshot creation',
     type: String,
     maxLength: 255,
   })
@@ -53,7 +59,8 @@ export class ProjectSnapshotItemResponseDto {
   version: number
 
   @ApiProperty({
-    example: 'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
+    example:
+      'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
     description: 'Deterministic content hash of snapshot payload',
     type: String,
   })
@@ -125,7 +132,8 @@ export class SnapshotPayloadRuleItemResponseDto {
 
   @ApiProperty({
     example: '0001.0001.0001',
-    description: 'Stable deterministic order key of the resolved rule',
+    description:
+      'Stable deterministic order key of the resolved rule',
     type: String,
   })
   orderKey: string
@@ -135,7 +143,8 @@ export class SnapshotPayloadDataDto {
   @ApiProperty({
     type: SnapshotPayloadRuleItemResponseDto,
     isArray: true,
-    description: 'Flat ordered list of resolved rules stored in snapshot payload',
+    description:
+      'Flat ordered list of resolved rules stored in snapshot payload',
   })
   rules: SnapshotPayloadRuleItemResponseDto[]
 }
@@ -189,7 +198,8 @@ export class ProjectSnapshotStatusResponseDto {
 
   @ApiProperty({
     example: false,
-    description: 'Whether latest snapshot is outdated compared to live project data',
+    description:
+      'Whether latest snapshot is outdated compared to live project data',
     type: Boolean,
   })
   isOutdated: boolean
@@ -213,7 +223,8 @@ export class ProjectSnapshotStatusResponseDto {
 
   @ApiProperty({
     example: '2026-04-20T12:45:00.000Z',
-    description: 'Latest snapshot creation timestamp in ISO-8601 format',
+    description:
+      'Latest snapshot creation timestamp in ISO-8601 format',
     type: String,
     format: 'date-time',
     nullable: true,

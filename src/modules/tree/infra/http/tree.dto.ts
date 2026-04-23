@@ -1,12 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Transform, Type } from 'class-transformer'
-import { IsBoolean, IsOptional, ValidateNested } from 'class-validator'
+import {
+  IsBoolean,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator'
 import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
 
 export class ProjectTreeDto {
   @ApiPropertyOptional({
     example: true,
-    description: 'Include hidden rule groups and rules in editor tree response',
+    description:
+      'Include hidden rule groups and rules in editor tree response',
     type: Boolean,
     default: true,
   })
@@ -59,7 +64,10 @@ export class RuleTreeItemResponse {
   body: string
 
   @ApiProperty({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Flexible metadata payload',
     type: Object,
     nullable: true,
@@ -148,7 +156,8 @@ export class ProjectTreeNodeResponse {
 
   @ApiProperty({
     example: false,
-    description: 'Whether this node is hidden at project configuration level',
+    description:
+      'Whether this node is hidden at project configuration level',
     type: Boolean,
   })
   isHidden: boolean
@@ -174,7 +183,9 @@ export class ProjectTreeNodeResponse {
     isArray: true,
     description: 'Direct rules that belong to this rule group',
   })
-  @ValidateNested({ each: true })
+  @ValidateNested({
+    each: true,
+  })
   @Type(() => RuleTreeItemResponse)
   rules: RuleTreeItemResponse[]
 
@@ -183,7 +194,9 @@ export class ProjectTreeNodeResponse {
     isArray: true,
     description: 'Direct child rule groups',
   })
-  @ValidateNested({ each: true })
+  @ValidateNested({
+    each: true,
+  })
   @Type(() => ProjectTreeNodeResponse)
   children: ProjectTreeNodeResponse[]
 }
@@ -206,7 +219,8 @@ export class ProjectTreeResponse {
 
   @ApiProperty({
     example: true,
-    description: 'Whether metadata field were included in the rule groups and rules',
+    description:
+      'Whether metadata field were included in the rule groups and rules',
     type: Boolean,
   })
   includeMetadata: boolean
@@ -214,9 +228,12 @@ export class ProjectTreeResponse {
   @ApiProperty({
     type: () => ProjectTreeNodeResponse,
     isArray: true,
-    description: 'Ordered list of root rule groups with nested children and direct rules',
+    description:
+      'Ordered list of root rule groups with nested children and direct rules',
   })
-  @ValidateNested({ each: true })
+  @ValidateNested({
+    each: true,
+  })
   @Type(() => ProjectTreeNodeResponse)
   tree: ProjectTreeNodeResponse[]
 }

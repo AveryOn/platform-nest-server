@@ -4,7 +4,8 @@ import { ALSKey, AsyncLocalStorageType } from './logger.types'
 
 @Injectable()
 export class AsyncContextService {
-  private readonly als = new AsyncLocalStorage<AsyncLocalStorageType>()
+  private readonly als =
+    new AsyncLocalStorage<AsyncLocalStorageType>()
 
   readonly ALSKey = ALSKey
 
@@ -16,11 +17,16 @@ export class AsyncContextService {
     return this.als.getStore()
   }
 
-  getValue<K extends ALSKey>(field: K): AsyncLocalStorageType[K] | undefined {
+  getValue<K extends ALSKey>(
+    field: K,
+  ): AsyncLocalStorageType[K] | undefined {
     return this.getStore()?.[field]
   }
 
-  setValue<K extends ALSKey, V extends AsyncLocalStorageType[K]>(field: K, value: V): void {
+  setValue<K extends ALSKey, V extends AsyncLocalStorageType[K]>(
+    field: K,
+    value: V,
+  ): void {
     const store = this.getStore()
     if (store) store[field] = value
   }

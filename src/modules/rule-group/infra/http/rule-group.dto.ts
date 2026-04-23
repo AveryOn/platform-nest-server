@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger'
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  PartialType,
+} from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
@@ -100,7 +104,9 @@ export class RuleGroupPatchBaseDto {
   type?: RuleGroupType
 }
 
-export class RuleGroupPatchDto extends PartialType(RuleGroupPatchBaseDto) {
+export class RuleGroupPatchDto extends PartialType(
+  RuleGroupPatchBaseDto,
+) {
   @IsNotEmptyBody({
     message: 'At least one field must be provided',
   })
@@ -110,7 +116,8 @@ export class RuleGroupPatchDto extends PartialType(RuleGroupPatchBaseDto) {
 export class RuleGroupMoveDto {
   @ApiPropertyOptional({
     example: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-    description: 'New parent rule group UUID. Null means move to root',
+    description:
+      'New parent rule group UUID. Null means move to root',
     format: 'uuid',
     nullable: true,
     type: String,
@@ -161,7 +168,9 @@ export class RuleGroupReorderChildrenDto {
   })
   @IsArray()
   @ArrayMinSize(1)
-  @ValidateNested({ each: true })
+  @ValidateNested({
+    each: true,
+  })
   @Type(() => RuleGroupReorderItemDto)
   items: RuleGroupReorderItemDto[]
 }
@@ -174,7 +183,9 @@ export class RuleGroupReorderRootDto {
   })
   @IsArray()
   @ArrayMinSize(1)
-  @ValidateNested({ each: true })
+  @ValidateNested({
+    each: true,
+  })
   @Type(() => RuleGroupReorderItemDto)
   items: RuleGroupReorderItemDto[]
 }

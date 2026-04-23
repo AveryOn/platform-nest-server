@@ -1,5 +1,16 @@
-import { Controller, Get, HttpStatus, Param, ParseUUIDPipe } from '@nestjs/common'
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+} from '@nestjs/common'
+import {
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 import {
   TemplateItemResponseDto,
   TemplateSnapshotsListResponseDto,
@@ -8,7 +19,10 @@ import {
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.Template)
-@Controller({ path: 'templates', version: '1' })
+@Controller({
+  path: 'templates',
+  version: '1',
+})
 export class TemplateController {
   @Get()
   @ApiOperation({
@@ -34,7 +48,8 @@ export class TemplateController {
           id: '2f972727-e95d-4564-b1bc-7dc95d44c7a3',
           slug: 'shadcn-ui',
           name: 'shadcn/ui',
-          description: 'Default UI rules template based on shadcn/ui structure',
+          description:
+            'Default UI rules template based on shadcn/ui structure',
           createdAt: '2026-04-20T12:00:00.000Z',
           updatedAt: '2026-04-20T12:30:00.000Z',
         },
@@ -74,12 +89,16 @@ export class TemplateController {
     status: HttpStatus.NOT_FOUND,
     description: 'Template not found',
   })
-  getTemplateById(@Param('templateId', ParseUUIDPipe) templateId: string): TemplateItemResponseDto {
+  getTemplateById(
+    @Param('templateId', ParseUUIDPipe)
+    templateId: string,
+  ): TemplateItemResponseDto {
     return {
       id: templateId,
       slug: 'shadcn-ui',
       name: 'shadcn/ui',
-      description: 'Default UI rules template based on shadcn/ui structure',
+      description:
+        'Default UI rules template based on shadcn/ui structure',
       createdAt: '2026-04-20T12:00:00.000Z',
       updatedAt: '2026-04-20T12:30:00.000Z',
     }
@@ -88,7 +107,8 @@ export class TemplateController {
   @Get(':templateId/snapshots')
   @ApiOperation({
     summary: 'Get template snapshots list',
-    description: 'Returns the list of immutable snapshots for the specified template',
+    description:
+      'Returns the list of immutable snapshots for the specified template',
     operationId: 'get_template_snapshots_list',
     tags: [ApiSwaggerTag.Template],
   })
@@ -118,7 +138,8 @@ export class TemplateController {
     description: 'Template not found',
   })
   getTemplateSnapshots(
-    @Param('templateId', ParseUUIDPipe) templateId: string,
+    @Param('templateId', ParseUUIDPipe)
+    templateId: string,
   ): TemplateSnapshotsListResponseDto {
     return {
       templateId,

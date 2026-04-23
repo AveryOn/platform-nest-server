@@ -1,4 +1,9 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common'
+import {
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+} from '@nestjs/common'
 import { Response } from 'express'
 import { AppError } from '~/core/error/app-error'
 import { ERRORS } from '~/core/error/app-error.dict'
@@ -9,7 +14,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp()
     const res = ctx.getResponse<Response>()
 
-    console.debug({ exception })
+    console.debug({
+      exception,
+    })
 
     if (exception instanceof AppError) {
       return res.status(exception.httpStatus).json({
