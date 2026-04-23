@@ -93,8 +93,9 @@ export class RuleTreeItemResponse {
     description: 'Update timestamp in ISO-8601 format',
     type: String,
     format: 'date-time',
+    nullable: true,
   })
-  updatedAt: string
+  updatedAt: string | null
 }
 
 export class ProjectTreeNodeResponse {
@@ -143,8 +144,9 @@ export class ProjectTreeNodeResponse {
     description: 'Rule group semantic type',
     type: String,
     enum: Object.values(RuleGroupType),
+    nullable: true,
   })
-  type: RuleGroupTypeKey
+  type: RuleGroupTypeKey | null
 
   @ApiProperty({
     example: 0,
@@ -174,8 +176,9 @@ export class ProjectTreeNodeResponse {
     description: 'Update timestamp in ISO-8601 format',
     type: String,
     format: 'date-time',
+    nullable: true,
   })
-  updatedAt: string
+  updatedAt: string | null
 
   @ApiProperty({
     type: RuleTreeItemResponse,

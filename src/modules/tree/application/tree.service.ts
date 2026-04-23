@@ -31,6 +31,7 @@ export class TreeService implements TreeServicePort {
         tags: ['button', 'usage'],
       },
       orderIndex: 0,
+      isHidden: false,
       createdAt: '2026-04-20T12:00:00.000Z',
       updatedAt: '2026-04-20T12:30:00.000Z',
     }
