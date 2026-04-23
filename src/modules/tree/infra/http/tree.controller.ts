@@ -1,10 +1,11 @@
 import { Controller, Get, HttpStatus, Param, ParseUUIDPipe, Query } from '@nestjs/common'
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
 import {
-  ProjectTreeNodeResponseDto,
-  ProjectTreeQueryDto,
-  ProjectTreeResponseDto,
-  RuleTreeItemResponseDto,
+  ProjectTreeDto,
+  ProjectTreeNodeResponse,
+  ProjectTreeResponse,
+  RuleTreeItemResponse,
 } from '~/modules/tree/infra/http/tree.dto'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
@@ -30,7 +31,7 @@ export class TreeController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Project tree successfully returned',
-    type: ProjectTreeResponseDto,
+    type: ProjectTreeResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -54,12 +55,12 @@ export class TreeController {
   })
   getProjectTree(
     @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Query() query: ProjectTreeQueryDto,
-  ): ProjectTreeResponseDto {
-    const rule: RuleTreeItemResponseDto = {
+    @Query() query: ProjectTreeDto,
+  ): ProjectTreeResponse {
+    const rule: RuleTreeItemResponse = {
       id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
       ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      title: 'When to use',
+      name: 'When to use',
       body: 'Use button for primary actions.',
       metadata: { tags: ['button', 'usage'] },
       orderIndex: 0,
@@ -67,13 +68,13 @@ export class TreeController {
       updatedAt: '2026-04-20T12:30:00.000Z',
     }
 
-    const childNode: ProjectTreeNodeResponseDto = {
+    const childNode: ProjectTreeNodeResponse = {
       id: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
       projectId,
       parentGroupId: '7c917903-d8f3-445b-bec8-122c4cf3a411',
       name: 'Button',
       description: 'Rules for button component',
-      kind: 'component',
+      type: RuleGroupType.component,
       orderIndex: 0,
       isHidden: false,
       createdAt: '2026-04-20T12:00:00.000Z',
@@ -82,13 +83,13 @@ export class TreeController {
       children: [],
     }
 
-    const rootNode: ProjectTreeNodeResponseDto = {
+    const rootNode: ProjectTreeNodeResponse = {
       id: '7c917903-d8f3-445b-bec8-122c4cf3a411',
       projectId,
       parentGroupId: null,
       name: 'Components',
       description: 'Component rules',
-      kind: 'category',
+      type: RuleGroupType.category,
       orderIndex: 0,
       isHidden: false,
       createdAt: '2026-04-20T12:00:00.000Z',
