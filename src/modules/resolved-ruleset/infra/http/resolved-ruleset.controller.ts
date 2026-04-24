@@ -14,9 +14,9 @@ import {
 } from '@nestjs/swagger'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 import {
-  ResolvedRuleItemResponseDto,
-  ResolvedRulesetQueryDto,
-  ResolvedRulesetResponseDto,
+  GetResolvedRulesetDto,
+  GetResolvedRulesetResponse,
+  ResolvedRuleItemResponse,
 } from './resolved-ruleset.dto'
 
 @ApiTags(ApiSwaggerTag.ResolvedRuleset)
@@ -44,7 +44,7 @@ export class ResolvedRulesetController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Resolved ruleset successfully returned',
-    type: ResolvedRulesetResponseDto,
+    type: GetResolvedRulesetResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -66,17 +66,17 @@ export class ResolvedRulesetController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  getResolvedRuleset(
+  async getResolvedRuleset(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
     @Query()
-    query: ResolvedRulesetQueryDto,
-  ): ResolvedRulesetResponseDto {
-    const rule: ResolvedRuleItemResponseDto = {
+    query: GetResolvedRulesetDto,
+  ): Promise<GetResolvedRulesetResponse> {
+    const rule: ResolvedRuleItemResponse = {
       id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
       projectId,
       ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      title: 'When to use',
+      name: 'When to use',
       body: 'Use button for primary actions.',
       metadata:
         query.includeMetadata === false
