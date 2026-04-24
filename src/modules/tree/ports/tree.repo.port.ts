@@ -1,4 +1,4 @@
-import type { TransactionContext } from '~/modules/transaction/application/transaction.type'
+import type { TransactionContext } from '~/infra/transaction/application/transaction.type'
 import type {
   RuleTreeLeaf,
   RuleTreeNodeBase,

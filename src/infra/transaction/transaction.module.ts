@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common'
-import { TX_PORT } from '~/modules/transaction/ports/transaction.service.port'
-import { DrizzleTxAdapter } from './infra/persistence/transaction.drizzle.adapter'
+import { Global, Module } from '@nestjs/common'
+import { DrizzleTxAdapter } from '~/infra/transaction/infra/persistence/transaction.drizzle.adapter'
+import { TX_PORT } from '~/infra/transaction/ports/transaction.port'
 
 /**
  * TransactionModule
@@ -13,7 +13,7 @@ import { DrizzleTxAdapter } from './infra/persistence/transaction.drizzle.adapte
  * - Allow services to orchestrate multi-repository operations within a single transaction
  *
  * How it works:
- * - Binds the abstract TransactionServicePort (via TX_PORT token)
+ * - Binds the abstract TransactionPort (via TX_PORT token)
  *   to a concrete infrastructure adapter (DrizzleTxAdapter)
  * - Any application service can inject TX_PORT and execute logic inside `run(...)`
  * - The actual transaction implementation is delegated to the adapter
@@ -30,7 +30,7 @@ import { DrizzleTxAdapter } from './infra/persistence/transaction.drizzle.adapte
  *
  * Usage:
  * ```ts
- * constructor(@Inject(TX_PORT) private readonly tx: TransactionServicePort) {}
+ * constructor(@Inject(TX_PORT) private readonly tx: TransactionPort) {}
  *
  * await this.tx.run(async (tx) => {
  *   await repoA.doSomething(tx)
@@ -38,6 +38,7 @@ import { DrizzleTxAdapter } from './infra/persistence/transaction.drizzle.adapte
  * })
  * ```
  */
+@Global()
 @Module({
   providers: [
     {

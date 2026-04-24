@@ -1,4 +1,4 @@
-import type { TransactionContext } from '~/modules/transaction/application/transaction.type'
+import type { TransactionContext } from '~/infra/transaction/application/transaction.type'
 
 /**
  * Injection token used to register and resolve the transaction service
@@ -20,8 +20,8 @@ export const TX_PORT = Symbol('TX_PORT')
  * @template TTx - Opaque transaction context passed through repositories.
  *                Its concrete type is defined in the infrastructure layer.
  */
-export abstract class TransactionServicePort<
-  TTx extends TransactionContext,
+export abstract class TransactionPort<
+  TTx extends TransactionContext = TransactionContext,
 > {
   /**
    * Executes the given handler function within a transaction.
@@ -38,5 +38,7 @@ export abstract class TransactionServicePort<
    * @param handler - Async function representing a unit of work.
    * @returns A promise resolving with the handler result.
    */
-  abstract run(handler: (tx: TTx) => Promise<TTx>): Promise<TTx>
+  abstract run<TResult>(
+    handler: (tx: TTx) => Promise<TResult>,
+  ): Promise<TResult>
 }

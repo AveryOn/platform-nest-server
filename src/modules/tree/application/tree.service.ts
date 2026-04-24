@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { RuleGroupType } from '~/infra/drizzle/schemas'
+import {
+  TX_PORT,
+  type TransactionPort,
+} from '~/infra/transaction/ports/transaction.port'
 import type {
   RuleTreeLeaf,
   RuleTreeNode,
@@ -17,11 +21,15 @@ export class TreeService implements TreeServicePort {
   constructor(
     @Inject(TREE_REPO_PORT)
     private readonly treeRepo: TreeRepoPort,
+
+    @Inject(TX_PORT)
+    private readonly tx: TransactionPort,
   ) {}
 
   async getEditorTree(
     cmd: TreeServiceCmd.GetTree,
   ): Promise<TreeServiceResult.GetTree> {
+    tx
     const rules = await this.treeRepo.getProjectRules(cmd.projectId)
     const rule: RuleTreeLeaf = {
       id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
