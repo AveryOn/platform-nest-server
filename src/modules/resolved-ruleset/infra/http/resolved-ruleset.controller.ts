@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Inject,
   Param,
   ParseUUIDPipe,
   Query,
@@ -12,11 +13,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import {
+  RESOLVED_RULESET_SERVICE_PORT,
+  type ResolvedRulesetServicePort,
+} from '~/modules/resolved-ruleset/ports/resolved-ruleset.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 import {
   GetResolvedRulesetDto,
   GetResolvedRulesetResponse,
-  ResolvedRuleItemResponse,
 } from './resolved-ruleset.dto'
 
 @ApiTags(ApiSwaggerTag.ResolvedRuleset)
@@ -25,6 +29,10 @@ import {
   version: '1',
 })
 export class ResolvedRulesetController {
+  constructor(
+    @Inject(RESOLVED_RULESET_SERVICE_PORT)
+    private readonly resolvedRulesetService: ResolvedRulesetServicePort,
+  ) {}
   @Get(':projectId/resolved-ruleset')
   @ApiOperation({
     summary: 'Get resolved ruleset',
@@ -72,30 +80,9 @@ export class ResolvedRulesetController {
     @Query()
     query: GetResolvedRulesetDto,
   ): Promise<GetResolvedRulesetResponse> {
-    const rule: ResolvedRuleItemResponse = {
-      id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-      projectId,
-      ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      name: 'When to use',
-      body: 'Use button for primary actions.',
-      metadata:
-        query.includeMetadata === false
-          ? null
-          : {
-              tags: ['button', 'usage'],
-            },
-      path: ['Components', 'Button', 'When to use'],
-      orderKey: '0001.0001.0001',
-      orderIndex: 0,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-    }
-
-    return {
-      projectId,
-      total: 1,
-      includeMetadata: query.includeMetadata ?? true,
-      rules: [rule],
-    }
+    return await this.resolvedRulesetService.getResolvedRuleset({
+      projectId: projectId,
+      includeMetadata: query.includeMetadata,
+    })
   }
 }
