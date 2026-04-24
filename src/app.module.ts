@@ -13,6 +13,7 @@ import { RuleModule } from '~/modules/rule/rule.module'
 import { SnapshotModule } from '~/modules/snapshot/snapshot.module'
 import { SystemModule } from '~/modules/system/system.module'
 import { TemplateModule } from '~/modules/template/template.module'
+import { TransactionModule } from '~/modules/transaction/transaction.module'
 import { TreeModule } from '~/modules/tree/tree.module'
 import { PaginatorModule } from '~/shared/paginator/paginator.module'
 // import { RedisModule } from '@nestjs-modules/ioredis'
@@ -23,6 +24,7 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     LoggerModule,
     PaginatorModule,
     DrizzleModule,
+    TransactionModule,
     AuthModule,
     SystemModule,
     ProjectModule,

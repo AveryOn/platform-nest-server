@@ -22,6 +22,7 @@ export class TreeService implements TreeServicePort {
   async getEditorTree(
     cmd: TreeServiceCmd.GetTree,
   ): Promise<TreeServiceResult.GetTree> {
+    const rules = await this.treeRepo.getProjectRules(cmd.projectId)
     const rule: RuleTreeLeaf = {
       id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
       ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
