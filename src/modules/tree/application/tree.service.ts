@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { RuleGroupType } from '~/infra/drizzle/schemas'
+import type { TransactionContext } from '~/infra/transaction/application/transaction.type'
 import {
   TX_PORT,
   type TransactionPort,
@@ -7,6 +7,7 @@ import {
 import type {
   RuleTreeLeaf,
   RuleTreeNode,
+  RuleTreeNodeBase,
   TreeServiceCmd,
   TreeServiceResult,
 } from '~/modules/tree/application/tree.type'
@@ -23,62 +24,68 @@ export class TreeService implements TreeServicePort {
     private readonly treeRepo: TreeRepoPort,
 
     @Inject(TX_PORT)
-    private readonly tx: TransactionPort,
+    private readonly tx: TransactionPort<TransactionContext>,
   ) {}
 
   async getEditorTree(
     cmd: TreeServiceCmd.GetTree,
   ): Promise<TreeServiceResult.GetTree> {
-    tx
-    const rules = await this.treeRepo.getProjectRules(cmd.projectId)
-    const rule: RuleTreeLeaf = {
-      id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-      ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      name: 'When to use',
-      body: 'Use button for primary actions.',
-      metadata: {
-        tags: ['button', 'usage'],
-      },
-      orderIndex: 0,
-      isHidden: false,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-    }
+    const [rules, groups] = await this.tx.run(async (tx) => {
+      return await Promise.all([
+        this.treeRepo.getProjectRules(cmd.projectId, tx),
+        this.treeRepo.getProjectRuleGroups(cmd.projectId, tx),
+      ])
+    })
 
-    const childNode: RuleTreeNode = {
-      id: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      projectId: cmd.projectId,
-      parentGroupId: '7c917903-d8f3-445b-bec8-122c4cf3a411',
-      name: 'Button',
-      description: 'Rules for button component',
-      type: RuleGroupType.component,
-      orderIndex: 0,
-      isHidden: false,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-      rules: [rule],
-      children: [],
-    }
+    const tree = this.buildTree(groups, rules)
 
-    const rootNode: RuleTreeNode = {
-      id: '7c917903-d8f3-445b-bec8-122c4cf3a411',
-      projectId: cmd.projectId,
-      parentGroupId: null,
-      name: 'Components',
-      description: 'Component rules',
-      type: RuleGroupType.category,
-      orderIndex: 0,
-      isHidden: false,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-      rules: [],
-      children: [childNode],
-    }
     return Promise.resolve({
       projectId: cmd.projectId,
       includeHidden: cmd.includeHidden ?? true,
       includeMetadata: cmd.includeMetadata ?? true,
-      tree: [rootNode],
+      tree: tree,
     })
+  }
+
+  private buildTree(
+    groups: RuleTreeNodeBase[],
+    rules: RuleTreeLeaf[],
+  ): RuleTreeNode[] {
+    const rulesByGroupId = new Map<string, RuleTreeLeaf[]>()
+    const groupsByParentId = new Map<string | null, RuleTreeNodeBase[]>()
+
+    for (const rule of rules) {
+      const groupRules = rulesByGroupId.get(rule.ruleGroupId) ?? []
+      groupRules.push(rule)
+      rulesByGroupId.set(rule.ruleGroupId, groupRules)
+    }
+
+    for (const group of groups) {
+      const siblingGroups =
+        groupsByParentId.get(group.parentGroupId) ?? []
+      siblingGroups.push(group)
+      groupsByParentId.set(group.parentGroupId, siblingGroups)
+    }
+
+    const sortByOrderIndex = <T extends { orderIndex: number }>(
+      items: T[],
+    ): T[] => {
+      return items.sort((a, b) => a.orderIndex - b.orderIndex)
+    }
+
+    const buildNode = (group: RuleTreeNodeBase): RuleTreeNode => {
+      const directRules = rulesByGroupId.get(group.id) ?? []
+      const directChildren = groupsByParentId.get(group.id) ?? []
+
+      return {
+        ...group,
+        rules: sortByOrderIndex(directRules),
+        children: sortByOrderIndex(directChildren).map(buildNode),
+      }
+    }
+
+    const rootGroups = groupsByParentId.get(null) ?? []
+
+    return sortByOrderIndex(rootGroups).map(buildNode)
   }
 }

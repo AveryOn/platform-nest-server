@@ -91,7 +91,7 @@ export class TreeDrizzleRepo implements TreeRepoPort {
           isNull(rulesTable.deletedAt),
         ),
       )
-    return res.map(({ rule, config }) => ({
+    return res.map(({ config, rule }) => ({
       id: rule.id,
       body: rule.body,
       metadata: rule.metadata as RuleMetadata,
