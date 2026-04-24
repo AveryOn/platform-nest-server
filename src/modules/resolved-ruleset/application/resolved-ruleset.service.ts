@@ -21,6 +21,21 @@ export class ResolvedRulesetService implements ResolvedRulesetServicePort {
     private readonly resolvedRulesetRepo: ResolvedRulesetRepoPort,
   ) {}
 
+  /**
+   * Main entry point for building the resolved ruleset.
+   *
+   * Loads raw project data from the repository and applies the full resolution pipeline:
+   * - validates project existence
+   * - resolves hidden groups (recursively) via project_rule_group_configs
+   * - resolves hidden rules via project_rule_configs
+   * - filters out hidden groups and rules
+   * - builds a hierarchical tree of rule groups
+   * - applies deterministic ordering
+   * - traverses the tree (top-down) to produce a flat list of rules
+   * - computes orderKey and orderIndex for each rule
+   *
+   * The result is a deterministic, ordered, flat ruleset ready for external consumption.
+   */
   async getResolvedRuleset(
     cmd: ResolvedRulesetCmd.Get,
   ): Promise<ResolvedRulesetRes.Get> {
@@ -81,6 +96,18 @@ export class ResolvedRulesetService implements ResolvedRulesetServicePort {
     }
   }
 
+  /**
+   * Computes the full set of hidden rule group IDs, including all descendants.
+   *
+   * Steps:
+   * - identifies groups explicitly marked as hidden in configs
+   * - builds parent -> children adjacency map
+   * - recursively marks entire subtrees as hidden
+   *
+   * Result:
+   * A Set of group IDs that must be excluded from the resolved ruleset,
+   * including all nested groups under hidden parents.
+   */
   private resolveHiddenGroupIds(
     groups: RawRuleGroup[],
     configs: RawRuleGroupConfig[],
@@ -120,6 +147,22 @@ export class ResolvedRulesetService implements ResolvedRulesetServicePort {
     return hiddenGroupIds
   }
 
+  /**
+   * Builds an in-memory tree of rule groups with attached rules.
+   *
+   * Steps:
+   * - groups rules by rule_group_id
+   * - creates node objects for each group
+   * - attaches rules to their respective groups
+   * - links parent/child relationships between groups
+   * - sorts children and rules by their order field
+   * - returns sorted root nodes
+   *
+   * Guarantees:
+   * - each node contains only its direct children and rules
+   * - ordering is applied at every level
+   * - orphan groups (missing parent) are treated as root nodes
+   */
   private buildTree(
     groups: RawRuleGroup[],
     rules: RawRule[],
@@ -168,6 +211,23 @@ export class ResolvedRulesetService implements ResolvedRulesetServicePort {
     return this.sortByOrder(rootNodes)
   }
 
+  /**
+   * Traverses the rule group tree in a top-down (DFS) manner and
+   * produces a flat list of resolved rules.
+   *
+   * For each node:
+   * - extends the semantic path using group names
+   * - accumulates order path for deterministic ordering
+   * - emits rules in the current group (respecting order)
+   * - recursively processes child groups
+   *
+   * Side effects:
+   * - appends resolved rule items to the output array
+   * - computes orderKey and orderIndex during traversal
+   *
+   * This function is the core of transforming hierarchical structure
+   * into a linear resolved ruleset.
+   */
   private traverseNode(input: {
     node: RuleGroupNode
     path: string[]
@@ -207,17 +267,54 @@ export class ResolvedRulesetService implements ResolvedRulesetServicePort {
     }
   }
 
+  /**
+   * Sorts a collection of items by their `order` field in ascending order.
+   *
+   * Behavior:
+   * - returns a new sorted array (does not mutate input)
+   * - ensures deterministic ordering for groups and rules
+   *
+   * Used for:
+   * - sorting root groups
+   * - sorting child groups
+   * - sorting rules inside groups
+   */
   private sortByOrder<T extends { orderIndex: number }>(items: T[]): T[] {
     return [...items].sort(
       (left, right) => left.orderIndex - right.orderIndex,
     )
   }
 
+  /**
+   * Builds a stable, deterministic order key from an order path.
+   *
+   * Each segment of the path is:
+   * - zero-padded to 4 digits
+   * - joined using dot notation
+   *
+   * Example:
+   * [1, 2, 3] -> "0001.0002.0003"
+   *
+   * Purpose:
+   * - provides a consistent sortable identifier
+   * - encodes hierarchical position of a rule
+   * - useful for external consumers (CLI, export, debugging)
+   */
   private buildOrderKey(orderPath: number[]): string {
     return orderPath
       .map((orderIndex) => String(orderIndex).padStart(4, '0'))
       .join('.')
   }
+
+  /**
+   * Normalizes a date value into an ISO-8601 string.
+   *
+   * Behavior:
+   * - if value is a Date -> converts to ISO string
+   * - if value is already a string -> returns as-is
+   *
+   * Ensures consistent timestamp format in resolved output.
+   */
 
   private toIsoString(value: Date | string): string {
     return value instanceof Date ? value.toISOString() : value
