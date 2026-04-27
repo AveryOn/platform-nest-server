@@ -34,7 +34,7 @@ export class JsonResponseInterceptor implements NestInterceptor {
           return data
         }
 
-        // не трогаем если это не объект
+        // don't touch if this an object
         if (typeof data !== 'object' || data === null) return data
 
         return {
@@ -66,40 +66,23 @@ export const ApiDataResponse = <TModel extends Type<any>>({
   type,
   description,
   status,
-  paginated,
 }: {
   type: TModel
   status?: HttpStatus
   description?: string
-  paginated?: boolean
 }) =>
   applyDecorators(
     ApiExtraModels(type, PaginationMetaDto),
     ApiResponse({
       description,
       status: status ? status : HttpStatus.OK,
-      schema: paginated
-        ? {
-            type: 'object',
-            properties: {
-              data: {
-                type: 'array',
-                items: {
-                  $ref: getSchemaPath(type),
-                },
-              },
-              paginator: {
-                $ref: getSchemaPath(PaginationMetaDto),
-              },
-            },
-          }
-        : {
-            type: 'object',
-            properties: {
-              data: {
-                $ref: getSchemaPath(type),
-              },
-            },
+      schema: {
+        type: 'object',
+        properties: {
+          data: {
+            $ref: getSchemaPath(type),
           },
+        },
+      },
     }),
   )

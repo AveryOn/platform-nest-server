@@ -13,15 +13,16 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import {
+  GetResolvedRulesetDto,
+  GetResolvedRulesetResponse,
+} from '~/modules/resolved-ruleset/infra/http/resolved-ruleset.dto'
 import {
   RESOLVED_RULESET_SERVICE_PORT,
   type ResolvedRulesetServicePort,
 } from '~/modules/resolved-ruleset/ports/resolved-ruleset.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
-import {
-  GetResolvedRulesetDto,
-  GetResolvedRulesetResponse,
-} from './resolved-ruleset.dto'
 
 @ApiTags(ApiSwaggerTag.ResolvedRuleset)
 @Controller({
@@ -49,7 +50,7 @@ export class ResolvedRulesetController {
     format: 'uuid',
     description: 'Project UUID',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Resolved ruleset successfully returned',
     type: GetResolvedRulesetResponse,

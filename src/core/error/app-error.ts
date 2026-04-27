@@ -20,7 +20,7 @@ export class AppError extends Error {
     meta?: LogMeta
   }
 
-  /** Вызывает logger.error */
+  /** envoke the logger.error */
   log(message?: string, meta?: LogMeta): this {
     this._log = {
       message,

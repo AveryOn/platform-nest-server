@@ -2,6 +2,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import express from 'express'
 import helmet from 'helmet'
+import 'reflect-metadata'
 
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from '~/app.module'
@@ -42,6 +43,9 @@ async function bootstrap() {
           whitelist: true,
           transform: true,
           forbidNonWhitelisted: true,
+          transformOptions: {
+            enableImplicitConversion: true,
+          },
         }),
       )
       .enableCors({

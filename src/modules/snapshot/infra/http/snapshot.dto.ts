@@ -6,6 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator'
+import { PaginationDto } from '~/shared/paginator/infra/http/paginator.dto'
 
 export class ProjectSnapshotCreateDto {
   @ApiPropertyOptional({
@@ -32,7 +33,7 @@ export class ProjectSnapshotCreateDto {
   reason?: string
 }
 
-export class ProjectSnapshotItemResponseDto {
+export class ProjectSnapshotItemRes {
   @ApiProperty({
     example: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
     description: 'Snapshot UUID',
@@ -74,7 +75,9 @@ export class ProjectSnapshotItemResponseDto {
   createdAt: string
 }
 
-export class ProjectSnapshotsListResponseDto {
+export class ProjectSnapshotsListQuery extends PaginationDto {}
+
+export class ProjectSnapshotsListRes {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Owner project UUID',
@@ -91,14 +94,14 @@ export class ProjectSnapshotsListResponseDto {
   total: number
 
   @ApiProperty({
-    type: ProjectSnapshotItemResponseDto,
+    type: ProjectSnapshotItemRes,
     isArray: true,
     description: 'Ordered list of project snapshots',
   })
-  items: ProjectSnapshotItemResponseDto[]
+  items: ProjectSnapshotItemRes[]
 }
 
-export class SnapshotPayloadRuleItemResponseDto {
+export class SnapshotPayloadRuleItemRes {
   @ApiProperty({
     example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
     description: 'Rule UUID inside snapshot payload',
@@ -112,7 +115,7 @@ export class SnapshotPayloadRuleItemResponseDto {
     description: 'Rule title',
     type: String,
   })
-  title: string
+  name: string
 
   @ApiProperty({
     example: 'Use button for primary actions.',
@@ -137,17 +140,17 @@ export class SnapshotPayloadRuleItemResponseDto {
   orderKey: string
 }
 
-export class SnapshotPayloadDataDto {
+export class SnapshotPayloadDto {
   @ApiProperty({
-    type: SnapshotPayloadRuleItemResponseDto,
+    type: SnapshotPayloadRuleItemRes,
     isArray: true,
     description:
       'Flat ordered list of resolved rules stored in snapshot payload',
   })
-  rules: SnapshotPayloadRuleItemResponseDto[]
+  rules: SnapshotPayloadRuleItemRes[]
 }
 
-export class ProjectSnapshotPayloadResponseDto {
+export class ProjectSnapshotPayloadRes {
   @ApiProperty({
     example: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
     description: 'Snapshot UUID',
@@ -172,13 +175,13 @@ export class ProjectSnapshotPayloadResponseDto {
   version: number
 
   @ApiProperty({
-    type: SnapshotPayloadDataDto,
+    type: SnapshotPayloadDto,
     description: 'Materialized snapshot payload',
   })
-  payload: SnapshotPayloadDataDto
+  payload: SnapshotPayloadDto
 }
 
-export class ProjectSnapshotStatusResponseDto {
+export class ProjectSnapshotStatusRes {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Owner project UUID',
