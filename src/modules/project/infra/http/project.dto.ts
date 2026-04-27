@@ -15,7 +15,7 @@ import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
 import { PaginationDto } from '~/shared/paginator/infra/http/paginator.dto'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
 
-export class ProjectGetListQueryDto extends PaginationDto {
+export class ProjectGetListQuery extends PaginationDto {
   @ApiPropertyOptional({
     example: 'design',
     description: 'Free-text search by project name',

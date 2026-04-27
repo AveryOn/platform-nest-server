@@ -20,7 +20,7 @@ import {
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import {
   ProjectCreateDto,
-  ProjectGetListQueryDto,
+  ProjectGetListQuery,
   ProjectItemResponse,
   ProjectListItemResponse,
   ProjectPatchDto,
@@ -49,7 +49,7 @@ export class ProjectController {
   })
   @ApiPaginator({
     query: {
-      type: ProjectGetListQueryDto,
+      type: ProjectGetListQuery,
     },
     response: {
       status: HttpStatus.OK,
@@ -74,8 +74,8 @@ export class ProjectController {
     description: 'Validation failed',
   })
   getProjects(
-    @ValidQuery(ProjectGetListQueryDto)
-    _query: ProjectGetListQueryDto,
+    @ValidQuery(ProjectGetListQuery)
+    _query: ProjectGetListQuery,
   ): PaginatedResponse<ProjectListItemResponse> {
     return {
       data: [
