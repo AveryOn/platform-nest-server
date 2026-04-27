@@ -9,7 +9,7 @@ import {
 } from '~/shared/paginator/ports/paginator.service.port'
 
 @Injectable()
-export class SnapashotDrizzleRepo implements SnapshotRepoPort {
+export class SnapshotDrizzleRepo implements SnapshotRepoPort {
   constructor(
     @Inject(PAGINATOR_PORT)
     private readonly paginator: PaginatorServicePort,

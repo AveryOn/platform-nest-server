@@ -15,6 +15,20 @@
       "when": 1776959453770,
       "tag": "0001_foamy_giant_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777308164701,
+      "tag": "0002_fancy_runaways",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777308355812,
+      "tag": "0003_sharp_purifiers",
+      "breakpoints": true
     }
   ]
 }

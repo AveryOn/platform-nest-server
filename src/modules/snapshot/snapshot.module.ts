@@ -1,22 +1,30 @@
 import { Module } from '@nestjs/common'
-import { SnapashotService } from '~/modules/snapshot/application/snapshot.service'
+import { ResolvedRulesetModule } from '~/modules/resolved-ruleset/resolved-ruleset.module'
+import { SnapshotPayloadBuilder } from '~/modules/snapshot/application/snapshot-payload-builder.service'
+import { SnapshotService } from '~/modules/snapshot/application/snapshot.service'
 import { SnapshotController } from '~/modules/snapshot/infra/http/snapshot.controller'
-import { SnapashotDrizzleRepo } from '~/modules/snapshot/infra/persistence/snapshot.drizzle.repo'
+import { SnapshotDrizzleRepo } from '~/modules/snapshot/infra/persistence/snapshot.drizzle.repo'
+import { SNAPSHOT_PAYLOAD_BUILDER_PORT } from '~/modules/snapshot/ports/snapshot-payload-builder.port'
 import { SNAPSHOT_REPO_PORT } from '~/modules/snapshot/ports/snapshot.repo.port'
 import { SNAPSHOT_SERVICE_PORT } from '~/modules/snapshot/ports/snapshot.service.port'
 
 @Module({
+  imports: [ResolvedRulesetModule],
   controllers: [SnapshotController],
   providers: [
     {
       provide: SNAPSHOT_SERVICE_PORT,
-      useClass: SnapashotService,
+      useClass: SnapshotService,
     },
     {
       provide: SNAPSHOT_REPO_PORT,
-      useClass: SnapashotDrizzleRepo,
+      useClass: SnapshotDrizzleRepo,
+    },
+    {
+      provide: SNAPSHOT_PAYLOAD_BUILDER_PORT,
+      useClass: SnapshotPayloadBuilder,
     },
   ],
-  exports: [SNAPSHOT_SERVICE_PORT],
+  exports: [SNAPSHOT_SERVICE_PORT, SNAPSHOT_PAYLOAD_BUILDER_PORT],
 })
 export class SnapshotModule {}

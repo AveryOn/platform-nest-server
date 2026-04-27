@@ -1,0 +1,1 @@
+ALTER TABLE "project_rule_snapshots" RENAME COLUMN "reason" TO "comment";

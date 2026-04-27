@@ -98,7 +98,8 @@ export class SnapshotController {
   ): Promise<PaginatedResponse<ProjectSnapshotItemRes>> {
     return await this.snapshotService.getList({
       projectId,
-      ...query,
+      limit: query.limit,
+      page: query.page,
     })
   }
 
@@ -392,7 +393,7 @@ export class SnapshotController {
   ): Promise<ProjectSnapshotItemRes> {
     return await this.snapshotService.create({
       projectId,
-      reason: body.reason,
+      comment: body.comment,
       skipIfUnchanged: body.skipIfUnchanged,
     })
   }

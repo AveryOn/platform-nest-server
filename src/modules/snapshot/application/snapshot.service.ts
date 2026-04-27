@@ -10,7 +10,7 @@ import {
 import type { SnapshotServicePort } from '~/modules/snapshot/ports/snapshot.service.port'
 
 @Injectable()
-export class SnapashotService implements SnapshotServicePort {
+export class SnapshotService implements SnapshotServicePort {
   constructor(
     @Inject(SNAPSHOT_REPO_PORT)
     private readonly snapshotRepo: SnapshotRepoPort,

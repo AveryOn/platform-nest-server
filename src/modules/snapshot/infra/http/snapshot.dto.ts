@@ -6,6 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator'
+import { ResolvedRuleItemResponse } from '~/modules/resolved-ruleset/infra/http/resolved-ruleset.dto'
 import { PaginationDto } from '~/shared/paginator/infra/http/paginator.dto'
 
 export class ProjectSnapshotCreateDto {
@@ -23,14 +24,14 @@ export class ProjectSnapshotCreateDto {
 
   @ApiPropertyOptional({
     example: 'Manual snapshot before export',
-    description: 'Optional human-readable reason for snapshot creation',
+    description: 'Optional human-readable comment for snapshot creation',
     type: String,
     maxLength: 255,
   })
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  reason?: string
+  comment?: string
 }
 
 export class ProjectSnapshotItemRes {
@@ -65,6 +66,14 @@ export class ProjectSnapshotItemRes {
     type: String,
   })
   hash: string
+
+  @ApiPropertyOptional({
+    example: 'Manual snapshot before export',
+    description: 'Optional snapshot comment',
+    type: String,
+    nullable: true,
+  })
+  comment?: string | null
 
   @ApiProperty({
     example: '2026-04-20T12:45:00.000Z',
@@ -142,12 +151,12 @@ export class SnapshotPayloadRuleItemRes {
 
 export class SnapshotPayloadDto {
   @ApiProperty({
-    type: SnapshotPayloadRuleItemRes,
+    type: ResolvedRuleItemResponse,
     isArray: true,
     description:
       'Flat ordered list of resolved rules stored in snapshot payload',
   })
-  rules: SnapshotPayloadRuleItemRes[]
+  rules: ResolvedRuleItemResponse[]
 }
 
 export class ProjectSnapshotPayloadRes {

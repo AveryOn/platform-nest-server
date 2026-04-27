@@ -9,6 +9,7 @@ import {
   createdAt,
   id,
   referenceOnUUID,
+  varchar255,
   varchar64,
 } from '~/infra/drizzle/application/drizzle.helpers'
 import { projectsTable } from '~/infra/drizzle/schemas'
@@ -21,6 +22,7 @@ export const projectRuleSnapshotsTable = pgTable(
       'project_id',
       () => projectsTable,
     ).notNull(),
+    comment: varchar255('comment'),
     version: integer('version').notNull(),
     payload: jsonb('payload').notNull(),
     hash: varchar64('hash').notNull(),
