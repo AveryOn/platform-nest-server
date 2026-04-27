@@ -3,6 +3,10 @@ import { AppError } from '~/core/error/app-error'
 import { ErrorEnum } from '~/core/error/app-error.dict'
 import { LOGGER_PORT } from '~/core/logger/logger.port'
 import type { AppLoggerService } from '~/core/logger/logger.service'
+import {
+  TX_PORT,
+  type TransactionPort,
+} from '~/infra/transaction/ports/transaction.port'
 import type {
   ProjectSnapshotReqCmd,
   ProjectSnapshotRes,
@@ -29,6 +33,9 @@ export class SnapshotService implements SnapshotServicePort {
 
     @Inject(LOGGER_PORT)
     private readonly logger: AppLoggerService,
+
+    @Inject(TX_PORT)
+    private readonly transaction: TransactionPort,
   ) {}
 
   async create(
@@ -40,28 +47,39 @@ export class SnapshotService implements SnapshotServicePort {
 
     const hash = buildSnapshotHash(payload)
 
-    const latestSnapshot = await this.snapshotRepo.getLatest({
-      projectId: cmd.projectId,
-    })
+    return await this.transaction.run(async (tx) => {
+      const latestSnapshot = await this.snapshotRepo.getLatest(
+        {
+          projectId: cmd.projectId,
+        },
+        tx,
+      )
 
-    if (
-      cmd.skipIfUnchanged === true &&
-      latestSnapshot !== null &&
-      latestSnapshot.hash === hash
-    ) {
-      return latestSnapshot
-    }
+      if (
+        cmd.skipIfUnchanged === true &&
+        latestSnapshot !== null &&
+        latestSnapshot.hash === hash
+      ) {
+        return latestSnapshot
+      }
 
-    const version = await this.snapshotRepo.getNextVersion({
-      projectId: cmd.projectId,
-    })
+      const version = await this.snapshotRepo.getNextVersion(
+        {
+          projectId: cmd.projectId,
+        },
+        tx,
+      )
 
-    return await this.snapshotRepo.create({
-      projectId: cmd.projectId,
-      version,
-      payload,
-      hash,
-      comment: cmd.comment,
+      return await this.snapshotRepo.create(
+        {
+          projectId: cmd.projectId,
+          version,
+          payload,
+          hash,
+          comment: cmd.comment,
+        },
+        tx,
+      )
     })
   }
 
