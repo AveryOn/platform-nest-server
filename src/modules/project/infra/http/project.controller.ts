@@ -9,7 +9,6 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -22,14 +21,17 @@ import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import {
   ProjectCreateDto,
   ProjectGetListQueryDto,
-  ProjectItemResponseDto,
-  ProjectListResponseDto,
+  ProjectItemResponse,
+  ProjectListItemResponse,
   ProjectPatchDto,
-  ProjectPatchResponseDto,
-  ProjectRemoveResponseDto,
+  ProjectPatchResponse,
+  ProjectRemoveResponse,
 } from '~/modules/project/infra/http/project.dto'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
+import { ValidQuery } from '~/shared/decorators/query'
+import type { PaginatedResponse } from '~/shared/paginator/infra/http/paginator.dto'
+import { ApiPaginator } from '~/shared/paginator/infra/http/paginator.swagger.helper'
 
 @ApiTags(ApiSwaggerTag.Project)
 @Controller({
@@ -45,10 +47,15 @@ export class ProjectController {
     operationId: 'get_projects_list',
     tags: [ApiSwaggerTag.Project],
   })
-  @ApiDataResponse({
-    type: ProjectListResponseDto,
-    status: HttpStatus.OK,
-    description: 'Projects list successfully returned',
+  @ApiPaginator({
+    query: {
+      type: ProjectGetListQueryDto,
+    },
+    response: {
+      status: HttpStatus.OK,
+      description: 'Projects list successfully returned',
+      type: ProjectListItemResponse,
+    },
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -67,11 +74,11 @@ export class ProjectController {
     description: 'Validation failed',
   })
   getProjects(
-    @Query()
-    query: ProjectGetListQueryDto,
-  ): ProjectListResponseDto {
+    @ValidQuery(ProjectGetListQueryDto)
+    _query: ProjectGetListQueryDto,
+  ): PaginatedResponse<ProjectListItemResponse> {
     return {
-      items: [
+      data: [
         {
           id: '550e8400-e29b-41d4-a716-446655440000',
           name: 'Main Design System',
@@ -84,9 +91,12 @@ export class ProjectController {
           updatedAt: '2026-04-20T12:30:00.000Z',
         },
       ],
-      total: 1,
-      page: query.page ?? 1,
-      limit: query.limit ?? 20,
+      paginator: {
+        total: 1,
+        limit: 1,
+        page: 1,
+        totalPages: 1,
+      },
     }
   }
 
@@ -106,7 +116,7 @@ export class ProjectController {
     description: 'Project UUID',
   })
   @ApiDataResponse({
-    type: ProjectItemResponseDto,
+    type: ProjectItemResponse,
     status: HttpStatus.OK,
     description: 'Project successfully returned',
   })
@@ -133,7 +143,7 @@ export class ProjectController {
   getProjectById(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
-  ): ProjectItemResponseDto {
+  ): ProjectItemResponse {
     return {
       id: projectId,
       name: 'Main Design System',
@@ -161,7 +171,7 @@ export class ProjectController {
     description: 'Payload for creating a project',
   })
   @ApiDataResponse({
-    type: ProjectItemResponseDto,
+    type: ProjectItemResponse,
     status: HttpStatus.CREATED,
     description: 'Project successfully created',
   })
@@ -194,7 +204,7 @@ export class ProjectController {
   createProject(
     @Body()
     body: ProjectCreateDto,
-  ): ProjectItemResponseDto {
+  ): ProjectItemResponse {
     return {
       id: crypto.randomUUID(),
       name: body.name,
@@ -229,7 +239,7 @@ export class ProjectController {
     description: 'Payload for updating project fields',
   })
   @ApiDataResponse({
-    type: ProjectPatchResponseDto,
+    type: ProjectPatchResponse,
     status: HttpStatus.OK,
     description: 'Project successfully updated',
   })
@@ -263,7 +273,7 @@ export class ProjectController {
     projectId: string,
     @Body()
     _body: ProjectPatchDto,
-  ): ProjectPatchResponseDto {
+  ): ProjectPatchResponse {
     return {
       status: 'success',
       projectId,
@@ -287,7 +297,7 @@ export class ProjectController {
     description: 'Project UUID',
   })
   @ApiDataResponse({
-    type: ProjectRemoveResponseDto,
+    type: ProjectRemoveResponse,
     status: HttpStatus.OK,
     description: 'Project successfully archived',
   })
@@ -310,7 +320,7 @@ export class ProjectController {
   deleteProject(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
-  ): ProjectRemoveResponseDto {
+  ): ProjectRemoveResponse {
     return {
       status: 'success',
       projectId,

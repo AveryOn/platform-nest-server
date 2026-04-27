@@ -3,21 +3,19 @@ import {
   ApiPropertyOptional,
   PartialType,
 } from '@nestjs/swagger'
-import { Transform, Type } from 'class-transformer'
+import { Transform } from 'class-transformer'
 import {
   IsBoolean,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
-  Max,
-  Min,
 } from 'class-validator'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
+import { PaginationDto } from '~/shared/paginator/infra/http/paginator.dto'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
 
-export class ProjectGetListQueryDto {
+export class ProjectGetListQueryDto extends PaginationDto {
   @ApiPropertyOptional({
     example: 'design',
     description: 'Free-text search by project name',
@@ -26,34 +24,6 @@ export class ProjectGetListQueryDto {
   @IsOptional()
   @IsString()
   search?: string
-
-  @ApiPropertyOptional({
-    example: 1,
-    description: 'Page number',
-    minimum: 1,
-    default: 1,
-    type: Number,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  page?: number
-
-  @ApiPropertyOptional({
-    example: 20,
-    description: 'Items per page',
-    minimum: 1,
-    maximum: 100,
-    default: 20,
-    type: Number,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(100)
-  limit?: number
 
   @ApiPropertyOptional({
     example: false,
@@ -74,6 +44,7 @@ export class ProjectGetListQueryDto {
   })
   @IsOptional()
   @IsUUID()
+  @IsString()
   brandId?: string
 }
 
@@ -105,6 +76,7 @@ export class ProjectCreateDto {
     type: String,
   })
   @IsOptional()
+  @IsString()
   @IsUUID()
   brandId?: string | null
 
@@ -116,6 +88,7 @@ export class ProjectCreateDto {
     type: String,
   })
   @IsOptional()
+  @IsString()
   @IsUUID()
   templateSnapshotId?: string | null
 }
@@ -148,6 +121,7 @@ export class ProjectPatchBaseDto {
     type: String,
   })
   @IsOptional()
+  @IsString()
   @IsUUID()
   brandId?: string | null
 
@@ -159,6 +133,7 @@ export class ProjectPatchBaseDto {
     type: String,
   })
   @IsOptional()
+  @IsString()
   @IsUUID()
   templateSnapshotId?: string | null
 }
@@ -170,13 +145,14 @@ export class ProjectPatchDto extends PartialType(ProjectPatchBaseDto) {
   dummy?: any
 }
 
-export class ProjectListItemResponseDto {
+export class ProjectListItemResponse {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Project UUID',
     format: 'uuid',
     type: String,
   })
+  @IsString()
   id: string
 
   @ApiProperty({
@@ -192,6 +168,7 @@ export class ProjectListItemResponseDto {
     nullable: true,
     type: String,
   })
+  @IsString()
   description: string | null
 
   @ApiProperty({
@@ -201,6 +178,7 @@ export class ProjectListItemResponseDto {
     nullable: true,
     type: String,
   })
+  @IsString()
   brandId: string | null
 
   @ApiProperty({
@@ -208,6 +186,7 @@ export class ProjectListItemResponseDto {
     description: 'Organization identifier',
     type: String,
   })
+  @IsString()
   organizationId: string
 
   @ApiProperty({
@@ -217,6 +196,7 @@ export class ProjectListItemResponseDto {
     nullable: true,
     type: String,
   })
+  @IsString()
   templateSnapshotId: string | null
 
   @ApiProperty({
@@ -231,6 +211,7 @@ export class ProjectListItemResponseDto {
     description: 'Project creation timestamp in ISO-8601 format',
     type: String,
   })
+  @IsString()
   createdAt: string
 
   @ApiProperty({
@@ -238,10 +219,11 @@ export class ProjectListItemResponseDto {
     description: 'Project update timestamp in ISO-8601 format',
     type: String,
   })
+  @IsString()
   updatedAt: string
 }
 
-export class ProjectItemResponseDto {
+export class ProjectItemResponse {
   @ApiProperty({
     example: SWAGGER_EXAMPLES.uuid,
     type: String,
@@ -300,37 +282,7 @@ export class ProjectItemResponseDto {
   updatedAt: string
 }
 
-export class ProjectListResponseDto {
-  @ApiProperty({
-    type: () => ProjectListItemResponseDto,
-    isArray: true,
-    description: 'Paginated list of projects',
-  })
-  items: ProjectListItemResponseDto[]
-
-  @ApiProperty({
-    example: 1,
-    description: 'Total number of matched projects',
-    type: Number,
-  })
-  total: number
-
-  @ApiProperty({
-    example: 1,
-    description: 'Current page number',
-    type: Number,
-  })
-  page: number
-
-  @ApiProperty({
-    example: 20,
-    description: 'Requested page size',
-    type: Number,
-  })
-  limit: number
-}
-
-export class ProjectPatchResponseDto {
+export class ProjectPatchResponse {
   @ApiProperty({
     enum: ['success', 'failed'],
     default: 'success',
@@ -349,7 +301,7 @@ export class ProjectPatchResponseDto {
   projectId: string
 }
 
-export class ProjectRemoveResponseDto {
+export class ProjectRemoveResponse {
   @ApiProperty({
     example: 'success',
     enum: ['success', 'failed'],
