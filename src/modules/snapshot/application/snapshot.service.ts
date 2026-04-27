@@ -1,106 +1,146 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { AppError } from '~/core/error/app-error'
+import { ErrorEnum } from '~/core/error/app-error.dict'
+import { LOGGER_PORT } from '~/core/logger/logger.port'
+import type { AppLoggerService } from '~/core/logger/logger.service'
 import type {
   ProjectSnapshotReqCmd,
   ProjectSnapshotRes,
 } from '~/modules/snapshot/application/snapshot.type'
 import {
+  SNAPSHOT_PAYLOAD_BUILDER_PORT,
+  type SnapshotPayloadBuilderPort,
+} from '~/modules/snapshot/ports/snapshot-payload-builder.port'
+import {
   SNAPSHOT_REPO_PORT,
   type SnapshotRepoPort,
 } from '~/modules/snapshot/ports/snapshot.repo.port'
 import type { SnapshotServicePort } from '~/modules/snapshot/ports/snapshot.service.port'
+import { buildSnapshotHash } from '~/shared/crypto/hash.crypto'
 
 @Injectable()
 export class SnapshotService implements SnapshotServicePort {
   constructor(
     @Inject(SNAPSHOT_REPO_PORT)
     private readonly snapshotRepo: SnapshotRepoPort,
+
+    @Inject(SNAPSHOT_PAYLOAD_BUILDER_PORT)
+    private readonly payloadBuilder: SnapshotPayloadBuilderPort,
+
+    @Inject(LOGGER_PORT)
+    private readonly logger: AppLoggerService,
   ) {}
 
   async create(
     cmd: ProjectSnapshotReqCmd.Create,
   ): Promise<ProjectSnapshotRes.Create> {
-    return await Promise.resolve({
-      id: crypto.randomUUID(),
+    const payload = await this.payloadBuilder.build({
       projectId: cmd.projectId,
-      version: 2,
-      hash: '4ae7c3b6ac0beff671efa0e5b9f9b2f7ff38e44b6d7af1b70987f2c8472f5520',
-      createdAt: new Date().toISOString(),
+    })
+
+    const hash = buildSnapshotHash(payload)
+
+    const latestSnapshot = await this.snapshotRepo.getLatest({
+      projectId: cmd.projectId,
+    })
+
+    if (
+      cmd.skipIfUnchanged === true &&
+      latestSnapshot !== null &&
+      latestSnapshot.hash === hash
+    ) {
+      return latestSnapshot
+    }
+
+    const version = await this.snapshotRepo.getNextVersion({
+      projectId: cmd.projectId,
+    })
+
+    return await this.snapshotRepo.create({
+      projectId: cmd.projectId,
+      version,
+      payload,
+      hash,
+      comment: cmd.comment,
     })
   }
 
   async getList(
     cmd: ProjectSnapshotReqCmd.GetList,
   ): Promise<ProjectSnapshotRes.GetList> {
-    return await Promise.resolve({
-      data: [
-        {
-          id: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
-          projectId: cmd.projectId,
-          version: 1,
-          hash: 'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
-          createdAt: '2026-04-20T12:45:00.000Z',
-        },
-      ],
-      paginator: {
-        limit: 1,
-        page: 1,
-        total: 1,
-        totalPages: 1,
-      },
-    })
+    return await this.snapshotRepo.getList(cmd)
   }
+
   async getById(
     cmd: ProjectSnapshotReqCmd.GetById,
   ): Promise<ProjectSnapshotRes.GetById> {
-    return await Promise.resolve({
-      id: cmd.snapshotId,
-      projectId: cmd.projectId,
-      version: 1,
-      hash: 'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
-      createdAt: '2026-04-20T12:45:00.000Z',
-    })
+    const snapshot = await this.snapshotRepo.getById(cmd)
+
+    if (snapshot === null) {
+      throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger, {}).log(
+        'Snapshot not found',
+      )
+    }
+    return snapshot
   }
+
   async getByVersion(
     cmd: ProjectSnapshotReqCmd.GetByVersion,
   ): Promise<ProjectSnapshotRes.GetByVersion> {
-    return await Promise.resolve({
-      id: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
-      projectId: cmd.projectId,
-      version: cmd.version,
-      hash: 'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
-      createdAt: '2026-04-20T12:45:00.000Z',
-    })
+    const snapshot = await this.snapshotRepo.getByVersion(cmd)
+
+    if (snapshot === null) {
+      throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger, {}).log(
+        'Snapshot not found',
+      )
+    }
+    return snapshot
   }
+
   async getPayload(
     cmd: ProjectSnapshotReqCmd.GetPayload,
   ): Promise<ProjectSnapshotRes.GetPayload> {
-    return await Promise.resolve({
-      snapshotId: cmd.snapshotId,
-      projectId: cmd.projectId,
-      version: 1,
-      payload: {
-        rules: [
-          {
-            id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-            name: 'When to use',
-            body: 'Use button for primary actions.',
-            path: ['Components', 'Button', 'When to use'],
-            orderKey: '0001.0001.0001',
-          },
-        ],
-      },
-    })
+    const snapshotPayload = await this.snapshotRepo.getPayload(cmd)
+
+    if (snapshotPayload === null) {
+      throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger, {}).log(
+        'Snapshot not found',
+      )
+    }
+    return snapshotPayload
   }
+
   async getStatus(
     cmd: ProjectSnapshotReqCmd.GetStatus,
   ): Promise<ProjectSnapshotRes.GetStatus> {
-    return await Promise.resolve({
+    const latestSnapshot = await this.snapshotRepo.getLatest({
+      projectId: cmd.projectId,
+    })
+
+    if (latestSnapshot === null) {
+      return {
+        projectId: cmd.projectId,
+        hasSnapshots: false,
+        isOutdated: true,
+        latestSnapshotId: null,
+        latestVersion: null,
+        lastCreatedAt: null,
+      }
+    }
+
+    const payload = await this.payloadBuilder.build({
+      projectId: cmd.projectId,
+    })
+    const currentHash = buildSnapshotHash(payload)
+    const isOutdated = latestSnapshot.hash !== currentHash
+
+    return {
       projectId: cmd.projectId,
       hasSnapshots: true,
-      isOutdated: false,
-      latestSnapshotId: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
-      latestVersion: 1,
-      lastCreatedAt: '2026-04-20T12:45:00.000Z',
-    })
+      isOutdated: isOutdated,
+      latestSnapshotId: latestSnapshot.id,
+      latestVersion: latestSnapshot.version,
+      lastCreatedAt: latestSnapshot.createdAt,
+    }
   }
 }

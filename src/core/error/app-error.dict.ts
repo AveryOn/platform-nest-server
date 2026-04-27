@@ -8,6 +8,7 @@ export enum ErrorEnum {
   GROUP_NOT_FOUND = 'GROUP_NOT_FOUND',
   UNAUTHORIZED = 'UNAUTHORIZED',
   USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL = 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL',
+  SOURCE_NOT_FOUND = 'SOURCE_NOT_FOUND',
 }
 
 interface ErrorChunk {
@@ -51,6 +52,11 @@ export const ERRORS: Record<keyof typeof ErrorEnum, ErrorChunk> = {
     code: 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL',
     httpStatus: 409,
     message: 'User already exists. Use another email',
+  },
+  SOURCE_NOT_FOUND: {
+    code: 'SOURCE_NOT_FOUND',
+    httpStatus: 404,
+    message: 'Source is not found',
   },
 }
 
