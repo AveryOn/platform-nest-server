@@ -1,11 +1,11 @@
 import { index, pgEnum, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
 
 import {
-  createdAt,
-  id,
-  referenceOnUUID,
-  updatedAt,
-} from '~/infra/drizzle/drizzle.helpers'
+    createdAt,
+    id,
+    referenceOnUUID,
+    updatedAt,
+} from '~/infra/drizzle/application/drizzle.helpers'
 import { projectsTable, ruleGroupsTable } from '~/infra/drizzle/schemas'
 
 export const projectRuleGroupConfigStatus = pgEnum(

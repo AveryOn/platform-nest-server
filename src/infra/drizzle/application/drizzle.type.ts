@@ -4,7 +4,7 @@ import type {
   NodePgQueryResultHKT,
 } from 'drizzle-orm/node-postgres'
 import type { PgTransaction } from 'drizzle-orm/pg-core'
-import { type db } from '~/infra/drizzle/client'
+import { type db } from '~/infra/drizzle/infra/client'
 import type * as schema from '~/infra/drizzle/schemas'
 
 export type Tx = PgTransaction<

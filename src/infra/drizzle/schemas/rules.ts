@@ -1,20 +1,20 @@
 import {
-  integer,
-  jsonb,
-  pgTable,
-  text,
-  uniqueIndex,
+    integer,
+    jsonb,
+    pgTable,
+    text,
+    uniqueIndex,
 } from 'drizzle-orm/pg-core'
 
 import {
-  createdAt,
-  deletedAt,
-  description,
-  id,
-  name,
-  referenceOnUUID,
-  updatedAt,
-} from '~/infra/drizzle/drizzle.helpers'
+    createdAt,
+    deletedAt,
+    description,
+    id,
+    name,
+    referenceOnUUID,
+    updatedAt,
+} from '~/infra/drizzle/application/drizzle.helpers'
 import { projectsTable, ruleGroupsTable } from '~/infra/drizzle/schemas'
 
 export const rulesTable = pgTable(

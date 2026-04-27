@@ -1,19 +1,19 @@
 import { index, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
 
 import {
-  createdAt,
-  deletedAt,
-  description,
-  id,
-  name,
-  referenceOnText,
-  referenceOnUUID,
-  updatedAt,
-} from '~/infra/drizzle/drizzle.helpers'
+    createdAt,
+    deletedAt,
+    description,
+    id,
+    name,
+    referenceOnText,
+    referenceOnUUID,
+    updatedAt,
+} from '~/infra/drizzle/application/drizzle.helpers'
 import {
-  brandsTable,
-  organizations,
-  templateSnapshotsTable,
+    brandsTable,
+    organizations,
+    templateSnapshotsTable,
 } from '~/infra/drizzle/schemas'
 import { _ } from '~/shared/const/app.const'
 

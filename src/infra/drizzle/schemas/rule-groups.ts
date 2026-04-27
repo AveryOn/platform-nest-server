@@ -1,23 +1,23 @@
 import {
-  foreignKey,
-  index,
-  integer,
-  jsonb,
-  pgEnum,
-  pgTable,
-  uniqueIndex,
-  uuid,
+    foreignKey,
+    index,
+    integer,
+    jsonb,
+    pgEnum,
+    pgTable,
+    uniqueIndex,
+    uuid,
 } from 'drizzle-orm/pg-core'
 
 import {
-  createdAt,
-  deletedAt,
-  description,
-  id,
-  name,
-  referenceOnUUID,
-  updatedAt,
-} from '~/infra/drizzle/drizzle.helpers'
+    createdAt,
+    deletedAt,
+    description,
+    id,
+    name,
+    referenceOnUUID,
+    updatedAt,
+} from '~/infra/drizzle/application/drizzle.helpers'
 import { projectsTable } from '~/infra/drizzle/schemas'
 
 export const ruleGroupScopeEnum = pgEnum('rule_group_scope', [

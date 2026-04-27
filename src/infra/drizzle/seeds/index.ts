@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { randomUUID } from 'node:crypto'
 
-import { db, pool } from '~/infra/drizzle/client'
+import { db, pool } from '~/infra/drizzle/infra/client'
 import { templatesTable } from '~/infra/drizzle/schemas'
 // import { shadcnTemplateDefinition } from './shadcn-template'
 

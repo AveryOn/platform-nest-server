@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import type { Tx } from '~/infra/drizzle/drizzle.type'
+import type { Tx } from '~/infra/drizzle/application/drizzle.type'
+import {
+  DRIZZLE_SERVICE_PORT,
+  type DrizzleServicePort,
+} from '~/infra/drizzle/ports/drizzle.service.port'
 import type { TransactionPort } from '~/infra/transaction/ports/transaction.port'
 
 /**
@@ -19,8 +22,8 @@ import type { TransactionPort } from '~/infra/transaction/ports/transaction.port
 @Injectable()
 export class DrizzleTxAdapter implements TransactionPort<Tx> {
   constructor(
-    @Inject(DrizzleService)
-    private readonly drizzle: DrizzleService,
+    @Inject(DRIZZLE_SERVICE_PORT)
+    private readonly drizzle: DrizzleServicePort,
   ) {}
 
   run<TResult>(handler: (tx: Tx) => Promise<TResult>): Promise<TResult> {

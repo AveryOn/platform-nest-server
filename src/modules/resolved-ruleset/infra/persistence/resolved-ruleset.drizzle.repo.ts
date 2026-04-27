@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { eq, inArray } from 'drizzle-orm'
-import type { Tx } from '~/infra/drizzle/drizzle.type'
+import type { Tx } from '~/infra/drizzle/application/drizzle.type'
 import {
   projectRuleConfigsTable,
   projectRuleGroupConfigsTable,
@@ -18,7 +18,8 @@ import { type ResolvedRulesetRepoPort } from '~/modules/resolved-ruleset/ports/r
 @Injectable()
 export class ResolvedRulesetDrizzleRepo implements ResolvedRulesetRepoPort {
   constructor(
-    @Inject(TX_PORT) private readonly transaction: TransactionPort<Tx>,
+    @Inject(TX_PORT)
+    private readonly transaction: TransactionPort<Tx>,
   ) {}
 
   async getProjectResolvedRulesetData(

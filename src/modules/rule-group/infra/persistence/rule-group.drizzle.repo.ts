@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import {
+  DRIZZLE_SERVICE_PORT,
+  type DrizzleServicePort,
+} from '~/infra/drizzle/ports/drizzle.service.port'
 import { RuleGroupType } from '~/infra/drizzle/schemas'
 
 import {
@@ -9,6 +13,11 @@ import { RuleGroupRepoPort } from '~/modules/rule-group/ports/rule-group.repo.po
 
 @Injectable()
 export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
+  constructor(
+    @Inject(DRIZZLE_SERVICE_PORT)
+    private readonly drizzle: DrizzleServicePort,
+  ) {}
+
   async create(
     cmd: RuleGroupServiceCmd.Create,
   ): Promise<RuleGroupEntity> {

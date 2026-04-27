@@ -1,18 +1,14 @@
-import {
-  Inject,
-  Injectable,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 import { env } from '~/core/env'
 import { LOGGER_PORT } from '~/core/logger/logger.port'
 import { AppLoggerService } from '~/core/logger/logger.service'
 import * as schema from '~/infra/drizzle/schemas'
+import type { DrizzleServicePort } from '../ports/drizzle.service.port'
 
 @Injectable()
-export class DrizzleService implements OnModuleInit, OnModuleDestroy {
+export class DrizzleService implements DrizzleServicePort {
   private pool: Pool
   db: NodePgDatabase<typeof schema>
 

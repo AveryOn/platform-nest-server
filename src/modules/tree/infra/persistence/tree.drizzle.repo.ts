@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { and, eq, isNull } from 'drizzle-orm'
-import { defineDb } from '~/infra/drizzle/drizzle.helpers'
-import { DrizzleService } from '~/infra/drizzle/drizzle.service'
-import type { Tx } from '~/infra/drizzle/drizzle.type'
+import { defineDb } from '~/infra/drizzle/application/drizzle.helpers'
+import type { Tx } from '~/infra/drizzle/application/drizzle.type'
+import {
+  DRIZZLE_SERVICE_PORT,
+  type DrizzleServicePort,
+} from '~/infra/drizzle/ports/drizzle.service.port'
 import {
   projectRuleConfigsTable,
   projectRuleGroupConfigsTable,
@@ -20,8 +23,8 @@ import type { TreeRepoPort } from '~/modules/tree/ports/tree.repo.port'
 @Injectable()
 export class TreeDrizzleRepo implements TreeRepoPort {
   constructor(
-    @Inject(DrizzleService)
-    private readonly drizzle: DrizzleService,
+    @Inject(DRIZZLE_SERVICE_PORT)
+    private readonly drizzle: DrizzleServicePort,
   ) {}
 
   /** Get project nodes */
