@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
@@ -24,6 +25,10 @@ import {
   ProjectSnapshotStatusRes,
   ProjectSnapshotsListQuery,
 } from '~/modules/snapshot/infra/http/snapshot.dto'
+import {
+  SNAPSHOT_SERVICE_PORT,
+  type SnapshotServicePort,
+} from '~/modules/snapshot/ports/snapshot.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 import { ValidQuery } from '~/shared/decorators/query'
 import type { PaginatedResponse } from '~/shared/paginator/infra/http/paginator.dto'
@@ -35,6 +40,11 @@ import { ApiPaginator } from '~/shared/paginator/infra/http/paginator.swagger.he
   version: '1',
 })
 export class SnapshotController {
+  constructor(
+    @Inject(SNAPSHOT_SERVICE_PORT)
+    private readonly snapshotService: SnapshotServicePort,
+  ) {}
+
   // -----------------------------------------------------
   // [GET] | GET SNAPHOTS LIST
   // #region GET------------------------------------------
@@ -80,29 +90,16 @@ export class SnapshotController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project not found',
   })
-  getProjectSnapshots(
+  async getProjectSnapshots(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
     @ValidQuery(ProjectSnapshotsListQuery)
-    _query: ProjectSnapshotsListQuery,
-  ): PaginatedResponse<ProjectSnapshotItemRes> {
-    return {
-      data: [
-        {
-          id: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
-          projectId,
-          version: 1,
-          hash: 'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
-          createdAt: '2026-04-20T12:45:00.000Z',
-        },
-      ],
-      paginator: {
-        limit: 1,
-        page: 1,
-        total: 1,
-        totalPages: 1,
-      },
-    }
+    query: ProjectSnapshotsListQuery,
+  ): Promise<PaginatedResponse<ProjectSnapshotItemRes>> {
+    return await this.snapshotService.getList({
+      projectId,
+      ...query,
+    })
   }
 
   // ------------------------------------------
@@ -152,19 +149,16 @@ export class SnapshotController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project or snapshot not found',
   })
-  getProjectSnapshotById(
+  async getProjectSnapshotById(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
     @Param('snapshotId', ParseUUIDPipe)
     snapshotId: string,
-  ): ProjectSnapshotItemRes {
-    return {
-      id: snapshotId,
+  ): Promise<ProjectSnapshotItemRes> {
+    return await this.snapshotService.getById({
       projectId,
-      version: 1,
-      hash: 'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
-      createdAt: '2026-04-20T12:45:00.000Z',
-    }
+      snapshotId,
+    })
   }
 
   // ------------------------------------------
@@ -214,19 +208,16 @@ export class SnapshotController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project or snapshot version not found',
   })
-  getProjectSnapshotByVersion(
+  async getProjectSnapshotByVersion(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
     @Param('version', ParseIntPipe)
     version: number,
-  ): ProjectSnapshotItemRes {
-    return {
-      id: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
+  ): Promise<ProjectSnapshotItemRes> {
+    return await this.snapshotService.getByVersion({
       projectId,
       version,
-      hash: 'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
-      createdAt: '2026-04-20T12:45:00.000Z',
-    }
+    })
   }
 
   // ------------------------------------------
@@ -277,28 +268,16 @@ export class SnapshotController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project or snapshot not found',
   })
-  getProjectSnapshotPayload(
+  async getProjectSnapshotPayload(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
     @Param('snapshotId', ParseUUIDPipe)
     snapshotId: string,
-  ): ProjectSnapshotPayloadRes {
-    return {
-      snapshotId,
+  ): Promise<ProjectSnapshotPayloadRes> {
+    return await this.snapshotService.getPayload({
       projectId,
-      version: 1,
-      payload: {
-        rules: [
-          {
-            id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-            name: 'When to use',
-            body: 'Use button for primary actions.',
-            path: ['Components', 'Button', 'When to use'],
-            orderKey: '0001.0001.0001',
-          },
-        ],
-      },
-    }
+      snapshotId,
+    })
   }
 
   // ------------------------------------------
@@ -341,18 +320,13 @@ export class SnapshotController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project not found',
   })
-  getProjectSnapshotStatus(
+  async getProjectSnapshotStatus(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
-  ): ProjectSnapshotStatusRes {
-    return {
+  ): Promise<ProjectSnapshotStatusRes> {
+    return await this.snapshotService.getStatus({
       projectId,
-      hasSnapshots: true,
-      isOutdated: false,
-      latestSnapshotId: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
-      latestVersion: 1,
-      lastCreatedAt: '2026-04-20T12:45:00.000Z',
-    }
+    })
   }
 
   // #endregion -------------------------------------------
@@ -410,18 +384,16 @@ export class SnapshotController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  createProjectSnapshot(
+  async createProjectSnapshot(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
     @Body()
-    _body: ProjectSnapshotCreateDto,
-  ): ProjectSnapshotItemRes {
-    return {
-      id: crypto.randomUUID(),
+    body: ProjectSnapshotCreateDto,
+  ): Promise<ProjectSnapshotItemRes> {
+    return await this.snapshotService.create({
       projectId,
-      version: 2,
-      hash: '4ae7c3b6ac0beff671efa0e5b9f9b2f7ff38e44b6d7af1b70987f2c8472f5520',
-      createdAt: new Date().toISOString(),
-    }
+      reason: body.reason,
+      skipIfUnchanged: body.skipIfUnchanged,
+    })
   }
 }

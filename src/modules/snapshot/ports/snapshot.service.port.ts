@@ -25,4 +25,8 @@ export abstract class SnapshotServicePort {
   abstract getStatus(
     cmd: ProjectSnapshotReqCmd.GetStatus,
   ): Promise<ProjectSnapshotRes.GetStatus>
+
+  abstract create(
+    cmd: ProjectSnapshotReqCmd.Create,
+  ): Promise<ProjectSnapshotRes.Create>
 }

@@ -1,3 +1,5 @@
+import type { PaginatedResponse } from '~/shared/paginator/infra/http/paginator.dto'
+
 export interface ProjectSnapshotEntity {
   id: string
   projectId: string
@@ -33,7 +35,7 @@ export namespace ProjectSnapshotReqCmd {
 }
 
 export namespace ProjectSnapshotRes {
-  export type GetList = ProjectSnapshotEntity[]
+  export type GetList = PaginatedResponse<ProjectSnapshotEntity>
   export type GetById = ProjectSnapshotEntity
   export type GetByVersion = ProjectSnapshotEntity
   export interface GetPayload {
