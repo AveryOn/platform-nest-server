@@ -1,11 +1,11 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
 import {
-    createdAt,
-    description,
-    id,
-    name,
-    updatedAt,
-    varchar255,
+  createdAt,
+  description,
+  id,
+  name,
+  updatedAt,
+  varchar255,
 } from '~/infra/drizzle/application/drizzle.helpers'
 
 export const templatesTable = pgTable(

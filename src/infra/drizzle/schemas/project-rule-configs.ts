@@ -1,10 +1,10 @@
 import { index, pgEnum, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
 
 import {
-    createdAt,
-    id,
-    referenceOnUUID,
-    updatedAt,
+  createdAt,
+  id,
+  referenceOnUUID,
+  updatedAt,
 } from '~/infra/drizzle/application/drizzle.helpers'
 import { projectsTable, rulesTable } from '~/infra/drizzle/schemas'
 

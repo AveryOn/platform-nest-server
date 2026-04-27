@@ -1,10 +1,10 @@
 import { index, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
 import {
-    createdAt,
-    id,
-    name,
-    referenceOnText,
-    updatedAt,
+  createdAt,
+  id,
+  name,
+  referenceOnText,
+  updatedAt,
 } from '~/infra/drizzle/application/drizzle.helpers'
 import { organizations } from '~/infra/drizzle/schemas'
 import { _ } from '~/shared/const/app.const'

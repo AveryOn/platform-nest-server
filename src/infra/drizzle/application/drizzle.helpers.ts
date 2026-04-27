@@ -7,7 +7,10 @@ import {
   type PgTableWithColumns,
   type UpdateDeleteAction,
 } from 'drizzle-orm/pg-core'
-import type { Database, Tx } from '~/infra/drizzle/application/drizzle.type'
+import type {
+  Database,
+  Tx,
+} from '~/infra/drizzle/application/drizzle.type'
 
 // --------------------------------------------------------
 // |    CREATION A SCHEMA
