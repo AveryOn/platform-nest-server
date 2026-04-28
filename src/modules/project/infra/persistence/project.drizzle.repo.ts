@@ -105,6 +105,7 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
         brandId: cmd.brandId ?? null,
         organizationId: cmd.organizationId,
         templateSnapshotId: cmd.templateSnapshotId ?? null,
+        updatedAt: null,
       })
       .returning()
 
