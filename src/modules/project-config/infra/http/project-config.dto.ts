@@ -1,90 +1,49 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  PartialType,
-} from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsBoolean, IsOptional } from 'class-validator'
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator'
+import { ProjectConfigStatus } from '~/modules/project-config/application/project-config.type'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
 
-export enum ProjectConfigStatus {
-  success = 'success',
-  failed = 'failed',
-}
-
-export class ProjectRuleGroupConfigPatchBaseDto {
-  @ApiPropertyOptional({
-    example: false,
-    description: 'Whether the rule group is hidden in project context',
-    type: Boolean,
-    nullable: true,
-  })
-  @IsOptional()
-  @Type(() => Boolean)
-  @IsBoolean()
-  isHidden?: boolean
-
-  @ApiPropertyOptional({
+export class ProjectRuleGroupConfigPatchDto {
+  @ApiProperty({
     example: true,
     description: 'Whether the rule group is active in project context',
     type: Boolean,
-    nullable: true,
+    nullable: false,
   })
-  @IsOptional()
+  @IsNotEmptyBody()
   @Type(() => Boolean)
   @IsBoolean()
-  isActive?: boolean
+  isActive: boolean
 }
 
-export class ProjectRuleGroupConfigPatchDto extends PartialType(
-  ProjectRuleGroupConfigPatchBaseDto,
-) {
-  @IsNotEmptyBody({
-    message: 'At least one field must be provided',
-  })
-  dummy?: any
-}
-
-export class ProjectRuleConfigPatchBaseDto {
-  @ApiPropertyOptional({
-    example: false,
-    description: 'Whether the rule is hidden in project context',
-    type: Boolean,
-    nullable: true,
-  })
-  @IsOptional()
-  @Type(() => Boolean)
-  @IsBoolean()
-  isHidden?: boolean
-
-  @ApiPropertyOptional({
+export class ProjectRuleConfigPatchDto {
+  @ApiProperty({
     example: true,
-    description: 'Whether the rule is active in project context',
+    description: 'Whether the rule group is active in project context',
     type: Boolean,
-    nullable: true,
+    nullable: false,
   })
-  @IsOptional()
+  @IsNotEmptyBody()
   @Type(() => Boolean)
   @IsBoolean()
-  isActive?: boolean
+  isActive: boolean
 }
 
-export class ProjectRuleConfigPatchDto extends PartialType(
-  ProjectRuleConfigPatchBaseDto,
-) {
-  @IsNotEmptyBody({
-    message: 'At least one field must be provided',
-  })
-  dummy?: any
-}
-
-export class ProjectRuleGroupConfigResponseDto {
+export class ProjectRuleGroupConfigRes {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Project UUID',
     type: String,
     format: 'uuid',
   })
+  @IsString()
   projectId: string
 
   @ApiProperty({
@@ -93,28 +52,24 @@ export class ProjectRuleGroupConfigResponseDto {
     type: String,
     format: 'uuid',
   })
+  @IsString()
   ruleGroupId: string
-
-  @ApiProperty({
-    example: false,
-    description: 'Whether the rule group is hidden in project context',
-    type: Boolean,
-  })
-  isHidden: boolean
 
   @ApiProperty({
     example: true,
     description: 'Whether the rule group is active in project context',
     type: Boolean,
   })
+  @IsBoolean()
   isActive: boolean
 
   @ApiProperty({
-    example: 'success',
-    description: 'Operation status',
+    example: ProjectConfigStatus.active,
+    description: 'Config status',
     type: String,
     enum: ProjectConfigStatus,
   })
+  @IsEnum(ProjectConfigStatus)
   status: ProjectConfigStatus
 
   @ApiProperty({
@@ -123,16 +78,20 @@ export class ProjectRuleGroupConfigResponseDto {
     type: String,
     format: 'date-time',
   })
-  updatedAt: string
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  updatedAt: string | null
 }
 
-export class ProjectRuleConfigResponseDto {
+export class ProjectRuleConfigRes {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Project UUID',
     type: String,
     format: 'uuid',
   })
+  @IsString()
   projectId: string
 
   @ApiProperty({
@@ -141,28 +100,25 @@ export class ProjectRuleConfigResponseDto {
     type: String,
     format: 'uuid',
   })
+  @IsString()
   ruleId: string
-
-  @ApiProperty({
-    example: false,
-    description: 'Whether the rule is hidden in project context',
-    type: Boolean,
-  })
-  isHidden: boolean
 
   @ApiProperty({
     example: true,
     description: 'Whether the rule is active in project context',
     type: Boolean,
   })
+  @IsBoolean()
   isActive: boolean
 
   @ApiProperty({
-    example: 'success',
+    example: ProjectConfigStatus.active,
     description: 'Operation status',
     type: String,
     enum: ProjectConfigStatus,
   })
+  @IsString()
+  @IsEnum(ProjectConfigStatus)
   status: ProjectConfigStatus
 
   @ApiProperty({
@@ -171,5 +127,8 @@ export class ProjectRuleConfigResponseDto {
     type: String,
     format: 'date-time',
   })
-  updatedAt: string
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  updatedAt: string | null
 }

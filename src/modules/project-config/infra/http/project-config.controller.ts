@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpStatus,
+  Inject,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -13,13 +14,17 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import {
-  ProjectConfigStatus,
   ProjectRuleConfigPatchDto,
-  ProjectRuleConfigResponseDto,
+  ProjectRuleConfigRes,
   ProjectRuleGroupConfigPatchDto,
-  ProjectRuleGroupConfigResponseDto,
+  ProjectRuleGroupConfigRes,
 } from '~/modules/project-config/infra/http/project-config.dto'
+import {
+  PROJECT_CONFIG_SERVICE_PORT,
+  type ProjectConfigServicePort,
+} from '~/modules/project-config/ports/project-config.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.ProjectConfig)
@@ -28,6 +33,11 @@ import { ApiSwaggerTag } from '~/shared/const/app.const'
   version: '1',
 })
 export class ProjectConfigController {
+  constructor(
+    @Inject(PROJECT_CONFIG_SERVICE_PORT)
+    private readonly configService: ProjectConfigServicePort,
+  ) {}
+
   @Patch(':projectId/rule-groups/:groupId/config')
   @ApiOperation({
     summary: 'Patch project rule group config',
@@ -56,10 +66,10 @@ export class ProjectConfigController {
     description: 'Project rule group config patch payload',
     required: true,
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Project rule group config successfully updated',
-    type: ProjectRuleGroupConfigResponseDto,
+    type: ProjectRuleGroupConfigRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -81,22 +91,19 @@ export class ProjectConfigController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  patchRuleGroupConfig(
+  async patchRuleGroupConfig(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
     @Body()
     body: ProjectRuleGroupConfigPatchDto,
-  ): ProjectRuleGroupConfigResponseDto {
-    return {
-      projectId,
-      ruleGroupId: groupId,
-      isHidden: body.isHidden ?? false,
-      isActive: body.isActive ?? true,
-      status: ProjectConfigStatus.success,
-      updatedAt: new Date().toISOString(),
-    }
+  ): Promise<ProjectRuleGroupConfigRes> {
+    return await this.configService.updateRuleGroupConfig({
+      groupId: groupId,
+      projectId: projectId,
+      isActive: body.isActive,
+    })
   }
 
   @Patch(':projectId/rules/:ruleId/config')
@@ -127,10 +134,10 @@ export class ProjectConfigController {
     description: 'Project rule config patch payload',
     required: true,
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Project rule config successfully updated',
-    type: ProjectRuleConfigResponseDto,
+    type: ProjectRuleConfigRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -152,21 +159,18 @@ export class ProjectConfigController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  patchRuleConfig(
+  async patchRuleConfig(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
     @Param('ruleId', ParseUUIDPipe)
     ruleId: string,
     @Body()
     body: ProjectRuleConfigPatchDto,
-  ): ProjectRuleConfigResponseDto {
-    return {
-      projectId,
-      ruleId,
-      isHidden: body.isHidden ?? false,
-      isActive: body.isActive ?? true,
-      status: ProjectConfigStatus.success,
-      updatedAt: new Date().toISOString(),
-    }
+  ): Promise<ProjectRuleConfigRes> {
+    return await this.configService.updateRuleConfig({
+      projectId: projectId,
+      ruleId: ruleId,
+      isActive: body.isActive,
+    })
   }
 }
