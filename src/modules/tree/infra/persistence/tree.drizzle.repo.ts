@@ -3,27 +3,27 @@ import { and, eq, isNull } from 'drizzle-orm'
 import { defineDb } from '~/infra/drizzle/application/drizzle.helpers'
 import type { Tx } from '~/infra/drizzle/application/drizzle.type'
 import {
-  DRIZZLE_SERVICE_PORT,
-  type DrizzleServicePort,
+    DRIZZLE_PORT,
+    type DrizzleServicePort,
 } from '~/infra/drizzle/ports/drizzle.service.port'
 import {
-  projectRuleConfigsTable,
-  projectRuleGroupConfigsTable,
-  RuleGroupScope,
-  ruleGroupsTable,
-  rulesTable,
+    projectRuleConfigsTable,
+    projectRuleGroupConfigsTable,
+    RuleGroupScope,
+    ruleGroupsTable,
+    rulesTable,
 } from '~/infra/drizzle/schemas'
 import type { RuleMetadata } from '~/modules/rule/application/rule.type'
 import type {
-  RuleTreeLeaf,
-  RuleTreeNodeBase,
+    RuleTreeLeaf,
+    RuleTreeNodeBase,
 } from '~/modules/tree/application/tree.type'
 import type { TreeRepoPort } from '~/modules/tree/ports/tree.repo.port'
 
 @Injectable()
 export class TreeDrizzleRepo implements TreeRepoPort {
   constructor(
-    @Inject(DRIZZLE_SERVICE_PORT)
+    @Inject(DRIZZLE_PORT)
     private readonly drizzle: DrizzleServicePort,
   ) {}
 

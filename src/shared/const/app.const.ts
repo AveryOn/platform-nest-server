@@ -26,3 +26,8 @@ export enum NodeEnv {
 
 /** undefined placeholder for values */
 export const _ = void undefined
+
+export enum OperationStatus {
+  success = 'success',
+  failed = 'failed',
+}

@@ -1,19 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  DRIZZLE_SERVICE_PORT,
-  type DrizzleServicePort,
+    DRIZZLE_PORT,
+    type DrizzleServicePort,
 } from '~/infra/drizzle/ports/drizzle.service.port'
 
 import {
-  RuleEntity,
-  RuleServiceCmd,
+    RuleEntity,
+    RuleServiceCmd,
 } from '~/modules/rule/application/rule.type'
 import { RuleRepoPort } from '~/modules/rule/ports/rule.repo.port'
 
 @Injectable()
 export class RuleDrizzleRepo implements RuleRepoPort {
   constructor(
-    @Inject(DRIZZLE_SERVICE_PORT)
+    @Inject(DRIZZLE_PORT)
     private readonly drizzle: DrizzleServicePort,
   ) {}
 

@@ -1,20 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  DRIZZLE_SERVICE_PORT,
-  type DrizzleServicePort,
+    DRIZZLE_PORT,
+    type DrizzleServicePort,
 } from '~/infra/drizzle/ports/drizzle.service.port'
 import { RuleGroupType } from '~/infra/drizzle/schemas'
 
 import {
-  type RuleGroupEntity,
-  type RuleGroupServiceCmd,
+    type RuleGroupEntity,
+    type RuleGroupServiceCmd,
 } from '~/modules/rule-group/application/rule-group.type'
 import { RuleGroupRepoPort } from '~/modules/rule-group/ports/rule-group.repo.port'
 
 @Injectable()
 export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
   constructor(
-    @Inject(DRIZZLE_SERVICE_PORT)
+    @Inject(DRIZZLE_PORT)
     private readonly drizzle: DrizzleServicePort,
   ) {}
 

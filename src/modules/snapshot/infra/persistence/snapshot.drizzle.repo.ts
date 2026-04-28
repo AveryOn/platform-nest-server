@@ -3,18 +3,18 @@ import { and, count, desc, eq, max } from 'drizzle-orm'
 import { defineDb } from '~/infra/drizzle/application/drizzle.helpers'
 import type { DrizzleService } from '~/infra/drizzle/application/drizzle.service'
 import type { Tx } from '~/infra/drizzle/application/drizzle.type'
-import { DRIZZLE_SERVICE_PORT } from '~/infra/drizzle/ports/drizzle.service.port'
+import { DRIZZLE_PORT } from '~/infra/drizzle/ports/drizzle.service.port'
 import { projectRuleSnapshotsTable } from '~/infra/drizzle/schemas'
 import type {
-  ProjectSnapshotEntity,
-  ProjectSnapshotRes,
-  SnapshotPayload,
-  SnapshotRepoCmd,
+    ProjectSnapshotEntity,
+    ProjectSnapshotRes,
+    SnapshotPayload,
+    SnapshotRepoCmd,
 } from '~/modules/snapshot/application/snapshot.type'
 import { type SnapshotRepoPort } from '~/modules/snapshot/ports/snapshot.repo.port'
 import {
-  PAGINATOR_PORT,
-  type PaginatorServicePort,
+    PAGINATOR_PORT,
+    type PaginatorServicePort,
 } from '~/shared/paginator/ports/paginator.service.port'
 
 @Injectable()
@@ -23,7 +23,7 @@ export class SnapshotDrizzleRepo implements SnapshotRepoPort {
     @Inject(PAGINATOR_PORT)
     private readonly paginator: PaginatorServicePort,
 
-    @Inject(DRIZZLE_SERVICE_PORT)
+    @Inject(DRIZZLE_PORT)
     private readonly drizzle: DrizzleService,
   ) {}
 

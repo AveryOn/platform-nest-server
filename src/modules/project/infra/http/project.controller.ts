@@ -39,6 +39,9 @@ import { ApiPaginator } from '~/shared/paginator/infra/http/paginator.swagger.he
   version: '1',
 })
 export class ProjectController {
+  // ------------------------------------------
+  // [GET] | GET PROJECTS LIST
+  // #region GET-------------------------------
   @Get()
   @ApiOperation({
     summary: 'Get projects list',
@@ -77,29 +80,12 @@ export class ProjectController {
     @ValidQuery(ProjectGetListQuery)
     _query: ProjectGetListQuery,
   ): PaginatedResponse<ProjectListItemResponse> {
-    return {
-      data: [
-        {
-          id: '550e8400-e29b-41d4-a716-446655440000',
-          name: 'Main Design System',
-          description: 'Main product project',
-          brandId: 'c6f33564-2c64-4f7c-bb6f-6e3d7ef21671',
-          organizationId: 'org_123456',
-          templateSnapshotId: '2c0c5af8-7d26-4dd4-a8d6-2f8b0658f1a2',
-          isArchived: false,
-          createdAt: '2026-04-20T12:00:00.000Z',
-          updatedAt: '2026-04-20T12:30:00.000Z',
-        },
-      ],
-      paginator: {
-        total: 1,
-        limit: 1,
-        page: 1,
-        totalPages: 1,
-      },
-    }
+    return {}
   }
 
+  // ------------------------------------------
+  // [GET] | GET PROJECT BY ID
+  // ------------------------------------------
   @Get(':projectId')
   @ApiOperation({
     summary: 'Get project by id',
@@ -157,6 +143,9 @@ export class ProjectController {
     }
   }
 
+  // #endreion------------------------------------------
+  // [POST] | CREATE PROJECT
+  // #region POST---------------------------------------
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
@@ -218,6 +207,9 @@ export class ProjectController {
     }
   }
 
+  // #endreion------------------------------------------
+  // [PATCH] | UPDATE PROJECT
+  // #region PATCH---------------------------------------
   @Patch(':projectId')
   @ApiOperation({
     summary: 'Update project',
@@ -280,6 +272,9 @@ export class ProjectController {
     }
   }
 
+  // #endreion------------------------------------------
+  // [DELETE] | ARCHIVE PROJECT
+  // #region DELETE---------------------------------------
   @Delete(':projectId')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
