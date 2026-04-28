@@ -1,12 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger'
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator'
+import { PaginationDto } from '~/shared/paginator/infra/http/paginator.dto'
 
-export class TemplateItemResponseDto {
+export class TemplateItemRes {
   @ApiProperty({
     example: '2f972727-e95d-4564-b1bc-7dc95d44c7a3',
     description: 'Template UUID',
     type: String,
     format: 'uuid',
   })
+  @IsNotEmpty()
+  @IsString()
   id: string
 
   @ApiProperty({
@@ -14,6 +24,8 @@ export class TemplateItemResponseDto {
     description: 'Stable template slug',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
   slug: string
 
   @ApiProperty({
@@ -21,6 +33,8 @@ export class TemplateItemResponseDto {
     description: 'Human-readable template name',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
   name: string
 
   @ApiProperty({
@@ -29,6 +43,9 @@ export class TemplateItemResponseDto {
     type: String,
     nullable: true,
   })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
   description: string | null
 
   @ApiProperty({
@@ -37,6 +54,8 @@ export class TemplateItemResponseDto {
     type: String,
     format: 'date-time',
   })
+  @IsNotEmpty()
+  @IsString()
   createdAt: string
 
   @ApiProperty({
@@ -45,32 +64,23 @@ export class TemplateItemResponseDto {
     type: String,
     format: 'date-time',
   })
-  updatedAt: string
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  updatedAt: string | null
 }
 
-export class TemplatesListResponseDto {
-  @ApiProperty({
-    example: 1,
-    description: 'Total number of available templates',
-    type: Number,
-  })
-  total: number
+export class TemplateGetListQueryDto extends PaginationDto {}
 
-  @ApiProperty({
-    type: TemplateItemResponseDto,
-    isArray: true,
-    description: 'List of available templates',
-  })
-  items: TemplateItemResponseDto[]
-}
-
-export class TemplateSnapshotItemResponseDto {
+export class TemplateSnapshotItemRes {
   @ApiProperty({
     example: '0d3fe3b9-a578-420e-9556-d316ece261d3',
     description: 'Template snapshot UUID',
     type: String,
     format: 'uuid',
   })
+  @IsString()
+  @IsNotEmpty()
   id: string
 
   @ApiProperty({
@@ -79,6 +89,8 @@ export class TemplateSnapshotItemResponseDto {
     type: String,
     format: 'uuid',
   })
+  @IsString()
+  @IsNotEmpty()
   templateId: string
 
   @ApiProperty({
@@ -88,6 +100,8 @@ export class TemplateSnapshotItemResponseDto {
     type: Number,
     minimum: 1,
   })
+  @IsNumber()
+  @IsNotEmpty()
   version: number
 
   @ApiProperty({
@@ -97,6 +111,8 @@ export class TemplateSnapshotItemResponseDto {
       'Deterministic content hash of template snapshot payload',
     type: String,
   })
+  @IsString()
+  @IsNotEmpty()
   hash: string
 
   @ApiProperty({
@@ -105,29 +121,9 @@ export class TemplateSnapshotItemResponseDto {
     type: String,
     format: 'date-time',
   })
+  @IsString()
+  @IsNotEmpty()
   createdAt: string
 }
 
-export class TemplateSnapshotsListResponseDto {
-  @ApiProperty({
-    example: '2f972727-e95d-4564-b1bc-7dc95d44c7a3',
-    description: 'Owner template UUID',
-    type: String,
-    format: 'uuid',
-  })
-  templateId: string
-
-  @ApiProperty({
-    example: 1,
-    description: 'Total number of template snapshots',
-    type: Number,
-  })
-  total: number
-
-  @ApiProperty({
-    type: TemplateSnapshotItemResponseDto,
-    isArray: true,
-    description: 'Ordered list of template snapshots',
-  })
-  items: TemplateSnapshotItemResponseDto[]
-}
+export class TemplateSnapshotGetListQueryDto extends PaginationDto {}

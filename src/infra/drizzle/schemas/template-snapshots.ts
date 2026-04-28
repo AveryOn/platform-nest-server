@@ -9,6 +9,7 @@ import {
   createdAt,
   id,
   referenceOnUUID,
+  varchar64,
 } from '~/infra/drizzle/application/drizzle.helpers'
 import { templatesTable } from '~/infra/drizzle/schemas'
 
@@ -22,6 +23,7 @@ export const templateSnapshotsTable = pgTable(
     ).notNull(),
     version: integer('version').notNull(),
     payload: jsonb('payload').notNull(),
+    hash: varchar64('hash').notNull(),
     createdAt: createdAt(),
   },
   (t) => [

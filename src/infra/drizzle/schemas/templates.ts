@@ -12,7 +12,7 @@ export const templatesTable = pgTable(
   'templates',
   {
     id: id(),
-    slug: varchar255('slug'),
+    slug: varchar255('slug').notNull(),
     name: name(),
     description: description(),
 
