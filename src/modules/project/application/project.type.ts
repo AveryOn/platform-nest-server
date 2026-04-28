@@ -10,6 +10,7 @@ export interface ProjectEntity {
   brandId: string | null
   organizationId: string
   templateSnapshotId: string | null
+  isArchived: boolean
   createdAt: string
   updatedAt: string | null
   deletedAt: string | null
@@ -28,9 +29,11 @@ export namespace ProjectReqCmd {
   }
   export interface Create {
     name: string
+    organizationId: string
     description?: string | null
     brandId?: string | null
     templateSnapshotId?: string | null
+    slug: string
   }
   export interface Update {
     projectId: string

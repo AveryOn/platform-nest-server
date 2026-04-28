@@ -6,11 +6,14 @@ import {
 import { Transform } from 'class-transformer'
 import {
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
+  ValidateIf,
 } from 'class-validator'
+import { OperationStatus } from '~/shared/const/app.const'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
 import { PaginationDto } from '~/shared/paginator/infra/http/paginator.dto'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
@@ -58,6 +61,15 @@ export class ProjectCreateDto {
   @IsNotEmpty()
   name: string
 
+  @ApiProperty({
+    example: 'slug',
+    description: 'Human-readable project slug',
+    type: String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  slug: string
+
   @ApiPropertyOptional({
     example: 'Project for product UI rules and governance',
     description: 'Optional project description',
@@ -76,6 +88,7 @@ export class ProjectCreateDto {
     type: String,
   })
   @IsOptional()
+  @ValidateIf((_, value) => value !== null)
   @IsString()
   @IsUUID()
   brandId?: string | null
@@ -89,6 +102,7 @@ export class ProjectCreateDto {
   })
   @IsOptional()
   @IsString()
+  @ValidateIf((_, value) => value !== null)
   @IsUUID()
   templateSnapshotId?: string | null
 }
@@ -111,6 +125,7 @@ export class ProjectPatchBaseDto {
   })
   @IsOptional()
   @IsString()
+  @ValidateIf((_, value) => value !== null)
   description?: string | null
 
   @ApiPropertyOptional({
@@ -123,6 +138,7 @@ export class ProjectPatchBaseDto {
   @IsOptional()
   @IsString()
   @IsUUID()
+  @ValidateIf((_, value) => value !== null)
   brandId?: string | null
 
   @ApiPropertyOptional({
@@ -134,6 +150,7 @@ export class ProjectPatchBaseDto {
   })
   @IsOptional()
   @IsString()
+  @ValidateIf((_, value) => value !== null)
   @IsUUID()
   templateSnapshotId?: string | null
 }
@@ -163,12 +180,22 @@ export class ProjectListItemResponse {
   name: string
 
   @ApiProperty({
+    example: 'slug',
+    description: 'Human-readable project slug',
+    type: String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  slug: string
+
+  @ApiProperty({
     example: 'Main product project',
     description: 'Project description',
     nullable: true,
     type: String,
   })
   @IsString()
+  @ValidateIf((_, value) => value !== null)
   description: string | null
 
   @ApiProperty({
@@ -179,6 +206,7 @@ export class ProjectListItemResponse {
     type: String,
   })
   @IsString()
+  @ValidateIf((_, value) => value !== null)
   brandId: string | null
 
   @ApiProperty({
@@ -197,6 +225,7 @@ export class ProjectListItemResponse {
     type: String,
   })
   @IsString()
+  @ValidateIf((_, value) => value !== null)
   templateSnapshotId: string | null
 
   @ApiProperty({
@@ -204,6 +233,7 @@ export class ProjectListItemResponse {
     description: 'Soft delete flag',
     type: Boolean,
   })
+  @IsBoolean()
   isArchived: boolean
 
   @ApiProperty({
@@ -218,9 +248,20 @@ export class ProjectListItemResponse {
     example: '2026-04-20T12:30:00.000Z',
     description: 'Project update timestamp in ISO-8601 format',
     type: String,
+    nullable: true,
   })
   @IsString()
-  updatedAt: string
+  @ValidateIf((_, value) => value !== null)
+  updatedAt: string | null
+
+  @ApiProperty({
+    example: SWAGGER_EXAMPLES.dateISO,
+    type: String,
+    nullable: true,
+  })
+  @IsString()
+  @ValidateIf((_, value) => value !== null)
+  deletedAt: string | null
 }
 
 export class ProjectItemResponse {
@@ -228,19 +269,32 @@ export class ProjectItemResponse {
     example: SWAGGER_EXAMPLES.uuid,
     type: String,
   })
+  @IsString()
   id: string
 
   @ApiProperty({
     example: 'Main Design System',
     type: String,
   })
+  @IsString()
   name: string
+
+  @ApiProperty({
+    example: 'slug',
+    description: 'Human-readable project slug',
+    type: String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  slug: string
 
   @ApiProperty({
     example: 'Main product project',
     nullable: true,
     type: String,
   })
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
   description: string | null
 
   @ApiProperty({
@@ -248,12 +302,15 @@ export class ProjectItemResponse {
     nullable: true,
     type: String,
   })
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
   brandId: string | null
 
   @ApiProperty({
     example: SWAGGER_EXAMPLES.betterAuthId,
     type: String,
   })
+  @IsString()
   organizationId: string
 
   @ApiProperty({
@@ -261,36 +318,52 @@ export class ProjectItemResponse {
     nullable: true,
     type: String,
   })
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
   templateSnapshotId: string | null
 
   @ApiProperty({
     example: SWAGGER_EXAMPLES.boolean,
     type: Boolean,
   })
+  @IsBoolean()
   isArchived: boolean
 
   @ApiProperty({
     example: SWAGGER_EXAMPLES.dateISO,
     type: String,
   })
+  @IsString()
   createdAt: string
 
   @ApiProperty({
     example: SWAGGER_EXAMPLES.dateISO,
     type: String,
   })
-  updatedAt: string
+  @IsString()
+  @ValidateIf((_, value) => value !== null)
+  updatedAt: string | null
+
+  @ApiProperty({
+    example: SWAGGER_EXAMPLES.dateISO,
+    type: String,
+  })
+  @IsString()
+  @ValidateIf((_, value) => value !== null)
+  deletedAt: string | null
 }
 
 export class ProjectPatchResponse {
   @ApiProperty({
-    enum: ['success', 'failed'],
-    default: 'success',
-    example: 'success',
+    enum: [OperationStatus.success, OperationStatus.failed],
+    default: OperationStatus.success,
+    example: OperationStatus.success,
     description: 'Patch operation status',
     type: String,
   })
-  status: 'success' | 'failed'
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: keyof typeof OperationStatus
 
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
@@ -298,21 +371,25 @@ export class ProjectPatchResponse {
     format: 'uuid',
     type: String,
   })
+  @IsString()
   projectId: string
 }
 
 export class ProjectRemoveResponse {
   @ApiProperty({
-    example: 'success',
-    enum: ['success', 'failed'],
+    example: OperationStatus.success,
+    enum: [OperationStatus.success, OperationStatus.failed],
   })
-  status: string
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: keyof typeof OperationStatus
 
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     type: String,
     format: 'uuid',
   })
+  @IsString()
   projectId: string
 
   @ApiProperty({
@@ -320,5 +397,6 @@ export class ProjectRemoveResponse {
     type: String,
     format: 'date-time',
   })
+  @IsString()
   archivedAt: string
 }

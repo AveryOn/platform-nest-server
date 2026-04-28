@@ -5,10 +5,13 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -18,6 +21,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import {
   ProjectCreateDto,
   ProjectGetListQuery,
@@ -27,6 +31,10 @@ import {
   ProjectPatchResponse,
   ProjectRemoveResponse,
 } from '~/modules/project/infra/http/project.dto'
+import {
+  PROJECT_SERVICE_PORT,
+  type ProjectServicePort,
+} from '~/modules/project/ports/project.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
 import { ValidQuery } from '~/shared/decorators/query'
@@ -39,6 +47,10 @@ import { ApiPaginator } from '~/shared/paginator/infra/http/paginator.swagger.he
   version: '1',
 })
 export class ProjectController {
+  constructor(
+    @Inject(PROJECT_SERVICE_PORT)
+    private readonly projectService: ProjectServicePort,
+  ) {}
   // ------------------------------------------
   // [GET] | GET PROJECTS LIST
   // #region GET-------------------------------
@@ -76,11 +88,17 @@ export class ProjectController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  getProjects(
+  async getProjects(
     @ValidQuery(ProjectGetListQuery)
-    _query: ProjectGetListQuery,
-  ): PaginatedResponse<ProjectListItemResponse> {
-    return {}
+    query: ProjectGetListQuery,
+  ): Promise<PaginatedResponse<ProjectListItemResponse>> {
+    return await this.projectService.getList({
+      limit: query.limit,
+      page: query.page,
+      brandId: query.brandId,
+      includeArchived: query.includeArchived,
+      search: query.search,
+    })
   }
 
   // ------------------------------------------
@@ -126,27 +144,20 @@ export class ProjectController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  getProjectById(
+  async getProjectById(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
-  ): ProjectItemResponse {
-    return {
-      id: projectId,
-      name: 'Main Design System',
-      description: 'Main product project',
-      brandId: 'c6f33564-2c64-4f7c-bb6f-6e3d7ef21671',
-      organizationId: 'org_123456',
-      templateSnapshotId: '2c0c5af8-7d26-4dd4-a8d6-2f8b0658f1a2',
-      isArchived: false,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-    }
+  ): Promise<ProjectItemResponse> {
+    return await this.projectService.getById({
+      projectId,
+    })
   }
 
-  // #endreion------------------------------------------
+  // #endregion------------------------------------------
   // [POST] | CREATE PROJECT
   // #region POST---------------------------------------
   @Post()
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create project',
@@ -190,24 +201,24 @@ export class ProjectController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  createProject(
+  async createProject(
     @Body()
     body: ProjectCreateDto,
-  ): ProjectItemResponse {
-    return {
-      id: crypto.randomUUID(),
+
+    @Req()
+    req: Request,
+  ): Promise<ProjectItemResponse> {
+    return await this.projectService.create({
       name: body.name,
-      description: body.description ?? null,
-      brandId: body.brandId ?? null,
-      organizationId: 'org_123456',
-      templateSnapshotId: body.templateSnapshotId ?? null,
-      isArchived: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
+      organizationId: (req as any).activeOrganizationId,
+      brandId: body.brandId,
+      description: body.description,
+      templateSnapshotId: body.templateSnapshotId,
+      slug: body.slug,
+    })
   }
 
-  // #endreion------------------------------------------
+  // #endregion------------------------------------------
   // [PATCH] | UPDATE PROJECT
   // #region PATCH---------------------------------------
   @Patch(':projectId')
@@ -260,19 +271,22 @@ export class ProjectController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  patchProject(
+  async patchProject(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
     @Body()
-    _body: ProjectPatchDto,
-  ): ProjectPatchResponse {
-    return {
-      status: 'success',
+    body: ProjectPatchDto,
+  ): Promise<ProjectPatchResponse> {
+    return await this.projectService.update({
       projectId,
-    }
+      brandId: body.brandId,
+      description: body.description,
+      name: body.name,
+      templateSnapshotId: body.templateSnapshotId,
+    })
   }
 
-  // #endreion------------------------------------------
+  // #endregion------------------------------------------
   // [DELETE] | ARCHIVE PROJECT
   // #region DELETE---------------------------------------
   @Delete(':projectId')
@@ -312,14 +326,12 @@ export class ProjectController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project not found',
   })
-  deleteProject(
+  async deleteProject(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
-  ): ProjectRemoveResponse {
-    return {
-      status: 'success',
+  ): Promise<ProjectRemoveResponse> {
+    return await this.projectService.delete({
       projectId,
-      archivedAt: new Date().toISOString(),
-    }
+    })
   }
 }
