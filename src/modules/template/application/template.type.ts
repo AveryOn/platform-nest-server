@@ -22,6 +22,7 @@ export namespace TemplateReqCmd {
     limit: number
     page: number
   }
+
   export interface getSnapshotList {
     limit: number
     page: number
@@ -39,5 +40,42 @@ export namespace TemplateRes {
   export type getById = TemplateEntity
 }
 
-export namespace TemplateRepoCmd {}
-export namespace TemplateRepoRes {}
+export namespace TemplateRepoCmd {
+  export interface getList {
+    limit: number
+    page: number
+  }
+
+  export interface getSnapshotList {
+    limit: number
+    page: number
+    templateId: string
+  }
+
+  export interface getById {
+    templateId: string
+  }
+}
+
+export namespace TemplateRepoRes {
+  export interface template {
+    id: string
+    slug: string
+    name: string
+    description: string | null
+    createdAt: Date | string
+    updatedAt: Date | string | null
+  }
+
+  export interface snapshot {
+    id: string
+    templateId: string
+    version: number
+    hash: string
+    createdAt: Date | string
+  }
+
+  export type getList = PaginatedOutput<template>
+  export type getSnapshotList = PaginatedOutput<snapshot>
+  export type getById = template | null
+}
