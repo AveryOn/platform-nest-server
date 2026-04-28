@@ -24,9 +24,11 @@ export namespace ProjectReqCmd {
     page: number
     limit: number
   }
+
   export interface GetById {
     projectId: string
   }
+
   export interface Create {
     name: string
     organizationId: string
@@ -35,6 +37,7 @@ export namespace ProjectReqCmd {
     templateSnapshotId?: string | null
     slug: string
   }
+
   export interface Update {
     projectId: string
     name?: string
@@ -42,6 +45,7 @@ export namespace ProjectReqCmd {
     brandId?: string | null
     templateSnapshotId?: string | null
   }
+
   export interface Delete {
     projectId: string
   }
@@ -51,10 +55,12 @@ export namespace ProjectRes {
   export type GetList = PaginatedResponse<ProjectEntity>
   export type GetById = ProjectEntity
   export type Create = ProjectEntity
+
   export interface Update {
     status: keyof typeof OperationStatus
     projectId: string
   }
+
   export interface Delete {
     status: keyof typeof OperationStatus
     projectId: string
@@ -63,17 +69,17 @@ export namespace ProjectRes {
 }
 
 export namespace ProjectRepoCmd {
-  export type GetList = unknown
-  export type GetById = unknown
-  export type Create = unknown
-  export type Update = unknown
-  export type Delete = unknown
+  export type GetList = ProjectReqCmd.GetList
+  export type GetById = ProjectReqCmd.GetById
+  export type Create = ProjectReqCmd.Create
+  export type Update = ProjectReqCmd.Update
+  export type Delete = ProjectReqCmd.Delete
 }
 
 export namespace ProjectRepoRes {
-  export type GetList = unknown
-  export type GetById = unknown
-  export type Create = unknown
-  export type Update = unknown
-  export type Delete = unknown
+  export type GetList = ProjectRes.GetList
+  export type GetById = ProjectEntity | null
+  export type Create = ProjectEntity
+  export type Update = ProjectRes.Update
+  export type Delete = ProjectRes.Delete
 }
