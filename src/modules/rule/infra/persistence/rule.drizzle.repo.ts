@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
-    DRIZZLE_PORT,
-    type DrizzleServicePort,
+  DRIZZLE_PORT,
+  type DrizzleServicePort,
 } from '~/infra/drizzle/ports/drizzle.service.port'
 
 import {
-    RuleEntity,
-    RuleServiceCmd,
+  RuleEntity,
+  RuleServiceCmd,
 } from '~/modules/rule/application/rule.type'
 import { RuleRepoPort } from '~/modules/rule/ports/rule.repo.port'
 

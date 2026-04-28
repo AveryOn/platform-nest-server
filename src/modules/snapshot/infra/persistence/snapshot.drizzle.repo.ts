@@ -6,15 +6,15 @@ import type { Tx } from '~/infra/drizzle/application/drizzle.type'
 import { DRIZZLE_PORT } from '~/infra/drizzle/ports/drizzle.service.port'
 import { projectRuleSnapshotsTable } from '~/infra/drizzle/schemas'
 import type {
-    ProjectSnapshotEntity,
-    ProjectSnapshotRes,
-    SnapshotPayload,
-    SnapshotRepoCmd,
+  ProjectSnapshotEntity,
+  ProjectSnapshotRes,
+  SnapshotPayload,
+  SnapshotRepoCmd,
 } from '~/modules/snapshot/application/snapshot.type'
 import { type SnapshotRepoPort } from '~/modules/snapshot/ports/snapshot.repo.port'
 import {
-    PAGINATOR_PORT,
-    type PaginatorServicePort,
+  PAGINATOR_PORT,
+  type PaginatorServicePort,
 } from '~/shared/paginator/ports/paginator.service.port'
 
 @Injectable()
