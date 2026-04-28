@@ -26,7 +26,7 @@ export class ProjectRuleGroupConfigPatchDto {
 export class ProjectRuleConfigPatchDto {
   @ApiProperty({
     example: true,
-    description: 'Whether the rule group is active in project context',
+    description: 'Whether the rule is active in project context',
     type: Boolean,
     nullable: false,
   })
@@ -113,7 +113,7 @@ export class ProjectRuleConfigRes {
 
   @ApiProperty({
     example: ProjectConfigStatus.active,
-    description: 'Operation status',
+    description: 'Config status',
     type: String,
     enum: ProjectConfigStatus,
   })
