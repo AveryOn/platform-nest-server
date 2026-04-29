@@ -18,15 +18,19 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import {
   RuleGroupCreateDto,
-  RuleGroupItemResponse,
+  RuleGroupDeleteRes,
+  RuleGroupItemRes,
   RuleGroupMoveDto,
   RuleGroupPatchDto,
-  RuleGroupRemoveResponse,
   RuleGroupReorderChildrenDto,
   RuleGroupReorderRootDto,
-  RuleGroupUpdateResponse,
+  RuleGroupUpdateRes,
+  type RuleGroupMoveRes,
+  type RuleGroupReorderChildrenRes,
+  type RuleGroupReorderRootRes,
 } from '~/modules/rule-group/infra/http/rule-group.dto'
 import {
   RULE_GROUP_SERVICE_PORT,
@@ -64,10 +68,10 @@ export class RuleGroupController {
     type: RuleGroupCreateDto,
     description: 'Payload for creating a rule group',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.CREATED,
     description: 'Rule group successfully created',
-    type: RuleGroupItemResponse,
+    type: RuleGroupItemRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -98,11 +102,12 @@ export class RuleGroupController {
     projectId: string,
     @Body()
     body: RuleGroupCreateDto,
-  ): Promise<RuleGroupItemResponse> {
+  ): Promise<RuleGroupItemRes> {
     return await this.ruleGroupService.create({
       name: body.name,
       orderIndex: body.orderIndex,
       projectId: projectId,
+      metadata: body.metadata,
       description: body.description,
       parentGroupId: body.parentGroupId,
       type: body.type,
@@ -124,10 +129,10 @@ export class RuleGroupController {
     format: 'uuid',
     description: 'Rule group UUID',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully returned',
-    type: RuleGroupItemResponse,
+    type: RuleGroupItemRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -148,7 +153,7 @@ export class RuleGroupController {
   async getRuleGroupById(
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
-  ): Promise<RuleGroupItemResponse> {
+  ): Promise<RuleGroupItemRes> {
     return await this.ruleGroupService.getById({ groupId })
   }
 
@@ -171,10 +176,10 @@ export class RuleGroupController {
     type: RuleGroupPatchDto,
     description: 'Payload for updating rule group fields',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully updated',
-    type: RuleGroupUpdateResponse,
+    type: RuleGroupUpdateRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -205,7 +210,7 @@ export class RuleGroupController {
     groupId: string,
     @Body()
     body: RuleGroupPatchDto,
-  ): Promise<RuleGroupUpdateResponse> {
+  ): Promise<RuleGroupUpdateRes> {
     return await this.ruleGroupService.patch({
       groupId: groupId,
       description: body.description,
@@ -234,10 +239,10 @@ export class RuleGroupController {
     type: RuleGroupMoveDto,
     description: 'Payload for moving a rule group',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully moved',
-    type: RuleGroupUpdateResponse,
+    type: RuleGroupUpdateRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -269,7 +274,7 @@ export class RuleGroupController {
     groupId: string,
     @Body()
     body: RuleGroupMoveDto,
-  ): Promise<RuleGroupUpdateResponse> {
+  ): Promise<RuleGroupMoveRes> {
     return await this.ruleGroupService.move({
       groupId: groupId,
       orderIndex: body.orderIndex,
@@ -298,10 +303,10 @@ export class RuleGroupController {
     type: RuleGroupReorderChildrenDto,
     description: 'Payload for reordering child rule groups',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Child rule groups successfully reordered',
-    type: RuleGroupUpdateResponse,
+    type: RuleGroupUpdateRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -333,7 +338,7 @@ export class RuleGroupController {
     groupId: string,
     @Body()
     body: RuleGroupReorderChildrenDto,
-  ): Promise<RuleGroupUpdateResponse> {
+  ): Promise<RuleGroupReorderChildrenRes> {
     return await this.ruleGroupService.reorderChildren({
       groupId: groupId,
       items: body.items,
@@ -360,10 +365,10 @@ export class RuleGroupController {
     type: RuleGroupReorderRootDto,
     description: 'Payload for reordering root rule groups',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Root rule groups successfully reordered',
-    type: RuleGroupUpdateResponse,
+    type: RuleGroupUpdateRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -395,7 +400,7 @@ export class RuleGroupController {
     projectId: string,
     @Body()
     body: RuleGroupReorderRootDto,
-  ): Promise<RuleGroupUpdateResponse> {
+  ): Promise<RuleGroupReorderRootRes> {
     return await this.ruleGroupService.reorderRoot({
       projectId: projectId,
       items: body.items,
@@ -418,10 +423,10 @@ export class RuleGroupController {
     format: 'uuid',
     description: 'Rule group UUID',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully archived',
-    type: RuleGroupRemoveResponse,
+    type: RuleGroupDeleteRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -442,8 +447,8 @@ export class RuleGroupController {
   async deleteRuleGroup(
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
-  ): Promise<RuleGroupRemoveResponse> {
-    return await this.ruleGroupService.remove({
+  ): Promise<RuleGroupDeleteRes> {
+    return await this.ruleGroupService.delete({
       groupId: groupId,
     })
   }

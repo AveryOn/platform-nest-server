@@ -3,9 +3,10 @@ import {
   DRIZZLE_PORT,
   type DrizzleServicePort,
 } from '~/infra/drizzle/ports/drizzle.service.port'
-import { RuleGroupType } from '~/infra/drizzle/schemas'
 
 import {
+  RuleGroupScope,
+  RuleGroupType,
   type RuleGroupEntity,
   type RuleGroupServiceCmd,
 } from '~/modules/rule-group/application/rule-group.type'
@@ -26,8 +27,10 @@ export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
       projectId: cmd.projectId,
       parentGroupId: cmd.parentGroupId ?? null,
       name: cmd.name,
+      metadata: null,
+      scope: RuleGroupScope.project,
       description: cmd.description ?? null,
-      type: cmd.type || (RuleGroupType as any).section,
+      type: cmd.type || RuleGroupType.section,
       orderIndex: cmd.orderIndex,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -41,6 +44,8 @@ export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
       projectId: '550e8400-e29b-41d4-a716-446655440000',
       parentGroupId: null,
       name: 'Button',
+      metadata: null,
+      scope: RuleGroupScope.project,
       description: 'Rules for button component',
       type: RuleGroupType.component,
       orderIndex: 1,
@@ -70,7 +75,7 @@ export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
     return Promise.resolve()
   }
 
-  async remove(_groupId: string): Promise<Date> {
+  async delete(_groupId: string): Promise<Date> {
     return Promise.resolve(new Date())
   }
 }

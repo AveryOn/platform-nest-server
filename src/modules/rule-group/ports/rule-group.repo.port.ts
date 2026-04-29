@@ -18,5 +18,5 @@ export abstract class RuleGroupRepoPort {
   abstract reorderRoot(
     cmd: RuleGroupServiceCmd.ReorderRoot,
   ): Promise<void>
-  abstract remove(groupId: string): Promise<Date>
+  abstract delete(groupId: string): Promise<Date>
 }

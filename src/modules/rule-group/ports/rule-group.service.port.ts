@@ -20,17 +20,17 @@ export abstract class RuleGroupServicePort {
 
   abstract move(
     cmd: RuleGroupServiceCmd.Move,
-  ): Promise<RuleGroupServiceResult.Update>
+  ): Promise<RuleGroupServiceResult.Move>
 
   abstract reorderChildren(
     cmd: RuleGroupServiceCmd.ReorderChildren,
-  ): Promise<RuleGroupServiceResult.Update>
+  ): Promise<RuleGroupServiceResult.ReorderChildren>
 
   abstract reorderRoot(
     cmd: RuleGroupServiceCmd.ReorderRoot,
-  ): Promise<RuleGroupServiceResult.Update>
+  ): Promise<RuleGroupServiceResult.ReorderRoot>
 
-  abstract remove(
-    cmd: RuleGroupServiceCmd.Remove,
-  ): Promise<RuleGroupServiceResult.Remove>
+  abstract delete(
+    cmd: RuleGroupServiceCmd.Delete,
+  ): Promise<RuleGroupServiceResult.Delete>
 }

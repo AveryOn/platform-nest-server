@@ -2,12 +2,14 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   RuleGroupServiceCmd,
   RuleGroupServiceResult,
+  type RuleGroupEntity,
 } from '~/modules/rule-group/application/rule-group.type'
 import {
   RULE_GROUP_REPO_PORT,
   type RuleGroupRepoPort,
 } from '~/modules/rule-group/ports/rule-group.repo.port'
 import { RuleGroupServicePort } from '~/modules/rule-group/ports/rule-group.service.port'
+import { OperationStatus } from '~/shared/const/app.const'
 
 @Injectable()
 export class RuleGroupService implements RuleGroupServicePort {
@@ -38,7 +40,7 @@ export class RuleGroupService implements RuleGroupServicePort {
     await this.ruleGroupRepo.patch(cmd)
 
     return {
-      status: 'success',
+      status: OperationStatus.success,
       groupId: cmd.groupId,
     }
   }
@@ -49,7 +51,7 @@ export class RuleGroupService implements RuleGroupServicePort {
     await this.ruleGroupRepo.move(cmd)
 
     return {
-      status: 'success',
+      status: OperationStatus.success,
       groupId: cmd.groupId,
     }
   }
@@ -60,7 +62,7 @@ export class RuleGroupService implements RuleGroupServicePort {
     await this.ruleGroupRepo.reorderChildren(cmd)
 
     return {
-      status: 'success',
+      status: OperationStatus.success,
       groupId: cmd.groupId,
     }
   }
@@ -71,28 +73,30 @@ export class RuleGroupService implements RuleGroupServicePort {
     await this.ruleGroupRepo.reorderRoot(cmd)
 
     return {
-      status: 'success',
+      status: OperationStatus.success,
       groupId: cmd.items[0]?.id ?? '',
     }
   }
 
-  async remove(
-    cmd: RuleGroupServiceCmd.Remove,
-  ): Promise<RuleGroupServiceResult.Remove> {
-    const archivedAt = await this.ruleGroupRepo.remove(cmd.groupId)
+  async delete(
+    cmd: RuleGroupServiceCmd.Delete,
+  ): Promise<RuleGroupServiceResult.Delete> {
+    const deletedAt = await this.ruleGroupRepo.delete(cmd.groupId)
 
     return {
-      status: 'success',
+      status: OperationStatus.success,
       groupId: cmd.groupId,
-      archivedAt: archivedAt.toISOString(),
+      deletedAt: deletedAt.toISOString(),
     }
   }
 
   private toItemResult(
-    entity: Awaited<ReturnType<RuleGroupRepoPort['create']>>,
+    entity: RuleGroupEntity,
   ): RuleGroupServiceResult.Item {
     return {
       id: entity.id,
+      scope: entity.scope,
+      metadata: entity.metadata,
       projectId: entity.projectId,
       parentGroupId: entity.parentGroupId,
       name: entity.name,

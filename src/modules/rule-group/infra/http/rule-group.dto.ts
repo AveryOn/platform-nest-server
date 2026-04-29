@@ -7,19 +7,25 @@ import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
+  IsDateString,
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
   Min,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator'
 import {
+  RuleGroupScope,
   RuleGroupType,
-  type RuleGroupTypeKey,
-} from '~/infra/drizzle/schemas'
+  type RuleGroupMetadata,
+} from '~/modules/rule-group/application/rule-group.type'
+import { OperationStatus } from '~/shared/const/app.const'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
 
 export class RuleGroupCreateDto {
@@ -28,8 +34,8 @@ export class RuleGroupCreateDto {
     description: 'Rule group name',
     type: String,
   })
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   name: string
 
   @ApiPropertyOptional({
@@ -39,19 +45,37 @@ export class RuleGroupCreateDto {
     type: String,
   })
   @IsOptional()
+  @ValidateIf((_, value) => value !== null)
   @IsString()
-  description?: string
+  description?: string | null
 
-  @ApiPropertyOptional({
-    example: 'component',
-    description: 'Rule group semantic type',
-    enum: RuleGroupType,
-    default: RuleGroupType.section,
-    type: String,
+  @ApiProperty({
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
+    description: 'Flexible metadata payload',
+    type: Object,
+    nullable: true,
   })
   @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsObject()
+  metadata?: RuleGroupMetadata
+
+  @ApiProperty({
+    example: RuleGroupType.component,
+    default: RuleGroupType.section,
+    description: 'Rule group semantic type',
+    enum: RuleGroupType,
+    type: String,
+    nullable: true,
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
   @IsEnum(RuleGroupType)
-  type?: RuleGroupTypeKey
+  type?: RuleGroupType | null
 
   @ApiPropertyOptional({
     example: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
@@ -61,8 +85,10 @@ export class RuleGroupCreateDto {
     type: String,
   })
   @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
   @IsUUID()
-  parentGroupId?: string
+  parentGroupId?: string | null
 
   @ApiProperty({
     example: 1,
@@ -70,6 +96,7 @@ export class RuleGroupCreateDto {
     minimum: 0,
     type: Number,
   })
+  @IsNotEmpty()
   @Type(() => Number)
   @IsInt()
   @Min(0)
@@ -93,18 +120,34 @@ export class RuleGroupPatchBaseDto {
     type: String,
   })
   @IsOptional()
+  @ValidateIf((_, value) => value !== null)
   @IsString()
-  description?: string
+  description?: string | null
+
+  @ApiProperty({
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
+    description: 'Flexible metadata payload',
+    type: Object,
+    nullable: true,
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsObject()
+  metadata?: RuleGroupMetadata
 
   @ApiPropertyOptional({
-    example: 'component',
+    example: RuleGroupType.component,
     description: 'Updated rule group semantic type',
     enum: RuleGroupType,
     type: String,
   })
   @IsOptional()
+  @IsString()
   @IsEnum(RuleGroupType)
-  type?: RuleGroupTypeKey
+  type?: RuleGroupType | null
 }
 
 export class RuleGroupPatchDto extends PartialType(
@@ -125,8 +168,10 @@ export class RuleGroupMoveDto {
     type: String,
   })
   @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
   @IsUUID()
-  parentGroupId?: string
+  parentGroupId: string | null
 
   @ApiProperty({
     example: 2,
@@ -134,6 +179,7 @@ export class RuleGroupMoveDto {
     minimum: 0,
     type: Number,
   })
+  @IsNotEmpty()
   @Type(() => Number)
   @IsInt()
   @Min(0)
@@ -147,6 +193,8 @@ export class RuleGroupReorderItemDto {
     format: 'uuid',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
   @IsUUID()
   id: string
 
@@ -156,6 +204,7 @@ export class RuleGroupReorderItemDto {
     minimum: 0,
     type: Number,
   })
+  @IsNotEmpty()
   @Type(() => Number)
   @IsInt()
   @Min(0)
@@ -192,22 +241,30 @@ export class RuleGroupReorderRootDto {
   items: RuleGroupReorderItemDto[]
 }
 
-export class RuleGroupItemResponse {
+export class RuleGroupItemRes {
   @ApiProperty({
     example: '5c0f7db5-cf42-4f0d-95a7-e8c0f2d96f0f',
     description: 'Rule group UUID',
     format: 'uuid',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
   id: string
 
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Owner project UUID',
     format: 'uuid',
+    nullable: true,
     type: String,
   })
-  projectId: string
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsUUID()
+  projectId: string | null
 
   @ApiProperty({
     example: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
@@ -216,6 +273,10 @@ export class RuleGroupItemResponse {
     nullable: true,
     type: String,
   })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsUUID()
   parentGroupId: string | null
 
   @ApiProperty({
@@ -223,6 +284,8 @@ export class RuleGroupItemResponse {
     description: 'Rule group name',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
   name: string
 
   @ApiProperty({
@@ -231,22 +294,58 @@ export class RuleGroupItemResponse {
     nullable: true,
     type: String,
   })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
   description: string | null
 
   @ApiProperty({
-    example: 'component',
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
+    description: 'Flexible metadata payload',
+    type: Object,
+    nullable: true,
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsObject()
+  metadata?: RuleGroupMetadata
+
+  @ApiProperty({
+    example: RuleGroupScope.project,
+    default: RuleGroupScope.project,
+    description: 'Rule group scope',
+    enum: RuleGroupScope,
+    type: String,
+    nullable: false,
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(RuleGroupScope)
+  scope: RuleGroupScope
+
+  @ApiProperty({
+    example: RuleGroupType.component,
     description: 'Rule group semantic type',
     enum: RuleGroupType,
     type: String,
     nullable: true,
   })
-  type: RuleGroupTypeKey | null
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsEnum(RuleGroupType)
+  type: RuleGroupType | null
 
   @ApiProperty({
     example: 1,
     description: 'Order index within sibling list',
     type: Number,
   })
+  @IsNotEmpty()
+  @IsNumber()
   orderIndex: number
 
   @ApiProperty({
@@ -255,6 +354,9 @@ export class RuleGroupItemResponse {
     format: 'date-time',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
+  @IsDateString()
   createdAt: string
 
   @ApiProperty({
@@ -264,17 +366,24 @@ export class RuleGroupItemResponse {
     type: String,
     nullable: true,
   })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsDateString()
   updatedAt: string | null
 }
 
-export class RuleGroupUpdateResponse {
+export class RuleGroupUpdateRes {
   @ApiProperty({
-    example: 'success',
-    description: 'Operation status',
-    enum: ['success', 'failed'],
+    example: OperationStatus.success,
+    description: 'Archive operation status',
+    enum: OperationStatus,
     type: String,
   })
-  status: string
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: OperationStatus
 
   @ApiProperty({
     example: '5c0f7db5-cf42-4f0d-95a7-e8c0f2d96f0f',
@@ -282,17 +391,143 @@ export class RuleGroupUpdateResponse {
     format: 'uuid',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
   groupId: string
 }
 
-export class RuleGroupRemoveResponse {
+export class RuleGroupMoveRes {
   @ApiProperty({
-    example: 'success',
-    description: 'Archive operation status',
-    enum: ['success', 'failed'],
+    example: OperationStatus.success,
+    description: 'Operation status',
+    enum: OperationStatus,
     type: String,
   })
-  status: string
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: OperationStatus
+
+  @ApiProperty({
+    example: '5c0f7db5-cf42-4f0d-95a7-e8c0f2d96f0f',
+    description: 'Moved rule group UUID',
+    format: 'uuid',
+    type: String,
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  groupId: string
+
+  @ApiProperty({
+    example: [
+      '5c0f7db5-cf42-4f0d-95a7-e8c0f2d96f0f',
+      '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
+    ],
+    description: 'Affected rule group UUIDs',
+    type: String,
+    isArray: true,
+    format: 'uuid',
+  })
+  @IsArray()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
+  @IsUUID(undefined, { each: true })
+  affectedIds: string[]
+}
+
+export class RuleGroupReorderChildrenRes {
+  @ApiProperty({
+    example: OperationStatus.success,
+    description: 'Operation status',
+    enum: OperationStatus,
+    type: String,
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: OperationStatus
+
+  @ApiProperty({
+    example: '5c0f7db5-cf42-4f0d-95a7-e8c0f2d96f0f',
+    description: 'Parent rule group UUID',
+    format: 'uuid',
+    type: String,
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  groupId: string
+
+  @ApiProperty({
+    example: [
+      '5c0f7db5-cf42-4f0d-95a7-e8c0f2d96f0f',
+      '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
+    ],
+    description: 'Affected child rule group UUIDs',
+    type: String,
+    isArray: true,
+    format: 'uuid',
+  })
+  @IsArray()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
+  @IsUUID(undefined, { each: true })
+  affectedIds: string[]
+}
+
+export class RuleGroupReorderRootRes {
+  @ApiProperty({
+    example: OperationStatus.success,
+    description: 'Operation status',
+    enum: OperationStatus,
+    type: String,
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: OperationStatus
+
+  @ApiProperty({
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    description: 'Project UUID',
+    format: 'uuid',
+    type: String,
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  projectId: string
+
+  @ApiProperty({
+    example: [
+      '5c0f7db5-cf42-4f0d-95a7-e8c0f2d96f0f',
+      '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
+    ],
+    description: 'Affected root rule group UUIDs',
+    type: String,
+    isArray: true,
+    format: 'uuid',
+  })
+  @IsArray()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
+  @IsUUID(undefined, { each: true })
+  affectedIds: string[]
+}
+
+export class RuleGroupDeleteRes {
+  @ApiProperty({
+    example: OperationStatus.success,
+    description: 'Archive operation status',
+    enum: OperationStatus,
+    type: String,
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: OperationStatus
 
   @ApiProperty({
     example: '5c0f7db5-cf42-4f0d-95a7-e8c0f2d96f0f',
@@ -300,6 +535,9 @@ export class RuleGroupRemoveResponse {
     format: 'uuid',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
   groupId: string
 
   @ApiProperty({
@@ -308,5 +546,8 @@ export class RuleGroupRemoveResponse {
     format: 'date-time',
     type: String,
   })
-  archivedAt: string
+  @IsNotEmpty()
+  @IsString()
+  @IsDateString()
+  deletedAt: string
 }
