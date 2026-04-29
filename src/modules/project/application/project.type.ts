@@ -16,6 +16,19 @@ export interface ProjectEntity {
   deletedAt: string | null
 }
 
+export interface ProjectRawEntity {
+  id: string
+  name: string
+  description: string | null
+  slug: string
+  brandId: string | null
+  organizationId: string
+  templateSnapshotId: string | null
+  createdAt: Date
+  updatedAt: Date | null
+  deletedAt: Date | null
+}
+
 export namespace ProjectReqCmd {
   export interface GetList {
     search?: string
