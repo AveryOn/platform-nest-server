@@ -9,8 +9,8 @@ import {
 import {
   projectRuleConfigsTable,
   projectRuleGroupConfigsTable,
-  RuleGroupScope,
   ruleGroupsTable,
+  RuleScope,
   rulesTable,
 } from '~/infra/drizzle/schemas'
 import type { RuleMetadata } from '~/modules/rule/application/rule.type'
@@ -51,7 +51,7 @@ export class TreeDrizzleRepo implements TreeRepoPort {
       .where(
         and(
           eq(ruleGroupsTable.projectId, projectId),
-          eq(ruleGroupsTable.scope, RuleGroupScope.project),
+          eq(ruleGroupsTable.scope, RuleScope.project),
           isNull(ruleGroupsTable.deletedAt),
         ),
       )

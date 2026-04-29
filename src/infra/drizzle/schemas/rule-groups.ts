@@ -1,3 +1,4 @@
+import { isNull } from 'drizzle-orm'
 import {
   foreignKey,
   index,
@@ -56,12 +57,11 @@ export const ruleGroupsTable = pgTable(
       foreignColumns: [t.id],
       name: 'rule_groups_parent_group_id_fkey',
     }),
-    // TODO This needs to be thought out separately for template nodes where project_id = null.
-    uniqueIndex('rule_groups_project_parent_order_unique').on(
-      t.projectId,
-      t.parentGroupId,
-      t.orderIndex,
-    ),
+
+    uniqueIndex('rule_groups_project_parent_order_unique')
+      .on(t.projectId, t.parentGroupId, t.orderIndex)
+      .where(isNull(t.deletedAt)),
+
     index('rule_groups_project_parent_order_idx').on(
       t.projectId,
       t.parentGroupId,

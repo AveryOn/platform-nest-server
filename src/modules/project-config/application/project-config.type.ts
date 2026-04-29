@@ -3,6 +3,15 @@ export enum ProjectConfigStatus {
   hidden = 'hidden',
 }
 
+/** Entity type that is returned to the client */
+export interface ProjectConfigEntity {
+  projectId: string
+  ruleGroupId: string
+  isActive: boolean
+  status: ProjectConfigStatus
+  updatedAt: string | null
+}
+
 export namespace ProjectConfigReqCmd {
   export interface updateRuleGroupConfig {
     projectId: string
@@ -18,17 +27,11 @@ export namespace ProjectConfigReqCmd {
 }
 
 export namespace ProjectConfigRes {
-  export interface updateRuleGroupConfig {
+  export type updateRuleGroupConfig = ProjectConfigEntity
+  export type updateRuleConfig = {
     projectId: string
-    ruleGroupId: string
     isActive: boolean
-    status: ProjectConfigStatus
-    updatedAt: string | null
-  }
-  export interface updateRuleConfig {
-    projectId: string
     ruleId: string
-    isActive: boolean
     status: ProjectConfigStatus
     updatedAt: string | null
   }

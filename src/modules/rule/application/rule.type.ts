@@ -1,10 +1,18 @@
-export type RuleMetadata = Record<string, any> | null
+import type { OperationStatus } from '~/shared/const/app.const'
+
+export type RuleMetadata = Record<string, unknown> | null
+export enum RuleScope {
+  project = 'project',
+  template = 'template',
+}
 
 export type RuleEntity = {
   id: string
   ruleGroupId: string
-  title: string | null
+  name: string
+  scope: RuleScope
   body: string
+  projectId: string | null
   metadata: RuleMetadata
   orderIndex: number
   createdAt: Date
@@ -15,7 +23,7 @@ export type RuleEntity = {
 export namespace RuleServiceCmd {
   export type Create = {
     ruleGroupId: string
-    title?: string | null
+    name: string
     body: string
     metadata?: RuleMetadata
     orderIndex: number
@@ -27,7 +35,7 @@ export namespace RuleServiceCmd {
 
   export type Patch = {
     ruleId: string
-    title?: string | null
+    name?: string
     body?: string
     metadata?: RuleMetadata
   }
@@ -48,7 +56,7 @@ export namespace RuleServiceCmd {
     items: ReorderItem[]
   }
 
-  export type Remove = {
+  export type Delete = {
     ruleId: string
   }
 }
@@ -57,7 +65,9 @@ export namespace RuleServiceRes {
   export type Item = {
     id: string
     ruleGroupId: string
-    title: string
+    projectId: string | null
+    scope: RuleScope
+    name: string
     body: string
     metadata: RuleMetadata
     orderIndex: number
@@ -66,13 +76,25 @@ export namespace RuleServiceRes {
   }
 
   export type Update = {
-    status: 'success'
+    status: OperationStatus
     ruleId: string
   }
 
-  export type Remove = {
-    status: 'success'
+  export type Move = {
+    status: OperationStatus
     ruleId: string
-    archivedAt: string
+    affectedIds: string[]
+  }
+
+  export type ReorderInGroup = {
+    status: OperationStatus
+    groupId: string
+    affectedIds: string[]
+  }
+
+  export type Delete = {
+    status: OperationStatus
+    ruleId: string
+    deletedAt: string
   }
 }

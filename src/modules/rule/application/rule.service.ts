@@ -10,6 +10,7 @@ import {
   RuleRepoPort,
 } from '~/modules/rule/ports/rule.repo.port'
 import { RuleServicePort } from '~/modules/rule/ports/rule.service.port'
+import { OperationStatus } from '~/shared/const/app.const'
 
 @Injectable()
 export class RuleService implements RuleServicePort {
@@ -19,66 +20,52 @@ export class RuleService implements RuleServicePort {
   ) {}
 
   async create(cmd: RuleServiceCmd.Create): Promise<RuleServiceRes.Item> {
-    const created = await this.ruleRepo.create(cmd)
+    const entity = await this.ruleRepo.create(cmd)
 
-    return this.toItemRes(created)
+    return this.toItemRes(entity)
   }
 
   async getById(
     cmd: RuleServiceCmd.GetById,
   ): Promise<RuleServiceRes.Item> {
-    const rule = await this.ruleRepo.getByIdOrFail(cmd.ruleId)
+    const entity = await this.ruleRepo.getById(cmd)
 
-    return this.toItemRes(rule)
+    return this.toItemRes(entity)
   }
 
   async patch(cmd: RuleServiceCmd.Patch): Promise<RuleServiceRes.Update> {
-    await this.ruleRepo.patch(cmd)
+    const entity = await this.ruleRepo.patch(cmd)
 
     return {
-      status: 'success',
-      ruleId: cmd.ruleId,
+      status: OperationStatus.success,
+      ruleId: entity.id,
     }
   }
 
-  async move(cmd: RuleServiceCmd.Move): Promise<RuleServiceRes.Update> {
-    await this.ruleRepo.move(cmd)
-
-    return {
-      status: 'success',
-      ruleId: cmd.ruleId,
-    }
+  async move(cmd: RuleServiceCmd.Move): Promise<RuleServiceRes.Move> {
+    return await this.ruleRepo.move(cmd)
   }
 
   async reorderInGroup(
     cmd: RuleServiceCmd.ReorderInGroup,
-  ): Promise<RuleServiceRes.Update> {
-    await this.ruleRepo.reorderInGroup(cmd)
-
-    return {
-      status: 'success',
-      ruleId: cmd.items[0]?.id ?? '',
-    }
+  ): Promise<RuleServiceRes.ReorderInGroup> {
+    return await this.ruleRepo.reorderInGroup(cmd)
   }
 
-  async remove(
-    cmd: RuleServiceCmd.Remove,
-  ): Promise<RuleServiceRes.Remove> {
-    const archivedAt = await this.ruleRepo.remove(cmd.ruleId)
-
-    return {
-      status: 'success',
-      ruleId: cmd.ruleId,
-      archivedAt: archivedAt.toISOString(),
-    }
+  async delete(
+    cmd: RuleServiceCmd.Delete,
+  ): Promise<RuleServiceRes.Delete> {
+    return await this.ruleRepo.delete(cmd)
   }
 
   private toItemRes(entity: RuleEntity): RuleServiceRes.Item {
     return {
       id: entity.id,
       ruleGroupId: entity.ruleGroupId,
-      title: entity.title ?? '',
+      name: entity.name,
       body: entity.body,
+      scope: entity.scope,
+      projectId: entity.projectId,
       metadata: entity.metadata,
       orderIndex: entity.orderIndex,
       createdAt: entity.createdAt.toISOString(),

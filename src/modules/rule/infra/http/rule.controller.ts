@@ -18,14 +18,17 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import {
   RuleCreateDto,
-  RuleItemResponseDto,
+  RuleDeleteRes,
+  RuleItemRes,
   RuleMoveDto,
+  RuleMoveRes,
   RulePatchDto,
-  RuleRemoveResponseDto,
   RuleReorderInGroupDto,
-  RuleUpdateResponseDto,
+  RuleReorderInGroupRes,
+  RuleUpdateRes,
 } from '~/modules/rule/infra/http/rule.dto'
 import {
   RULE_SERVICE_PORT,
@@ -43,6 +46,9 @@ export class RuleController {
     private readonly ruleService: RuleServicePort,
   ) {}
 
+  // ------------------------------------------
+  // [POST] | CREATE RULE
+  // #region POST------------------------------
   @Post('rule-groups/:groupId/rules')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
@@ -64,10 +70,10 @@ export class RuleController {
     description: 'Rule creation payload',
     required: true,
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.CREATED,
     description: 'Rule successfully created',
-    type: RuleItemResponseDto,
+    type: RuleItemRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -99,9 +105,9 @@ export class RuleController {
     groupId: string,
     @Body()
     body: RuleCreateDto,
-  ): Promise<RuleItemResponseDto> {
+  ): Promise<RuleItemRes> {
     return await this.ruleService.create({
-      title: body.title,
+      name: body.name,
       body: body.body,
       orderIndex: body.orderIndex,
       ruleGroupId: groupId,
@@ -109,115 +115,9 @@ export class RuleController {
     })
   }
 
-  @Get('rules/:ruleId')
-  @ApiOperation({
-    summary: 'Get rule by id',
-    description: 'Returns rule details by UUID',
-    operationId: 'get_rule_by_id',
-    tags: [ApiSwaggerTag.Rule],
-  })
-  @ApiParam({
-    name: 'ruleId',
-    required: true,
-    example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-    type: String,
-    format: 'uuid',
-    description: 'Rule UUID',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Rule successfully returned',
-    type: RuleItemResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Bad Request. Invalid UUID',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized. Missing or invalid authentication',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden. No access to this rule',
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Rule not found',
-  })
-  async getRuleById(
-    @Param('ruleId', ParseUUIDPipe)
-    ruleId: string,
-  ): Promise<RuleItemResponseDto> {
-    return await this.ruleService.getById({
-      ruleId: ruleId,
-    })
-  }
-
-  @Patch('rules/:ruleId')
-  @ApiOperation({
-    summary: 'Update rule',
-    description: 'Updates mutable fields of a rule',
-    operationId: 'patch_rule',
-    tags: [ApiSwaggerTag.Rule],
-  })
-  @ApiParam({
-    name: 'ruleId',
-    required: true,
-    example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-    type: String,
-    format: 'uuid',
-    description: 'Rule UUID',
-  })
-  @ApiBody({
-    type: RulePatchDto,
-    description: 'Rule patch payload',
-    required: true,
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Rule successfully updated',
-    type: RuleUpdateResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Bad Request. Invalid UUID or request body',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'Unauthorized. Missing or invalid authentication',
-  })
-  @ApiResponse({
-    status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden. No access to this rule',
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Rule not found',
-  })
-  @ApiResponse({
-    status: HttpStatus.CONFLICT,
-    description:
-      'Conflict. Update violates ordering or ownership constraints',
-  })
-  @ApiResponse({
-    status: HttpStatus.UNPROCESSABLE_ENTITY,
-    description: 'Validation failed',
-  })
-  async patchRule(
-    @Param('ruleId', ParseUUIDPipe)
-    ruleId: string,
-    @Body()
-    body: RulePatchDto,
-  ): Promise<RuleUpdateResponseDto> {
-    return await this.ruleService.patch({
-      ruleId: ruleId,
-      body: body.body,
-      metadata: body.metadata,
-      title: body.title,
-    })
-  }
-
+  // ------------------------------------------
+  // [POST] | MOVE RULE
+  // ------------------------------------------
   @Post('rules/:ruleId/move')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -239,10 +139,10 @@ export class RuleController {
     description: 'Rule move payload',
     required: true,
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule successfully moved',
-    type: RuleUpdateResponseDto,
+    type: RuleMoveRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -274,7 +174,7 @@ export class RuleController {
     ruleId: string,
     @Body()
     body: RuleMoveDto,
-  ): Promise<RuleUpdateResponseDto> {
+  ): Promise<RuleMoveRes> {
     return await this.ruleService.move({
       orderIndex: body.orderIndex,
       targetGroupId: body.targetGroupId,
@@ -282,6 +182,9 @@ export class RuleController {
     })
   }
 
+  // ------------------------------------------
+  // [POST] | REORDER RULES IN GROUP
+  // ------------------------------------------
   @Post('rule-groups/:groupId/reorder-rules')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -303,10 +206,10 @@ export class RuleController {
     description: 'Rule reorder payload',
     required: true,
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rules successfully reordered',
-    type: RuleUpdateResponseDto,
+    type: RuleReorderInGroupRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -338,19 +241,21 @@ export class RuleController {
     groupId: string,
     @Body()
     body: RuleReorderInGroupDto,
-  ): Promise<RuleUpdateResponseDto> {
+  ): Promise<RuleReorderInGroupRes> {
     return await this.ruleService.reorderInGroup({
-      groupId: groupId,
+      groupId,
       items: body.items,
     })
   }
 
-  @Delete('rules/:ruleId')
-  @HttpCode(HttpStatus.OK)
+  // #endregion-------------------------------
+  // [GET] | GET RULE BY ID
+  // #region GET------------------------------
+  @Get('rules/:ruleId')
   @ApiOperation({
-    summary: 'Archive rule',
-    description: 'Performs soft delete of a rule',
-    operationId: 'delete_rule',
+    summary: 'Get rule by id',
+    description: 'Returns rule details by UUID',
+    operationId: 'get_rule_by_id',
     tags: [ApiSwaggerTag.Rule],
   })
   @ApiParam({
@@ -361,10 +266,124 @@ export class RuleController {
     format: 'uuid',
     description: 'Rule UUID',
   })
+  @ApiDataResponse({
+    status: HttpStatus.OK,
+    description: 'Rule successfully returned',
+    type: RuleItemRes,
+  })
   @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request. Invalid UUID',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized. Missing or invalid authentication',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden. No access to this rule',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Rule not found',
+  })
+  async getRuleById(
+    @Param('ruleId', ParseUUIDPipe)
+    ruleId: string,
+  ): Promise<RuleItemRes> {
+    return await this.ruleService.getById({ ruleId })
+  }
+
+  // #endregion-------------------------------
+  // [PATCH] | UPDATE RULE
+  // #region PATCH------------------------------
+  @Patch('rules/:ruleId')
+  @ApiOperation({
+    summary: 'Update rule',
+    description: 'Updates mutable fields of a rule',
+    operationId: 'patch_rule',
+    tags: [ApiSwaggerTag.Rule],
+  })
+  @ApiParam({
+    name: 'ruleId',
+    required: true,
+    example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
+    type: String,
+    format: 'uuid',
+    description: 'Rule UUID',
+  })
+  @ApiBody({
+    type: RulePatchDto,
+    description: 'Rule patch payload',
+    required: true,
+  })
+  @ApiDataResponse({
+    status: HttpStatus.OK,
+    description: 'Rule successfully updated',
+    type: RuleUpdateRes,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Bad Request. Invalid UUID or request body',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized. Missing or invalid authentication',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden. No access to this rule',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Rule not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description:
+      'Conflict. Update violates ordering or ownership constraints',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNPROCESSABLE_ENTITY,
+    description: 'Validation failed',
+  })
+  async patchRule(
+    @Param('ruleId', ParseUUIDPipe)
+    ruleId: string,
+    @Body()
+    body: RulePatchDto,
+  ): Promise<RuleUpdateRes> {
+    return await this.ruleService.patch({
+      ruleId: ruleId,
+      body: body.body,
+      metadata: body.metadata,
+      name: body.name,
+    })
+  }
+
+  // #endregion-------------------------------
+  // [DELETE] | ARCHIVE RULE
+  // #region DELETE------------------------------
+  @Delete('rules/:ruleId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Archive rule',
+    description: 'Performs soft delete of a rule',
+    operationId: 'archive_rule',
+    tags: [ApiSwaggerTag.Rule],
+  })
+  @ApiParam({
+    name: 'ruleId',
+    required: true,
+    example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
+    type: String,
+    format: 'uuid',
+    description: 'Rule UUID',
+  })
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule successfully archived',
-    type: RuleRemoveResponseDto,
+    type: RuleDeleteRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -385,7 +404,7 @@ export class RuleController {
   async deleteRule(
     @Param('ruleId', ParseUUIDPipe)
     ruleId: string,
-  ): Promise<RuleRemoveResponseDto> {
-    return await this.ruleService.remove({ ruleId })
+  ): Promise<RuleDeleteRes> {
+    return await this.ruleService.delete({ ruleId })
   }
 }
