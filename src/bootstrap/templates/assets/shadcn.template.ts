@@ -111,6 +111,7 @@ export const shadcnTemplate: TemplateBase = {
                   body: 'Use primary for main CTAs and key interactive elements.',
                   orderIndex: 0,
                   description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -144,6 +145,7 @@ export const shadcnTemplate: TemplateBase = {
                   body: 'Use secondary for less prominent actions and backgrounds.',
                   orderIndex: 0,
                   description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -177,6 +179,7 @@ export const shadcnTemplate: TemplateBase = {
                   body: 'Use muted for subtle backgrounds and disabled states.',
                   orderIndex: 0,
                   description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -210,6 +213,7 @@ export const shadcnTemplate: TemplateBase = {
                   body: 'Use accent for highlights and emphasis.',
                   orderIndex: 0,
                   description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -242,6 +246,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Info Foreground',
               type: RuleGroupType.token,
               orderIndex: 15,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(204 100% 97%)',
@@ -253,6 +258,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Success',
               type: RuleGroupType.token,
               orderIndex: 16,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(155 90% 24%)',
@@ -264,6 +270,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Success Foreground',
               type: RuleGroupType.token,
               orderIndex: 17,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(145 81% 96%)',
@@ -275,6 +282,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Warning',
               type: RuleGroupType.token,
               orderIndex: 18,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(22 92% 37%)',
@@ -286,6 +294,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Warning Foreground',
               type: RuleGroupType.token,
               orderIndex: 19,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(45 100% 96%)',
@@ -297,6 +306,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Destructive',
               type: RuleGroupType.token,
               orderIndex: 20,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(357 100% 45%)',
@@ -308,12 +318,16 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Destructive actions only',
                   body: 'Use destructive color only for irreversible or dangerous actions.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
                 {
                   key: 'color-destructive-rule-2',
                   name: 'Confirmation required',
                   body: 'Always pair destructive actions with a confirmation step.',
                   orderIndex: 1,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -322,6 +336,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Border',
               type: RuleGroupType.token,
               orderIndex: 21,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(233 14% 23% / 7%)',
@@ -333,6 +348,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Input',
               type: RuleGroupType.token,
               orderIndex: 22,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(233 26% 86%)',
@@ -344,6 +360,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Ring',
               type: RuleGroupType.token,
               orderIndex: 23,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(234 39% 44%)',
@@ -355,6 +372,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Chart 1',
               type: RuleGroupType.token,
               orderIndex: 24,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(211 100% 78%)',
@@ -366,6 +384,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Chart 2',
               type: RuleGroupType.token,
               orderIndex: 25,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(216 100% 58%)',
@@ -377,6 +396,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Chart 3',
               type: RuleGroupType.token,
               orderIndex: 26,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(221 97% 54%)',
@@ -388,6 +408,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Chart 4',
               type: RuleGroupType.token,
               orderIndex: 27,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(225 84% 49%)',
@@ -399,6 +420,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Chart 5',
               type: RuleGroupType.token,
               orderIndex: 28,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(227 76% 41%)',
@@ -410,6 +432,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Sidebar',
               type: RuleGroupType.token,
               orderIndex: 29,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(231 90% 97%)',
@@ -421,6 +444,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Sidebar Foreground',
               type: RuleGroupType.token,
               orderIndex: 30,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(234 96% 9%)',
@@ -432,6 +456,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Sidebar Primary',
               type: RuleGroupType.token,
               orderIndex: 31,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(229 84% 51%)',
@@ -443,6 +468,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Sidebar Primary Foreground',
               type: RuleGroupType.token,
               orderIndex: 32,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(233 100% 96%)',
@@ -454,6 +480,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Sidebar Accent',
               type: RuleGroupType.token,
               orderIndex: 33,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(73 100% 96%)',
@@ -465,6 +492,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Sidebar Accent Foreground',
               type: RuleGroupType.token,
               orderIndex: 34,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(72 100% 12%)',
@@ -476,6 +504,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Sidebar Border',
               type: RuleGroupType.token,
               orderIndex: 35,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(232 60% 85%)',
@@ -487,6 +516,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Sidebar Ring',
               type: RuleGroupType.token,
               orderIndex: 36,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(233 27% 53%)',
@@ -500,12 +530,15 @@ export const shadcnTemplate: TemplateBase = {
           name: 'Typography',
           type: RuleGroupType.category,
           orderIndex: 1,
+          description: null,
+          metadata: null,
           children: [
             {
               key: 'font-sans',
               name: 'Font Sans',
               type: RuleGroupType.token,
               orderIndex: 0,
+              description: null,
               metadata: {
                 token_type: 'font',
                 value: 'Geist',
@@ -517,6 +550,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Font Mono',
               type: RuleGroupType.token,
               orderIndex: 1,
+              description: null,
               metadata: {
                 token_type: 'font',
                 value: 'Geist Mono',
@@ -528,6 +562,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'text-xs',
               type: RuleGroupType.token,
               orderIndex: 2,
+              description: null,
               metadata: {
                 token_type: 'typography',
                 value: '0.75rem',
@@ -540,6 +575,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Small text only',
                   body: 'Use text-xs for captions and helper text only.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -548,6 +585,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'text-sm',
               type: RuleGroupType.token,
               orderIndex: 3,
+              description: null,
               metadata: {
                 token_type: 'typography',
                 value: '0.875rem',
@@ -560,6 +598,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Body text',
                   body: 'Use text-sm for body text and secondary content.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -568,6 +608,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'text-base',
               type: RuleGroupType.token,
               orderIndex: 4,
+              description: null,
               metadata: {
                 token_type: 'typography',
                 value: '1rem',
@@ -580,6 +621,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Default size',
                   body: 'Use text-base as the default font size for most content.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -588,6 +631,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'text-lg',
               type: RuleGroupType.token,
               orderIndex: 5,
+              description: null,
               metadata: {
                 token_type: 'typography',
                 value: '1.125rem',
@@ -600,6 +644,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Subheadings',
                   body: 'Use text-lg for subheadings in card layouts.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -610,12 +656,15 @@ export const shadcnTemplate: TemplateBase = {
           name: 'Radius',
           type: RuleGroupType.category,
           orderIndex: 2,
+          description: null,
+          metadata: null,
           children: [
             {
-              key: 'radius',
+              key: 'radius-base',
               name: 'Radius',
               type: RuleGroupType.token,
               orderIndex: 0,
+              description: null,
               metadata: {
                 token_type: 'radius',
                 value: '0.625rem',
@@ -627,6 +676,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'radius-sm',
               type: RuleGroupType.token,
               orderIndex: 1,
+              description: null,
               metadata: {
                 token_type: 'radius',
                 value: 'calc(var(--radius) - 4px)',
@@ -638,6 +688,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Small elements',
                   body: 'Use radius-sm for small interactive elements like badges.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -646,6 +698,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'radius-md',
               type: RuleGroupType.token,
               orderIndex: 2,
+              description: null,
               metadata: {
                 token_type: 'radius',
                 value: 'calc(var(--radius) - 2px)',
@@ -657,6 +710,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Default radius',
                   body: 'Use radius-md as the default border radius for most components.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -665,6 +720,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'radius-lg',
               type: RuleGroupType.token,
               orderIndex: 3,
+              description: null,
               metadata: {
                 token_type: 'radius',
                 value: 'var(--radius)',
@@ -676,6 +732,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Cards and modals',
                   body: 'Use radius-lg for cards and modals, never for buttons.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -684,6 +742,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'radius-xl',
               type: RuleGroupType.token,
               orderIndex: 4,
+              description: null,
               metadata: {
                 token_type: 'radius',
                 value: 'calc(var(--radius) + 4px)',
@@ -695,6 +754,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'radius-2xl',
               type: RuleGroupType.token,
               orderIndex: 5,
+              description: null,
               metadata: {
                 token_type: 'radius',
                 value: 'calc(var(--radius) + 8px)',
@@ -706,6 +766,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'radius-3xl',
               type: RuleGroupType.token,
               orderIndex: 6,
+              description: null,
               metadata: {
                 token_type: 'radius',
                 value: 'calc(var(--radius) + 12px)',
@@ -717,6 +778,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'radius-4xl',
               type: RuleGroupType.token,
               orderIndex: 7,
+              description: null,
               metadata: {
                 token_type: 'radius',
                 value: 'calc(var(--radius) + 16px)',
@@ -730,12 +792,15 @@ export const shadcnTemplate: TemplateBase = {
           name: 'Shadows',
           type: RuleGroupType.category,
           orderIndex: 3,
+          description: null,
+          metadata: null,
           children: [
             {
               key: 'shadow-sm',
               name: 'shadow-sm',
               type: RuleGroupType.token,
               orderIndex: 0,
+              description: null,
               metadata: {
                 token_type: 'shadow',
                 value: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -747,6 +812,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Subtle elevation',
                   body: 'Use shadow-sm for subtle elevation on hover states.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -755,6 +822,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'shadow-md',
               type: RuleGroupType.token,
               orderIndex: 1,
+              description: null,
               metadata: {
                 token_type: 'shadow',
                 value: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -766,6 +834,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Elevated surfaces',
                   body: 'Use shadow-md for elevated surfaces like dropdowns and popovers.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -774,6 +844,7 @@ export const shadcnTemplate: TemplateBase = {
               name: 'shadow-lg',
               type: RuleGroupType.token,
               orderIndex: 2,
+              description: null,
               metadata: {
                 token_type: 'shadow',
                 value: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
@@ -785,6 +856,8 @@ export const shadcnTemplate: TemplateBase = {
                   name: 'Modals and dialogs',
                   body: 'Use shadow-lg for modals and dialogs to create depth.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -797,24 +870,32 @@ export const shadcnTemplate: TemplateBase = {
       name: 'Components',
       type: RuleGroupType.category,
       orderIndex: 1,
+      description: null,
+      metadata: null,
       children: [
         {
           key: 'button',
           name: 'Button',
           type: RuleGroupType.component,
           orderIndex: 0,
+          description: null,
+          metadata: null,
           rules: [
             {
               key: 'button-rule-1',
               name: 'Always include a visible text label',
               body: 'Buttons must have a visible text label for accessibility.',
               orderIndex: 0,
+              description: null,
+              metadata: null,
             },
             {
               key: 'button-rule-2',
               name: 'Max one primary button per view',
               body: 'Limit to one primary button per view to maintain visual hierarchy.',
               orderIndex: 1,
+              description: null,
+              metadata: null,
             },
           ],
           children: [
@@ -823,18 +904,24 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Destructive',
               type: RuleGroupType.variant,
               orderIndex: 0,
+              description: null,
+              metadata: null,
               rules: [
                 {
                   key: 'button-destructive-rule-1',
                   name: 'Only for irreversible actions',
                   body: 'Use destructive variant only for irreversible or dangerous actions.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
                 {
                   key: 'button-destructive-rule-2',
                   name: 'Must include confirmation step',
                   body: 'Destructive buttons must include a confirmation step before execution.',
                   orderIndex: 1,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -843,12 +930,16 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Ghost',
               type: RuleGroupType.variant,
               orderIndex: 1,
+              description: null,
+              metadata: null,
               rules: [
                 {
                   key: 'button-ghost-rule-1',
                   name: 'Secondary actions in toolbars',
                   body: 'Use ghost variant for secondary actions in toolbars and navigation.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -857,12 +948,16 @@ export const shadcnTemplate: TemplateBase = {
               name: 'Outline',
               type: RuleGroupType.variant,
               orderIndex: 2,
+              description: null,
+              metadata: null,
               rules: [
                 {
                   key: 'button-outline-rule-1',
                   name: 'Secondary actions',
                   body: 'Use outline variant for secondary actions that need visual weight.',
                   orderIndex: 0,
+                  description: null,
+                  metadata: null,
                 },
               ],
             },
@@ -873,12 +968,16 @@ export const shadcnTemplate: TemplateBase = {
           name: 'Accordion',
           type: RuleGroupType.component,
           orderIndex: 1,
+          description: null,
+          metadata: null,
           rules: [
             {
               key: 'accordion-rule-1',
               name: 'Collapsible content sections',
               body: 'Use accordion for collapsible content sections to save space.',
               orderIndex: 0,
+              description: null,
+              metadata: null,
             },
           ],
         },
@@ -887,12 +986,16 @@ export const shadcnTemplate: TemplateBase = {
           name: 'Alert',
           type: RuleGroupType.component,
           orderIndex: 2,
+          description: null,
+          metadata: null,
           rules: [
             {
               key: 'alert-rule-1',
               name: 'Important information',
               body: 'Use alerts to display important information that requires user attention.',
               orderIndex: 0,
+              description: null,
+              metadata: null,
             },
           ],
         },
@@ -901,12 +1004,16 @@ export const shadcnTemplate: TemplateBase = {
           name: 'Alert Dialog',
           type: RuleGroupType.component,
           orderIndex: 3,
+          description: null,
+          metadata: null,
           rules: [
             {
               key: 'alert-dialog-rule-1',
               name: 'Confirmation dialogs',
               body: 'Use alert dialogs for confirmation of critical actions.',
               orderIndex: 0,
+              description: null,
+              metadata: null,
             },
           ],
         },
@@ -917,12 +1024,16 @@ export const shadcnTemplate: TemplateBase = {
       name: 'Content',
       type: RuleGroupType.category,
       orderIndex: 2,
+      description: null,
+      metadata: null,
       rules: [
         {
           key: 'content-rule-1',
           name: 'Tone of voice',
           body: 'Use active voice. Be direct and clear.',
           orderIndex: 0,
+          description: null,
+          metadata: null,
         },
       ],
     },
