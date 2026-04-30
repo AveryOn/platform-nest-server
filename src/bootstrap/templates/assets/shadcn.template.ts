@@ -1,29 +1,32 @@
 import type { TemplateBase } from '~/bootstrap/templates/application/service/template.types'
+import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
 
 export const shadcnTemplate: TemplateBase = {
   name: 'Shadcn Template',
   slug: 'shadcn',
   groups: [
     {
-      key: '',
-      ref: 'styles',
+      key: 'styles',
       name: 'Styles',
-      type: 'category',
+      type: RuleGroupType.category,
+      description: null,
+      metadata: null,
       orderIndex: 0,
       children: [
         {
-          key: '',
-          ref: 'colors',
+          key: 'colors',
           name: 'Colors',
-          type: 'category',
+          type: RuleGroupType.category,
           orderIndex: 0,
+          description: null,
+          metadata: null,
           children: [
             {
-              key: '',
-              ref: 'color-foreground',
+              key: 'color-foreground',
               name: 'Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 0,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(234 96% 9%)',
@@ -31,11 +34,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-background',
+              key: 'color-background',
               name: 'Background',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 1,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(0 0% 100%)',
@@ -43,11 +46,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-card',
+              key: 'color-card',
               name: 'Card',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 2,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(0 0% 100%)',
@@ -55,11 +58,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-card-foreground',
+              key: 'color-card-foreground',
               name: 'Card Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 3,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(234 96% 9%)',
@@ -67,11 +70,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-popover',
+              key: 'color-popover',
               name: 'Popover',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 4,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(0 0% 100%)',
@@ -79,11 +82,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-popover-foreground',
+              key: 'color-popover-foreground',
               name: 'Popover Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 5,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(234 96% 9%)',
@@ -91,11 +94,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-primary',
+              key: 'color-primary',
               name: 'Primary',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 6,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(229 84% 51%)',
@@ -103,20 +106,20 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'color-primary-rule-1',
-                  title: 'Primary action color',
+                  key: 'color-primary-rule-1',
+                  name: 'Primary action color',
                   body: 'Use primary for main CTAs and key interactive elements.',
                   orderIndex: 0,
+                  description: null,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'color-primary-foreground',
+              key: 'color-primary-foreground',
               name: 'Primary Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 7,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(233 100% 96%)',
@@ -124,11 +127,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-secondary',
+              key: 'color-secondary',
               name: 'Secondary',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 8,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(231 70% 95%)',
@@ -136,20 +139,20 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'color-secondary-rule-1',
-                  title: 'Secondary actions',
+                  key: 'color-secondary-rule-1',
+                  name: 'Secondary actions',
                   body: 'Use secondary for less prominent actions and backgrounds.',
                   orderIndex: 0,
+                  description: null,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'color-secondary-foreground',
+              key: 'color-secondary-foreground',
               name: 'Secondary Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 9,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(229 84% 51%)',
@@ -157,11 +160,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-muted',
+              key: 'color-muted',
               name: 'Muted',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 10,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(233 80% 99%)',
@@ -169,20 +172,20 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'color-muted-rule-1',
-                  title: 'Subtle backgrounds',
+                  key: 'color-muted-rule-1',
+                  name: 'Subtle backgrounds',
                   body: 'Use muted for subtle backgrounds and disabled states.',
                   orderIndex: 0,
+                  description: null,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'color-muted-foreground',
+              key: 'color-muted-foreground',
               name: 'Muted Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 11,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(234 17% 50%)',
@@ -190,11 +193,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-accent',
+              key: 'color-accent',
               name: 'Accent',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 12,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(72 100% 93%)',
@@ -202,20 +205,20 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'color-accent-rule-1',
-                  title: 'Accent highlights',
+                  key: 'color-accent-rule-1',
+                  name: 'Accent highlights',
                   body: 'Use accent for highlights and emphasis.',
                   orderIndex: 0,
+                  description: null,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'color-accent-foreground',
+              key: 'color-accent-foreground',
               name: 'Accent Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 13,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(73 23% 24%)',
@@ -223,11 +226,11 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-info',
+              key: 'color-info',
               name: 'Info',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 14,
+              description: null,
               metadata: {
                 token_type: 'color',
                 value: 'hsl(201 98% 32%)',
@@ -235,10 +238,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-info-foreground',
+              key: 'color-info-foreground',
               name: 'Info Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 15,
               metadata: {
                 token_type: 'color',
@@ -247,10 +249,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-success',
+              key: 'color-success',
               name: 'Success',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 16,
               metadata: {
                 token_type: 'color',
@@ -259,10 +260,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-success-foreground',
+              key: 'color-success-foreground',
               name: 'Success Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 17,
               metadata: {
                 token_type: 'color',
@@ -271,10 +271,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-warning',
+              key: 'color-warning',
               name: 'Warning',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 18,
               metadata: {
                 token_type: 'color',
@@ -283,10 +282,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-warning-foreground',
+              key: 'color-warning-foreground',
               name: 'Warning Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 19,
               metadata: {
                 token_type: 'color',
@@ -295,10 +293,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-destructive',
+              key: 'color-destructive',
               name: 'Destructive',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 20,
               metadata: {
                 token_type: 'color',
@@ -307,26 +304,23 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'color-destructive-rule-1',
-                  title: 'Destructive actions only',
+                  key: 'color-destructive-rule-1',
+                  name: 'Destructive actions only',
                   body: 'Use destructive color only for irreversible or dangerous actions.',
                   orderIndex: 0,
                 },
                 {
-                  key: '',
-                  ref: 'color-destructive-rule-2',
-                  title: 'Confirmation required',
+                  key: 'color-destructive-rule-2',
+                  name: 'Confirmation required',
                   body: 'Always pair destructive actions with a confirmation step.',
                   orderIndex: 1,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'color-border',
+              key: 'color-border',
               name: 'Border',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 21,
               metadata: {
                 token_type: 'color',
@@ -335,10 +329,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-input',
+              key: 'color-input',
               name: 'Input',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 22,
               metadata: {
                 token_type: 'color',
@@ -347,10 +340,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-ring',
+              key: 'color-ring',
               name: 'Ring',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 23,
               metadata: {
                 token_type: 'color',
@@ -359,10 +351,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-chart-1',
+              key: 'color-chart-1',
               name: 'Chart 1',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 24,
               metadata: {
                 token_type: 'color',
@@ -371,10 +362,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-chart-2',
+              key: 'color-chart-2',
               name: 'Chart 2',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 25,
               metadata: {
                 token_type: 'color',
@@ -383,10 +373,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-chart-3',
+              key: 'color-chart-3',
               name: 'Chart 3',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 26,
               metadata: {
                 token_type: 'color',
@@ -395,10 +384,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-chart-4',
+              key: 'color-chart-4',
               name: 'Chart 4',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 27,
               metadata: {
                 token_type: 'color',
@@ -407,10 +395,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-chart-5',
+              key: 'color-chart-5',
               name: 'Chart 5',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 28,
               metadata: {
                 token_type: 'color',
@@ -419,10 +406,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-sidebar',
+              key: 'color-sidebar',
               name: 'Sidebar',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 29,
               metadata: {
                 token_type: 'color',
@@ -431,10 +417,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-sidebar-foreground',
+              key: 'color-sidebar-foreground',
               name: 'Sidebar Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 30,
               metadata: {
                 token_type: 'color',
@@ -443,10 +428,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-sidebar-primary',
+              key: 'color-sidebar-primary',
               name: 'Sidebar Primary',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 31,
               metadata: {
                 token_type: 'color',
@@ -455,10 +439,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-sidebar-primary-foreground',
+              key: 'color-sidebar-primary-foreground',
               name: 'Sidebar Primary Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 32,
               metadata: {
                 token_type: 'color',
@@ -467,10 +450,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-sidebar-accent',
+              key: 'color-sidebar-accent',
               name: 'Sidebar Accent',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 33,
               metadata: {
                 token_type: 'color',
@@ -479,10 +461,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-sidebar-accent-foreground',
+              key: 'color-sidebar-accent-foreground',
               name: 'Sidebar Accent Foreground',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 34,
               metadata: {
                 token_type: 'color',
@@ -491,10 +472,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-sidebar-border',
+              key: 'color-sidebar-border',
               name: 'Sidebar Border',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 35,
               metadata: {
                 token_type: 'color',
@@ -503,10 +483,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'color-sidebar-ring',
+              key: 'color-sidebar-ring',
               name: 'Sidebar Ring',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 36,
               metadata: {
                 token_type: 'color',
@@ -517,17 +496,15 @@ export const shadcnTemplate: TemplateBase = {
           ],
         },
         {
-          key: '',
-          ref: 'typography',
+          key: 'typography',
           name: 'Typography',
-          type: 'category',
+          type: RuleGroupType.category,
           orderIndex: 1,
           children: [
             {
-              key: '',
-              ref: 'font-sans',
+              key: 'font-sans',
               name: 'Font Sans',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 0,
               metadata: {
                 token_type: 'font',
@@ -536,10 +513,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'font-mono',
+              key: 'font-mono',
               name: 'Font Mono',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 1,
               metadata: {
                 token_type: 'font',
@@ -548,10 +524,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'text-xs',
+              key: 'text-xs',
               name: 'text-xs',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 2,
               metadata: {
                 token_type: 'typography',
@@ -561,19 +536,17 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'text-xs-rule-1',
-                  title: 'Small text only',
+                  key: 'text-xs-rule-1',
+                  name: 'Small text only',
                   body: 'Use text-xs for captions and helper text only.',
                   orderIndex: 0,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'text-sm',
+              key: 'text-sm',
               name: 'text-sm',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 3,
               metadata: {
                 token_type: 'typography',
@@ -583,19 +556,17 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'text-sm-rule-1',
-                  title: 'Body text',
+                  key: 'text-sm-rule-1',
+                  name: 'Body text',
                   body: 'Use text-sm for body text and secondary content.',
                   orderIndex: 0,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'text-base',
+              key: 'text-base',
               name: 'text-base',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 4,
               metadata: {
                 token_type: 'typography',
@@ -605,19 +576,17 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'text-base-rule-1',
-                  title: 'Default size',
+                  key: 'text-base-rule-1',
+                  name: 'Default size',
                   body: 'Use text-base as the default font size for most content.',
                   orderIndex: 0,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'text-lg',
+              key: 'text-lg',
               name: 'text-lg',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 5,
               metadata: {
                 token_type: 'typography',
@@ -627,9 +596,8 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'text-lg-rule-1',
-                  title: 'Subheadings',
+                  key: 'text-lg-rule-1',
+                  name: 'Subheadings',
                   body: 'Use text-lg for subheadings in card layouts.',
                   orderIndex: 0,
                 },
@@ -638,17 +606,15 @@ export const shadcnTemplate: TemplateBase = {
           ],
         },
         {
-          key: '',
-          ref: 'radius',
+          key: 'radius',
           name: 'Radius',
-          type: 'category',
+          type: RuleGroupType.category,
           orderIndex: 2,
           children: [
             {
-              key: '',
-              ref: 'radius',
+              key: 'radius',
               name: 'Radius',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 0,
               metadata: {
                 token_type: 'radius',
@@ -657,10 +623,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'radius-sm',
+              key: 'radius-sm',
               name: 'radius-sm',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 1,
               metadata: {
                 token_type: 'radius',
@@ -669,19 +634,17 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'radius-sm-rule-1',
-                  title: 'Small elements',
+                  key: 'radius-sm-rule-1',
+                  name: 'Small elements',
                   body: 'Use radius-sm for small interactive elements like badges.',
                   orderIndex: 0,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'radius-md',
+              key: 'radius-md',
               name: 'radius-md',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 2,
               metadata: {
                 token_type: 'radius',
@@ -690,19 +653,17 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'radius-md-rule-1',
-                  title: 'Default radius',
+                  key: 'radius-md-rule-1',
+                  name: 'Default radius',
                   body: 'Use radius-md as the default border radius for most components.',
                   orderIndex: 0,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'radius-lg',
+              key: 'radius-lg',
               name: 'radius-lg',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 3,
               metadata: {
                 token_type: 'radius',
@@ -711,19 +672,17 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'radius-lg-rule-1',
-                  title: 'Cards and modals',
+                  key: 'radius-lg-rule-1',
+                  name: 'Cards and modals',
                   body: 'Use radius-lg for cards and modals, never for buttons.',
                   orderIndex: 0,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'radius-xl',
+              key: 'radius-xl',
               name: 'radius-xl',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 4,
               metadata: {
                 token_type: 'radius',
@@ -732,10 +691,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'radius-2xl',
+              key: 'radius-2xl',
               name: 'radius-2xl',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 5,
               metadata: {
                 token_type: 'radius',
@@ -744,10 +702,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'radius-3xl',
+              key: 'radius-3xl',
               name: 'radius-3xl',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 6,
               metadata: {
                 token_type: 'radius',
@@ -756,10 +713,9 @@ export const shadcnTemplate: TemplateBase = {
               },
             },
             {
-              key: '',
-              ref: 'radius-4xl',
+              key: 'radius-4xl',
               name: 'radius-4xl',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 7,
               metadata: {
                 token_type: 'radius',
@@ -770,17 +726,15 @@ export const shadcnTemplate: TemplateBase = {
           ],
         },
         {
-          key: '',
-          ref: 'shadows',
+          key: 'shadows',
           name: 'Shadows',
-          type: 'category',
+          type: RuleGroupType.category,
           orderIndex: 3,
           children: [
             {
-              key: '',
-              ref: 'shadow-sm',
+              key: 'shadow-sm',
               name: 'shadow-sm',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 0,
               metadata: {
                 token_type: 'shadow',
@@ -789,19 +743,17 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'shadow-sm-rule-1',
-                  title: 'Subtle elevation',
+                  key: 'shadow-sm-rule-1',
+                  name: 'Subtle elevation',
                   body: 'Use shadow-sm for subtle elevation on hover states.',
                   orderIndex: 0,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'shadow-md',
+              key: 'shadow-md',
               name: 'shadow-md',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 1,
               metadata: {
                 token_type: 'shadow',
@@ -810,19 +762,17 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'shadow-md-rule-1',
-                  title: 'Elevated surfaces',
+                  key: 'shadow-md-rule-1',
+                  name: 'Elevated surfaces',
                   body: 'Use shadow-md for elevated surfaces like dropdowns and popovers.',
                   orderIndex: 0,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'shadow-lg',
+              key: 'shadow-lg',
               name: 'shadow-lg',
-              type: 'token',
+              type: RuleGroupType.token,
               orderIndex: 2,
               metadata: {
                 token_type: 'shadow',
@@ -831,9 +781,8 @@ export const shadcnTemplate: TemplateBase = {
               },
               rules: [
                 {
-                  key: '',
-                  ref: 'shadow-lg-rule-1',
-                  title: 'Modals and dialogs',
+                  key: 'shadow-lg-rule-1',
+                  name: 'Modals and dialogs',
                   body: 'Use shadow-lg for modals and dialogs to create depth.',
                   orderIndex: 0,
                 },
@@ -844,85 +793,74 @@ export const shadcnTemplate: TemplateBase = {
       ],
     },
     {
-      key: '',
-      ref: 'components',
+      key: 'components',
       name: 'Components',
-      type: 'category',
+      type: RuleGroupType.category,
       orderIndex: 1,
       children: [
         {
-          key: '',
-          ref: 'button',
+          key: 'button',
           name: 'Button',
-          type: 'component',
+          type: RuleGroupType.component,
           orderIndex: 0,
           rules: [
             {
-              key: '',
-              ref: 'button-rule-1',
-              title: 'Always include a visible text label',
+              key: 'button-rule-1',
+              name: 'Always include a visible text label',
               body: 'Buttons must have a visible text label for accessibility.',
               orderIndex: 0,
             },
             {
-              key: '',
-              ref: 'button-rule-2',
-              title: 'Max one primary button per view',
+              key: 'button-rule-2',
+              name: 'Max one primary button per view',
               body: 'Limit to one primary button per view to maintain visual hierarchy.',
               orderIndex: 1,
             },
           ],
           children: [
             {
-              key: '',
-              ref: 'button-destructive',
+              key: 'button-destructive',
               name: 'Destructive',
-              type: 'variant',
+              type: RuleGroupType.variant,
               orderIndex: 0,
               rules: [
                 {
-                  key: '',
-                  ref: 'button-destructive-rule-1',
-                  title: 'Only for irreversible actions',
+                  key: 'button-destructive-rule-1',
+                  name: 'Only for irreversible actions',
                   body: 'Use destructive variant only for irreversible or dangerous actions.',
                   orderIndex: 0,
                 },
                 {
-                  key: '',
-                  ref: 'button-destructive-rule-2',
-                  title: 'Must include confirmation step',
+                  key: 'button-destructive-rule-2',
+                  name: 'Must include confirmation step',
                   body: 'Destructive buttons must include a confirmation step before execution.',
                   orderIndex: 1,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'button-ghost',
+              key: 'button-ghost',
               name: 'Ghost',
-              type: 'variant',
+              type: RuleGroupType.variant,
               orderIndex: 1,
               rules: [
                 {
-                  key: '',
-                  ref: 'button-ghost-rule-1',
-                  title: 'Secondary actions in toolbars',
+                  key: 'button-ghost-rule-1',
+                  name: 'Secondary actions in toolbars',
                   body: 'Use ghost variant for secondary actions in toolbars and navigation.',
                   orderIndex: 0,
                 },
               ],
             },
             {
-              key: '',
-              ref: 'button-outline',
+              key: 'button-outline',
               name: 'Outline',
-              type: 'variant',
+              type: RuleGroupType.variant,
               orderIndex: 2,
               rules: [
                 {
-                  key: '',
-                  ref: 'button-outline-rule-1',
-                  title: 'Secondary actions',
+                  key: 'button-outline-rule-1',
+                  name: 'Secondary actions',
                   body: 'Use outline variant for secondary actions that need visual weight.',
                   orderIndex: 0,
                 },
@@ -931,48 +869,42 @@ export const shadcnTemplate: TemplateBase = {
           ],
         },
         {
-          key: '',
-          ref: 'accordion',
+          key: 'accordion',
           name: 'Accordion',
-          type: 'component',
+          type: RuleGroupType.component,
           orderIndex: 1,
           rules: [
             {
-              key: '',
-              ref: 'accordion-rule-1',
-              title: 'Collapsible content sections',
+              key: 'accordion-rule-1',
+              name: 'Collapsible content sections',
               body: 'Use accordion for collapsible content sections to save space.',
               orderIndex: 0,
             },
           ],
         },
         {
-          key: '',
-          ref: 'alert',
+          key: 'alert',
           name: 'Alert',
-          type: 'component',
+          type: RuleGroupType.component,
           orderIndex: 2,
           rules: [
             {
-              key: '',
-              ref: 'alert-rule-1',
-              title: 'Important information',
+              key: 'alert-rule-1',
+              name: 'Important information',
               body: 'Use alerts to display important information that requires user attention.',
               orderIndex: 0,
             },
           ],
         },
         {
-          key: '',
-          ref: 'alert-dialog',
+          key: 'alert-dialog',
           name: 'Alert Dialog',
-          type: 'component',
+          type: RuleGroupType.component,
           orderIndex: 3,
           rules: [
             {
-              key: '',
-              ref: 'alert-dialog-rule-1',
-              title: 'Confirmation dialogs',
+              key: 'alert-dialog-rule-1',
+              name: 'Confirmation dialogs',
               body: 'Use alert dialogs for confirmation of critical actions.',
               orderIndex: 0,
             },
@@ -981,16 +913,14 @@ export const shadcnTemplate: TemplateBase = {
       ],
     },
     {
-      key: '',
-      ref: 'content',
+      key: 'content',
       name: 'Content',
-      type: 'category',
+      type: RuleGroupType.category,
       orderIndex: 2,
       rules: [
         {
-          key: '',
-          ref: 'content-rule-1',
-          title: 'Tone of voice',
+          key: 'content-rule-1',
+          name: 'Tone of voice',
           body: 'Use active voice. Be direct and clear.',
           orderIndex: 0,
         },

@@ -1,29 +1,28 @@
-import type { RuleGroupTypeKey } from '~/infra/drizzle/schemas'
+import type { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
 
-export type JsonBody<T> = Record<string, T>
-
-export interface TemplateRule {
-  ref: string
-  key: string // stable identifier (build-time only)
-  title?: string
-  orderIndex: number
-  body: JsonBody<any> | string
-  metadata?: JsonBody<any>
-}
-
-export interface TemplateGroup {
-  ref: string
-  type: RuleGroupTypeKey
-  key: string // stable identifier (build-time only)
-  name: string
-  orderIndex: number
-  children?: TemplateGroup[]
-  rules?: TemplateRule[]
-  metadata?: JsonBody<any>
-}
-
-export interface TemplateBase {
+export type TemplateBase = {
   slug: string
   name: string
-  groups: TemplateGroup[]
+  description?: string | null
+  groups: TemplateBaseGroup[]
+}
+
+export type TemplateBaseGroup = {
+  key: string
+  name: string
+  description?: string | null
+  type: RuleGroupType
+  orderIndex: number
+  metadata?: Record<string, unknown> | null
+  rules?: TemplateBaseRule[]
+  children?: TemplateBaseGroup[]
+}
+
+export type TemplateBaseRule = {
+  key: string
+  name: string
+  description?: string | null
+  orderIndex: number
+  metadata?: Record<string, unknown> | null
+  body: string
 }
