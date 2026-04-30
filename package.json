@@ -22,7 +22,7 @@
     "db:generate": "npx drizzle-kit generate",
     "db:migrate": "npx drizzle-kit migrate",
     "db:deploy": "npx drizzle-kit migrate",
-    "db:seed": "tsx src/infra/drizzle/seeds/index.ts"
+    "db:seed:templates": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts apply"
   },
   "dependencies": {
     "@nestjs-modules/ioredis": "^2.0.2",

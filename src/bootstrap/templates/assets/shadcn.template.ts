@@ -680,7 +680,7 @@ export const shadcnTemplate: TemplateBase = {
               metadata: {
                 token_type: 'radius',
                 value: 'calc(var(--radius) - 4px)',
-                css_var: '--radius-sm',
+                css_var: '--radius-smasdasd',
               },
               rules: [
                 {

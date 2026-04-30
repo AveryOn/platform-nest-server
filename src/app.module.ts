@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
+import { TemplateSeedingSystemModule } from '~/bootstrap/templates/template-seeding-system.module'
 import { UserContextInterceptor } from '~/core/interceptors/user-context.interceptor'
 import { LoggerModule } from '~/core/logger/logger.module'
 import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
@@ -35,6 +36,7 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     SnapshotModule,
     ProjectConfigModule,
     TemplateModule,
+    TemplateSeedingSystemModule,
     // ExportModule,
 
     // RedisModule.forRoot({
