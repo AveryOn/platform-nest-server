@@ -20,6 +20,6 @@ import { PROJECT_SERVICE_PORT } from '~/modules/project/ports/project.service.po
       useClass: ProjectDrizzleRepo,
     },
   ],
-  exports: [PROJECT_SERVICE_PORT],
+  exports: [PROJECT_SERVICE_PORT, PROJECT_REPO_PORT],
 })
 export class ProjectModule {}

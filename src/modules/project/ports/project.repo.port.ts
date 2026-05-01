@@ -7,6 +7,11 @@ import type {
 export const PROJECT_REPO_PORT = Symbol('PROJECT_REPO_PORT')
 
 export abstract class ProjectRepoPort {
+  abstract findProjectOrFail(
+    cmd: ProjectRepoCmd.FindProjectOrFail,
+    tx?: TransactionContext,
+  ): Promise<ProjectRepoRes.FindProjectOrFail>
+
   abstract getList(
     cmd: ProjectRepoCmd.GetList,
     tx?: TransactionContext,

@@ -3,6 +3,7 @@ import { AppError } from '~/core/error/app-error'
 import { ErrorEnum } from '~/core/error/app-error.dict'
 import { LOGGER_PORT } from '~/core/logger/logger.port'
 import type { AppLoggerService } from '~/core/logger/logger.service'
+import type { TransactionContext } from '~/infra/transaction/application/transaction.type'
 import {
   TX_PORT,
   type TransactionPort,
@@ -35,7 +36,7 @@ export class SnapshotService implements SnapshotServicePort {
     private readonly logger: AppLoggerService,
 
     @Inject(TX_PORT)
-    private readonly transaction: TransactionPort,
+    private readonly transaction: TransactionPort<TransactionContext>,
   ) {}
 
   async create(

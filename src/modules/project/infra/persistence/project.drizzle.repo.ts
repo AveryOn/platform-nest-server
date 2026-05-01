@@ -9,6 +9,7 @@ import {
 import { projectsTable } from '~/infra/drizzle/schemas'
 import type {
   ProjectEntity,
+  ProjectRawEntity,
   ProjectRepoCmd,
   ProjectRepoRes,
 } from '~/modules/project/application/project.type'
@@ -28,6 +29,31 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
     @Inject(PAGINATOR_PORT)
     private readonly paginator: PaginatorServicePort,
   ) {}
+
+  async findProjectOrFail(
+    cmd: ProjectRepoCmd.FindProjectOrFail,
+    tx?: Tx,
+  ): Promise<ProjectRawEntity> {
+    const db = defineDb(this.drizzle.db, tx)
+
+    const [project] = await db
+      .select()
+      .from(projectsTable)
+      .where(
+        and(
+          eq(projectsTable.id, cmd.projectId),
+          eq(projectsTable.organizationId, cmd.organizationId),
+          isNull(projectsTable.deletedAt),
+        ),
+      )
+      .limit(1)
+
+    if (!project) {
+      throw new Error('Project not found')
+    }
+    return project
+  }
+
   async getList(
     cmd: ProjectRepoCmd.GetList,
     tx?: Tx,

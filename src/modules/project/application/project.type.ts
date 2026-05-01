@@ -85,6 +85,10 @@ export namespace ProjectRes {
 }
 
 export namespace ProjectRepoCmd {
+  export type FindProjectOrFail = {
+    projectId: string
+    organizationId: string
+  }
   export type GetList = ProjectReqCmd.GetList
   export type GetById = ProjectReqCmd.GetById
   export type Create = ProjectReqCmd.Create
@@ -93,6 +97,7 @@ export namespace ProjectRepoCmd {
 }
 
 export namespace ProjectRepoRes {
+  export type FindProjectOrFail = ProjectRawEntity
   export type GetList = ProjectRes.GetList
   export type GetById = ProjectEntity | null
   export type Create = ProjectEntity
