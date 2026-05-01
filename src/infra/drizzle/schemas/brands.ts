@@ -21,7 +21,7 @@ export const brandsTable = pgTable(
       {
         onDelete: 'cascade',
       },
-    ),
+    ).notNull(),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },

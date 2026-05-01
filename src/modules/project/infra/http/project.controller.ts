@@ -95,6 +95,7 @@ export class ProjectController {
     return await this.projectService.getList({
       limit: query.limit,
       page: query.page,
+      organizationId: 'TODO_ADD_REAL_ORG_ID',
       brandId: query.brandId,
       includeArchived: query.includeArchived,
       search: query.search,
@@ -149,6 +150,7 @@ export class ProjectController {
     projectId: string,
   ): Promise<ProjectItemResponse> {
     return await this.projectService.getById({
+      organizationId: 'TODO_ADD_REAL_ORG_ID',
       projectId,
     })
   }
@@ -278,8 +280,8 @@ export class ProjectController {
     body: ProjectPatchDto,
   ): Promise<ProjectPatchResponse> {
     return await this.projectService.update({
+      organizationId: 'TODO_ADD_REAL_ORG_ID',
       projectId,
-      brandId: body.brandId,
       description: body.description,
       name: body.name,
       templateSnapshotId: body.templateSnapshotId,
@@ -331,6 +333,7 @@ export class ProjectController {
     projectId: string,
   ): Promise<ProjectRemoveResponse> {
     return await this.projectService.delete({
+      organizationId: 'TODO_ADD_REAL_ORG_ID',
       projectId,
     })
   }

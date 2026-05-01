@@ -6,6 +6,7 @@ import {
 import { Transform } from 'class-transformer'
 import {
   IsBoolean,
+  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -46,8 +47,8 @@ export class ProjectGetListQuery extends PaginationDto {
     type: String,
   })
   @IsOptional()
-  @IsUUID()
   @IsString()
+  @IsUUID()
   brandId?: string
 }
 
@@ -80,18 +81,16 @@ export class ProjectCreateDto {
   @IsString()
   description?: string | null
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     example: 'c6f33564-2c64-4f7c-bb6f-6e3d7ef21671',
-    description: 'Optional brand UUID linked to the project',
+    description: 'Required brand UUID linked to the project',
     format: 'uuid',
-    nullable: true,
     type: String,
   })
-  @IsOptional()
-  @ValidateIf((_, value) => value !== null)
   @IsString()
+  @IsNotEmpty()
   @IsUUID()
-  brandId?: string | null
+  brandId: string
 
   @ApiPropertyOptional({
     example: '2c0c5af8-7d26-4dd4-a8d6-2f8b0658f1a2',
@@ -128,18 +127,18 @@ export class ProjectPatchBaseDto {
   @ValidateIf((_, value) => value !== null)
   description?: string | null
 
-  @ApiPropertyOptional({
-    example: 'c6f33564-2c64-4f7c-bb6f-6e3d7ef21671',
-    description: 'Updated brand UUID',
-    format: 'uuid',
-    nullable: true,
-    type: String,
-  })
-  @IsOptional()
-  @IsString()
-  @IsUUID()
-  @ValidateIf((_, value) => value !== null)
-  brandId?: string | null
+  // @ApiPropertyOptional({
+  //   example: 'c6f33564-2c64-4f7c-bb6f-6e3d7ef21671',
+  //   description: 'Updated brand UUID',
+  //   format: 'uuid',
+  //   nullable: true,
+  //   type: String,
+  // })
+  // @IsOptional()
+  // @IsString()
+  // @IsUUID()
+  // @ValidateIf((_, value) => value !== null)
+  // brandId?: string | null
 
   @ApiPropertyOptional({
     example: '2c0c5af8-7d26-4dd4-a8d6-2f8b0658f1a2',
@@ -169,6 +168,7 @@ export class ProjectListItemResponse {
     format: 'uuid',
     type: String,
   })
+  @IsNotEmpty()
   @IsString()
   id: string
 
@@ -177,6 +177,8 @@ export class ProjectListItemResponse {
     description: 'Project name',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
   name: string
 
   @ApiProperty({
@@ -184,8 +186,8 @@ export class ProjectListItemResponse {
     description: 'Human-readable project slug',
     type: String,
   })
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   slug: string
 
   @ApiProperty({
@@ -194,8 +196,8 @@ export class ProjectListItemResponse {
     nullable: true,
     type: String,
   })
-  @IsString()
   @ValidateIf((_, value) => value !== null)
+  @IsString()
   description: string | null
 
   @ApiProperty({
@@ -205,15 +207,17 @@ export class ProjectListItemResponse {
     nullable: true,
     type: String,
   })
+  @IsNotEmpty()
   @IsString()
-  @ValidateIf((_, value) => value !== null)
-  brandId: string | null
+  @IsUUID()
+  brandId: string
 
   @ApiProperty({
     example: 'org_123456',
     description: 'Organization identifier',
     type: String,
   })
+  @IsNotEmpty()
   @IsString()
   organizationId: string
 
@@ -226,6 +230,7 @@ export class ProjectListItemResponse {
   })
   @IsString()
   @ValidateIf((_, value) => value !== null)
+  @IsUUID()
   templateSnapshotId: string | null
 
   @ApiProperty({
@@ -233,6 +238,7 @@ export class ProjectListItemResponse {
     description: 'Soft delete flag',
     type: Boolean,
   })
+  @IsNotEmpty()
   @IsBoolean()
   isArchived: boolean
 
@@ -241,7 +247,9 @@ export class ProjectListItemResponse {
     description: 'Project creation timestamp in ISO-8601 format',
     type: String,
   })
+  @IsNotEmpty()
   @IsString()
+  @IsDateString()
   createdAt: string
 
   @ApiProperty({
@@ -250,8 +258,9 @@ export class ProjectListItemResponse {
     type: String,
     nullable: true,
   })
-  @IsString()
   @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsDateString()
   updatedAt: string | null
 
   @ApiProperty({
@@ -259,8 +268,9 @@ export class ProjectListItemResponse {
     type: String,
     nullable: true,
   })
-  @IsString()
   @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsDateString()
   deletedAt: string | null
 }
 
@@ -269,13 +279,16 @@ export class ProjectItemResponse {
     example: SWAGGER_EXAMPLES.uuid,
     type: String,
   })
+  @IsNotEmpty()
   @IsString()
+  @IsUUID()
   id: string
 
   @ApiProperty({
     example: 'Main Design System',
     type: String,
   })
+  @IsNotEmpty()
   @IsString()
   name: string
 
@@ -284,8 +297,8 @@ export class ProjectItemResponse {
     description: 'Human-readable project slug',
     type: String,
   })
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   slug: string
 
   @ApiProperty({
@@ -302,15 +315,18 @@ export class ProjectItemResponse {
     nullable: true,
     type: String,
   })
-  @ValidateIf((_, value) => value !== null)
+  @IsNotEmpty()
   @IsString()
-  brandId: string | null
+  @IsUUID()
+  brandId: string
 
   @ApiProperty({
     example: SWAGGER_EXAMPLES.betterAuthId,
     type: String,
   })
+  @IsNotEmpty()
   @IsString()
+  @IsUUID()
   organizationId: string
 
   @ApiProperty({
@@ -320,6 +336,7 @@ export class ProjectItemResponse {
   })
   @ValidateIf((_, value) => value !== null)
   @IsString()
+  @IsUUID()
   templateSnapshotId: string | null
 
   @ApiProperty({
@@ -333,23 +350,27 @@ export class ProjectItemResponse {
     example: SWAGGER_EXAMPLES.dateISO,
     type: String,
   })
+  @IsNotEmpty()
   @IsString()
+  @IsDateString()
   createdAt: string
 
   @ApiProperty({
     example: SWAGGER_EXAMPLES.dateISO,
     type: String,
   })
-  @IsString()
   @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsDateString()
   updatedAt: string | null
 
   @ApiProperty({
     example: SWAGGER_EXAMPLES.dateISO,
     type: String,
   })
-  @IsString()
   @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsDateString()
   deletedAt: string | null
 }
 

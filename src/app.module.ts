@@ -7,6 +7,7 @@ import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 import { TransactionModule } from '~/infra/transaction/transaction.module'
 import { AuthModule } from '~/modules/auth/auth.module'
+import { BrandModule } from '~/modules/brand/brand.module'
 import { ProjectConfigModule } from '~/modules/project-config/project-config.module'
 import { ProjectModule } from '~/modules/project/project.module'
 import { ResolvedRulesetModule } from '~/modules/resolved-ruleset/resolved-ruleset.module'
@@ -28,6 +29,7 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     TransactionModule,
     AuthModule,
     SystemModule,
+    BrandModule,
     ProjectModule,
     RuleGroupModule,
     RuleModule,

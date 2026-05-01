@@ -39,6 +39,7 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
     })
 
     const where = and(
+      eq(projectsTable.organizationId, cmd.organizationId),
       cmd.brandId ? eq(projectsTable.brandId, cmd.brandId) : undefined,
       cmd.search
         ? ilike(projectsTable.name, `%${cmd.search}%`)
@@ -80,7 +81,12 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
     const [project] = await db
       .select()
       .from(projectsTable)
-      .where(eq(projectsTable.id, cmd.projectId))
+      .where(
+        and(
+          eq(projectsTable.id, cmd.projectId),
+          eq(projectsTable.organizationId, cmd.organizationId),
+        ),
+      )
       .limit(1)
 
     if (!project) {
@@ -102,7 +108,7 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
         name: cmd.name,
         slug: cmd.slug,
         description: cmd.description ?? null,
-        brandId: cmd.brandId ?? null,
+        brandId: cmd.brandId,
         organizationId: cmd.organizationId,
         templateSnapshotId: cmd.templateSnapshotId ?? null,
         updatedAt: null,
@@ -123,11 +129,15 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
       .set({
         name: cmd.name,
         description: cmd.description,
-        brandId: cmd.brandId,
         templateSnapshotId: cmd.templateSnapshotId,
         updatedAt: new Date(),
       })
-      .where(eq(projectsTable.id, cmd.projectId))
+      .where(
+        and(
+          eq(projectsTable.id, cmd.projectId),
+          eq(projectsTable.organizationId, cmd.organizationId),
+        ),
+      )
 
     return {
       status: OperationStatus.success,
@@ -147,7 +157,12 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
         deletedAt: archivedAt,
         updatedAt: archivedAt,
       })
-      .where(eq(projectsTable.id, cmd.projectId))
+      .where(
+        and(
+          eq(projectsTable.id, cmd.projectId),
+          eq(projectsTable.organizationId, cmd.organizationId),
+        ),
+      )
 
     return {
       status: OperationStatus.success,

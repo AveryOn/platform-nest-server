@@ -7,7 +7,7 @@ export interface ProjectEntity {
   name: string
   slug: string
   description: string | null
-  brandId: string | null
+  brandId: string
   organizationId: string
   templateSnapshotId: string | null
   isArchived: boolean
@@ -21,7 +21,7 @@ export interface ProjectRawEntity {
   name: string
   description: string | null
   slug: string
-  brandId: string | null
+  brandId: string
   organizationId: string
   templateSnapshotId: string | null
   createdAt: Date
@@ -31,6 +31,7 @@ export interface ProjectRawEntity {
 
 export namespace ProjectReqCmd {
   export interface GetList {
+    organizationId: string
     search?: string
     includeArchived?: boolean
     brandId?: string
@@ -40,26 +41,28 @@ export namespace ProjectReqCmd {
 
   export interface GetById {
     projectId: string
+    organizationId: string
   }
 
   export interface Create {
     name: string
     organizationId: string
     description?: string | null
-    brandId?: string | null
+    brandId: string
     templateSnapshotId?: string | null
     slug: string
   }
 
   export interface Update {
+    organizationId: string
     projectId: string
     name?: string
     description?: string | null
-    brandId?: string | null
     templateSnapshotId?: string | null
   }
 
   export interface Delete {
+    organizationId: string
     projectId: string
   }
 }

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { AuthModule } from '~/modules/auth/auth.module'
+import { BrandModule } from '~/modules/brand/brand.module'
 import { ProjectService } from '~/modules/project/application/project.service'
 import { ProjectController } from '~/modules/project/infra/http/project.controller'
 import { ProjectDrizzleRepo } from '~/modules/project/infra/persistence/project.drizzle.repo'
@@ -8,7 +9,7 @@ import { PROJECT_SERVICE_PORT } from '~/modules/project/ports/project.service.po
 
 @Module({
   controllers: [ProjectController],
-  imports: [AuthModule],
+  imports: [AuthModule, BrandModule],
   providers: [
     {
       provide: PROJECT_SERVICE_PORT,

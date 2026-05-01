@@ -9,6 +9,7 @@ export enum ErrorEnum {
   UNAUTHORIZED = 'UNAUTHORIZED',
   USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL = 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL',
   SOURCE_NOT_FOUND = 'SOURCE_NOT_FOUND',
+  FORBIDDEN = 'FORBIDDEN',
 }
 
 interface ErrorChunk {
@@ -57,6 +58,11 @@ export const ERRORS: Record<keyof typeof ErrorEnum, ErrorChunk> = {
     code: 'SOURCE_NOT_FOUND',
     httpStatus: 404,
     message: 'Source is not found',
+  },
+  FORBIDDEN: {
+    code: 'FORBIDDEN',
+    httpStatus: 403,
+    message: 'Access to this resource is denied',
   },
 }
 

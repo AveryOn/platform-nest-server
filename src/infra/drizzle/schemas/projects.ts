@@ -25,8 +25,8 @@ export const projectsTable = pgTable(
     description: description(),
     slug: text('slug').notNull(),
     brandId: referenceOnUUID('brand_id', () => brandsTable, _, {
-      onDelete: 'set null',
-    }),
+      onDelete: 'restrict',
+    }).notNull(),
     organizationId: referenceOnText(
       'organization_id',
       () => organizations,
