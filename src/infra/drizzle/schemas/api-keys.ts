@@ -67,7 +67,7 @@ export const apiKeysTable = pgTable(
       .$type<string[]>()
       .notNull()
       .default(
-        sql`'["ruleset:read","snapshot:read","project:read"]'::jsonb`,
+        sql`'["project:read","ruleset:read","snapshot:read","snapshot:payload:read","export:read"]'::jsonb`,
       ),
     status: apiKeyStatusEnum('status').default('ACTIVE').notNull(),
     lastUsedIp: varchar64('last_used_ip'),

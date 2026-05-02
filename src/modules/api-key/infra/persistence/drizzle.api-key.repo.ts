@@ -161,4 +161,37 @@ export class ApiKeyDrizzleRepo implements ApiKeyRepoPort {
 
     return apiKey as ApiKeyRawEntity | null
   }
+
+  async findByHash(
+    cmd: ApiKeyRepoCmd.FindByHash,
+    tx?: Tx,
+  ): Promise<ApiKeyRepoRes.FindByHash> {
+    const db = defineDb(this.drizzle.db, tx)
+
+    const [apiKey] = await db
+      .select()
+      .from(apiKeysTable)
+      .where(
+        and(
+          eq(apiKeysTable.keyHash, cmd.keyHash),
+          eq(apiKeysTable.keyPrefix, cmd.keyPrefix),
+        ),
+      )
+      .limit(1)
+
+    return (apiKey as ApiKeyRawEntity | undefined) ?? null
+  }
+
+  async markUsed(cmd: ApiKeyRepoCmd.MarkUsed, tx?: Tx): Promise<void> {
+    const db = defineDb(this.drizzle.db, tx)
+
+    await db
+      .update(apiKeysTable)
+      .set({
+        lastUsedAt: new Date(),
+        lastUsedIp: cmd.ip ?? null,
+        lastUsedUa: cmd.userAgent ?? null,
+      })
+      .where(eq(apiKeysTable.id, cmd.apiKeyId))
+  }
 }

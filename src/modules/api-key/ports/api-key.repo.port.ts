@@ -27,6 +27,16 @@ export abstract class ApiKeyRepoPort {
     tx?: TransactionContext,
   ): Promise<ApiKeyRepoRes.FindByName>
 
+  abstract findByHash(
+    cmd: ApiKeyRepoCmd.FindByHash,
+    tx?: TransactionContext,
+  ): Promise<ApiKeyRepoRes.FindByHash>
+
+  abstract markUsed(
+    cmd: ApiKeyRepoCmd.MarkUsed,
+    tx?: TransactionContext,
+  ): Promise<void>
+
   abstract revoke(
     cmd: ApiKeyRepoCmd.Revoke,
     tx?: TransactionContext,

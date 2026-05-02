@@ -144,6 +144,16 @@ export namespace ApiKeyRepoCmd {
     apiKeyId: string
     organizationId: string
   }
+  export type FindByHash = {
+    keyHash: string
+    keyPrefix: string
+  }
+
+  export type MarkUsed = {
+    apiKeyId: string
+    ip?: string | null
+    userAgent?: string | null
+  }
 }
 
 export namespace ApiKeyRepoRes {
@@ -152,4 +162,5 @@ export namespace ApiKeyRepoRes {
   export type GetById = ApiKeyRawEntity | null
   export type FindByName = ApiKeyRawEntity | null
   export type Revoke = ApiKeyRawEntity | null
+  export type FindByHash = ApiKeyRawEntity | null
 }
