@@ -15,6 +15,7 @@ export enum ApiSwaggerTag {
   Snapshot = 'Snapshot',
   ProjectConfig = 'Project Config',
   Brand = 'Brand',
+  ApiKey = 'Api Keys',
 }
 
 export enum NodeEnv {

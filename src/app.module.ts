@@ -6,6 +6,7 @@ import { LoggerModule } from '~/core/logger/logger.module'
 import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
 import { TransactionModule } from '~/infra/transaction/transaction.module'
+import { ApiKeyModule } from '~/modules/api-key/api-key.module'
 import { AuthModule } from '~/modules/auth/auth.module'
 import { BrandModule } from '~/modules/brand/brand.module'
 import { ExportModule } from '~/modules/export/export.module'
@@ -41,6 +42,7 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     TemplateModule,
     TemplateSeedingSystemModule,
     ExportModule,
+    ApiKeyModule,
 
     // RedisModule.forRoot({
     //   type: 'single',

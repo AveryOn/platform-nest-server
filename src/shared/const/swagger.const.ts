@@ -3,6 +3,10 @@ export const SWAGGER_EXAMPLES = {
   uuid: '550e8400-e29b-41d4-a716-446655440000',
   cuid2: 'clx7k9z2n0000qf1a8w3d9e4b',
   betterAuthId: 'org_123456',
+  betterAuth: {
+    orgId: 'org_123456',
+    userId: 'user_1234',
+  },
   hash: 'NEPXDGGnnvd2QoXY2LYM0VfpUqtkvg91',
   dateISO: '2026-03-25T12:00:00.000Z',
   email: 'test001@gmail.com',
