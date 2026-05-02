@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -26,17 +27,16 @@ import {
   GetApiKeysQueryDto,
   RevokeApiKeyRes,
 } from '~/modules/api-key/infra/http/api-key.dto'
+import {
+  API_KEY_SERVICE_PORT,
+  type ApiKeyServicePort,
+} from '~/modules/api-key/ports/api-key.service.port'
 import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
 import { ApiQueries, ValidQuery } from '~/shared/decorators/query'
 import type { PaginatedResponse } from '~/shared/paginator/infra/http/paginator.dto'
 import { ApiPaginator } from '~/shared/paginator/infra/http/paginator.swagger.helper'
-import {
-  ApiKeyMode,
-  ApiKeyScope,
-  ApiKeyStatus,
-} from '../../application/api-key.type'
 
 @ApiTags(ApiSwaggerTag.ApiKey)
 @Controller({
@@ -44,6 +44,10 @@ import {
   version: '1',
 })
 export class ApiKeyController {
+  constructor(
+    @Inject(API_KEY_SERVICE_PORT)
+    private readonly apiKeyService: ApiKeyServicePort,
+  ) {}
   // #endregion------------------------------------------
   // [POST] | CREATE API KEY
   // #region POST---------------------------------------
@@ -97,31 +101,13 @@ export class ApiKeyController {
     @Req()
     req: Request,
   ): Promise<CreateApiKeyRes> {
-    const data = {
+    return await this.apiKeyService.create({
       name: body.name,
+      expiresAt: body.expiresAt,
       brandId: body.brandId,
       projectId: body.projectId,
-      expiresAt: body.expiresAt,
-      organizationId: (req as any).activeOrganizationId,
       createdByUserId: (req as any).user?.id,
-    }
-
-    return await Promise.resolve({
-      brandId: 'abc123',
-      createdAt: new Date().toString(),
-      createdByUserId: 'user123',
-      id: SWAGGER_EXAMPLES.uuid,
-      key: SWAGGER_EXAMPLES.hash,
-      keyPrefix: 'example_prefix',
-      mode: ApiKeyMode.ReadOnly,
-      name: 'example',
-      organizationId: 'org_123',
-      scopes: [ApiKeyScope.ExportRead, ApiKeyScope.RuleGroupRead],
-      status: ApiKeyStatus.Active,
-      expiresAt: new Date().toString(),
-      lastUsedAt: null,
-      revokedAt: null,
-      projectId: SWAGGER_EXAMPLES.uuid,
+      organizationId: (req as any).activeOrganizationId,
     })
   }
   // #endregion------------------------------------------
@@ -180,21 +166,14 @@ export class ApiKeyController {
     @Req()
     req: Request,
   ): Promise<PaginatedResponse<ApiKeyItemRes>> {
-    // const data = {
-    //   brandId: query.brandId,
-    //   projectId: query.projectId,
-    //   organizationId: (req as any).activeOrganizationId,
-    //   userId: (req as any).user?.id,
-    // }
-
-    return await Promise.resolve({
-      data: [],
-      paginator: {
-        limit: 1,
-        page: 1,
-        total: 1,
-        totalPages: 1,
-      },
+    return await this.apiKeyService.getList({
+      limit: query.limit,
+      page: query.page,
+      status: query.status,
+      projectId: query.projectId,
+      brandId: query.brandId,
+      userId: (req as any).user?.id,
+      organizationId: (req as any).activeOrganizationId,
     })
   }
   // #endregion------------------------------------------
@@ -243,28 +222,10 @@ export class ApiKeyController {
     @Req()
     req: Request,
   ): Promise<ApiKeyItemRes> {
-    const data = {
-      apiKeyId,
+    return await this.apiKeyService.getById({
+      apiKeyId: apiKeyId,
       organizationId: (req as any).activeOrganizationId,
       userId: (req as any).user?.id,
-    }
-
-    return await Promise.resolve({
-      brandId: 'abc123',
-      createdAt: new Date().toString(),
-      createdByUserId: 'user123',
-      id: SWAGGER_EXAMPLES.uuid,
-      key: SWAGGER_EXAMPLES.hash,
-      keyPrefix: 'example_prefix',
-      mode: ApiKeyMode.ReadOnly,
-      name: 'example',
-      organizationId: 'org_123',
-      scopes: [ApiKeyScope.ExportRead, ApiKeyScope.RuleGroupRead],
-      status: ApiKeyStatus.Active,
-      expiresAt: new Date().toString(),
-      lastUsedAt: null,
-      revokedAt: null,
-      projectId: SWAGGER_EXAMPLES.uuid,
     })
   }
   // #endregion------------------------------------------
@@ -316,28 +277,10 @@ export class ApiKeyController {
     @Req()
     req: Request,
   ): Promise<RevokeApiKeyRes> {
-    const data = {
-      apiKeyId,
+    return await this.apiKeyService.revoke({
+      apiKeyId: apiKeyId,
       organizationId: (req as any).activeOrganizationId,
       userId: (req as any).user?.id,
-    }
-
-    return await Promise.resolve({
-      brandId: 'abc123',
-      createdAt: new Date().toString(),
-      createdByUserId: 'user123',
-      id: SWAGGER_EXAMPLES.uuid,
-      key: SWAGGER_EXAMPLES.hash,
-      keyPrefix: 'example_prefix',
-      mode: ApiKeyMode.ReadOnly,
-      name: 'example',
-      organizationId: 'org_123',
-      scopes: [ApiKeyScope.ExportRead, ApiKeyScope.RuleGroupRead],
-      status: ApiKeyStatus.Revoked,
-      expiresAt: new Date().toString(),
-      lastUsedAt: new Date().toString(),
-      revokedAt: new Date().toString(),
-      projectId: SWAGGER_EXAMPLES.uuid,
     })
   }
   // #endregion------------------------------------------

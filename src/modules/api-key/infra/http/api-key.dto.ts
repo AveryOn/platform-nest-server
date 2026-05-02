@@ -43,11 +43,12 @@ export class CreateApiKeyDto {
       'Project UUID. If provided, the API key is scoped to this project',
     format: 'uuid',
     type: String,
+    nullable: true,
   })
   @IsOptional()
   @IsString()
   @IsUUID()
-  projectId?: string
+  projectId?: string | null
 
   @ApiPropertyOptional({
     example: '2026-12-31T23:59:59.000Z',
