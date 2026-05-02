@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Post,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -17,7 +18,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
-import { SessionGuard } from '~/modules/auth/infra/session.guard'
+import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
+import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
+import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
 import {
   ExportProjectReq,
   ExportProjectRes,
@@ -47,7 +50,8 @@ export class ExportController {
   // [POST] | EXPORT PROJECT RULESET
   // #region POST---------------------------------------
   @Post(':projectId/export')
-  @UseGuards(SessionGuard)
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.ExportRead)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Export project ruleset',
@@ -96,6 +100,9 @@ export class ExportController {
     @Req()
     req: AuthRequest,
   ): Promise<ExportProjectRes> {
+    if (!req.activeOrganizationId) {
+      throw new UnauthorizedException('Missing organization context')
+    }
     return await this.exportService.export({
       projectId,
       organizationId: req.activeOrganizationId,

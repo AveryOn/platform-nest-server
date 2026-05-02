@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -14,6 +15,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
+import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
+import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
 import {
   GetResolvedRulesetDto,
   GetResolvedRulesetResponse,
@@ -34,6 +38,9 @@ export class ResolvedRulesetController {
     @Inject(RESOLVED_RULESET_SERVICE_PORT)
     private readonly resolvedRulesetService: ResolvedRulesetServicePort,
   ) {}
+
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.RulesetRead)
   @Get(':projectId/resolved-ruleset')
   @ApiOperation({
     summary: 'Get resolved ruleset',

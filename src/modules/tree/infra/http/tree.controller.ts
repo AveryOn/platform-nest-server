@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -14,6 +15,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
+import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
+import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
 import {
   ProjectTreeDto,
   ProjectTreeResponse,
@@ -36,6 +40,8 @@ export class TreeController {
   ) {}
 
   @Get(':projectId/tree')
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.ProjectRead)
   @ApiOperation({
     summary: 'Get project editor tree',
     description:

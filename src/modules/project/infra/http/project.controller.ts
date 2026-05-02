@@ -55,6 +55,7 @@ export class ProjectController {
   // [GET] | GET PROJECTS LIST
   // #region GET-------------------------------
   @Get()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get projects list',
     description:
@@ -91,11 +92,14 @@ export class ProjectController {
   async getProjects(
     @ValidQuery(ProjectGetListQuery)
     query: ProjectGetListQuery,
+
+    @Req()
+    req: Request,
   ): Promise<PaginatedResponse<ProjectListItemResponse>> {
     return await this.projectService.getList({
       limit: query.limit,
       page: query.page,
-      organizationId: 'TODO_ADD_REAL_ORG_ID',
+      organizationId: (req as any).activeOrganizationId,
       brandId: query.brandId,
       includeArchived: query.includeArchived,
       search: query.search,
@@ -106,6 +110,7 @@ export class ProjectController {
   // [GET] | GET PROJECT BY ID
   // ------------------------------------------
   @Get(':projectId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get project by id',
     description: 'Returns project details by UUID',
@@ -148,9 +153,12 @@ export class ProjectController {
   async getProjectById(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
+    @Req()
+    req: Request,
   ): Promise<ProjectItemResponse> {
     return await this.projectService.getById({
-      organizationId: 'TODO_ADD_REAL_ORG_ID',
+      organizationId: (req as any).activeOrganizationId,
       projectId,
     })
   }
@@ -224,6 +232,7 @@ export class ProjectController {
   // [PATCH] | UPDATE PROJECT
   // #region PATCH---------------------------------------
   @Patch(':projectId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update project',
     description: 'Updates mutable project fields',
@@ -276,11 +285,15 @@ export class ProjectController {
   async patchProject(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Body()
     body: ProjectPatchDto,
+
+    @Req()
+    req: Request,
   ): Promise<ProjectPatchResponse> {
     return await this.projectService.update({
-      organizationId: 'TODO_ADD_REAL_ORG_ID',
+      organizationId: (req as any).activeOrganizationId,
       projectId,
       description: body.description,
       name: body.name,
@@ -292,6 +305,7 @@ export class ProjectController {
   // [DELETE] | ARCHIVE PROJECT
   // #region DELETE---------------------------------------
   @Delete(':projectId')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Archive project',
@@ -331,9 +345,12 @@ export class ProjectController {
   async deleteProject(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
+    @Req()
+    req: Request,
   ): Promise<ProjectRemoveResponse> {
     return await this.projectService.delete({
-      organizationId: 'TODO_ADD_REAL_ORG_ID',
+      organizationId: (req as any).activeOrganizationId,
       projectId,
     })
   }

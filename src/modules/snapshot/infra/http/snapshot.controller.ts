@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   ParseUUIDPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -18,6 +19,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
+import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
+import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
+import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import {
   ProjectSnapshotCreateDto,
   ProjectSnapshotItemRes,
@@ -49,6 +54,8 @@ export class SnapshotController {
   // [GET] | GET SNAPHOTS LIST
   // #region GET------------------------------------------
   @Get(':projectId/snapshots')
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.SnapshotRead)
   @ApiOperation({
     summary: 'Get project snapshots list',
     description:
@@ -107,6 +114,8 @@ export class SnapshotController {
   // [GET] | GET SNAPSHOT BY ID
   // ------------------------------------------
   @Get(':projectId/snapshots/:snapshotId')
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.SnapshotRead)
   @ApiOperation({
     summary: 'Get project snapshot by id',
     description: 'Returns snapshot metadata by snapshot UUID',
@@ -166,6 +175,8 @@ export class SnapshotController {
   // [GET] | GET SNAPSHOT BY VERSION
   // ------------------------------------------
   @Get(':projectId/snapshots/version/:version')
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.SnapshotRead)
   @ApiOperation({
     summary: 'Get project snapshot by version',
     description:
@@ -225,6 +236,8 @@ export class SnapshotController {
   // [GET] | GET SNAPSHOT PAYLOAD
   // ------------------------------------------
   @Get(':projectId/snapshots/:snapshotId/payload')
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.SnapshotPayloadRead)
   @ApiOperation({
     summary: 'Get project snapshot payload',
     description:
@@ -285,6 +298,8 @@ export class SnapshotController {
   // [GET] | GET SNAPSHOT STATUS
   // ------------------------------------------
   @Get(':projectId/snapshots/status')
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.SnapshotRead)
   @ApiOperation({
     summary: 'Get project snapshot status',
     description:
@@ -334,6 +349,7 @@ export class SnapshotController {
   // [POST] | CREATE PROJECT SNAPSHOT
   // #region POST -----------------------------------------
   @Post(':projectId/snapshots')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create project snapshot',
