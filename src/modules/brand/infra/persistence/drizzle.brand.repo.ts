@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { defineDb } from '~/infra/drizzle/application/drizzle.helpers'
 import type { Tx } from '~/infra/drizzle/application/drizzle.type'
 import {
@@ -16,6 +16,29 @@ export class BrandDrizzleRepo implements BrandRepoPort {
     @Inject(DRIZZLE_PORT)
     private readonly drizzle: DrizzleServicePort,
   ) {}
+  async findBrandOrFail(
+    cmd: { brandId: string; organizationId: string },
+    tx?: Tx,
+  ): Promise<BrandRawEntity> {
+    const db = defineDb(this.drizzle.db, tx)
+
+    const [brand] = await db
+      .select()
+      .from(brandsTable)
+      .where(
+        and(
+          eq(brandsTable.id, cmd.brandId),
+          eq(brandsTable.organizationId, cmd.organizationId),
+        ),
+      )
+      .limit(1)
+
+    if (!brand) {
+      throw new Error('Brand not found')
+    }
+
+    return brand
+  }
 
   async getById(
     brandId: string,

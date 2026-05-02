@@ -43,6 +43,7 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
         and(
           eq(projectsTable.id, cmd.projectId),
           eq(projectsTable.organizationId, cmd.organizationId),
+          eq(projectsTable.brandId, cmd.brandId),
           isNull(projectsTable.deletedAt),
         ),
       )

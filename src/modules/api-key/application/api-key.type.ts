@@ -21,6 +21,14 @@ export enum ApiKeyScope {
   ExportRead = 'export:read',
 }
 
+export const DEFAULT_API_KEY_SCOPES = [
+  ApiKeyScope.ProjectRead,
+  ApiKeyScope.RulesetRead,
+  ApiKeyScope.SnapshotRead,
+  ApiKeyScope.SnapshotPayloadRead,
+  ApiKeyScope.ExportRead,
+]
+
 export interface ApiKeyEntity {
   id: string
   name: string
@@ -47,7 +55,7 @@ export interface ApiKeyRawEntity {
   name: string
   keyHash: string
   keyPrefix: string
-  scopes: string
+  scopes: ApiKeyScope[]
   status: 'ACTIVE' | 'REVOKED'
   lastUsedIp: string | null
   lastUsedUa: string | null
@@ -66,6 +74,7 @@ export namespace ApiKeyServiceCmd {
     projectId?: string | null
     expiresAt?: string
   }
+
   export type GetList = {
     organizationId: string
     userId: string
@@ -75,26 +84,72 @@ export namespace ApiKeyServiceCmd {
     projectId?: string
     status?: ApiKeyStatus
   }
+
   export type GetById = {
     apiKeyId: string
     organizationId: string
     userId: string
   }
+
   export type Revoke = {
     apiKeyId: string
     organizationId: string
     userId: string
   }
 }
+
 export namespace ApiKeyServiceRes {
   export type Create = ApiKeyEntity & {
     key: string
   }
+
   export type GetList = PaginatedResponse<ApiKeyEntity>
   export type GetById = ApiKeyEntity
   export type Revoke = ApiKeyEntity
 }
 
-export namespace ApiKeyRepoCmd {}
+export namespace ApiKeyRepoCmd {
+  export type Create = {
+    name: string
+    brandId: string
+    projectId?: string | null
+    organizationId: string
+    createdByUserId: string
+    keyHash: string
+    keyPrefix: string
+    scopes: ApiKeyScope[]
+    expiresAt?: Date | null
+  }
 
-export namespace ApiKeyRepoRes {}
+  export type GetList = {
+    organizationId: string
+    limit: number
+    page: number
+    brandId?: string
+    projectId?: string
+    status?: ApiKeyStatus
+  }
+
+  export type GetById = {
+    apiKeyId: string
+    organizationId: string
+  }
+
+  export type FindByName = {
+    name: string
+    organizationId: string
+  }
+
+  export type Revoke = {
+    apiKeyId: string
+    organizationId: string
+  }
+}
+
+export namespace ApiKeyRepoRes {
+  export type Create = ApiKeyRawEntity
+  export type GetList = PaginatedResponse<ApiKeyRawEntity>
+  export type GetById = ApiKeyRawEntity | null
+  export type FindByName = ApiKeyRawEntity | null
+  export type Revoke = ApiKeyRawEntity | null
+}

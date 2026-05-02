@@ -87,6 +87,7 @@ export namespace ProjectRes {
 export namespace ProjectRepoCmd {
   export type FindProjectOrFail = {
     projectId: string
+    brandId: string
     organizationId: string
   }
   export type GetList = ProjectReqCmd.GetList

@@ -5,10 +5,12 @@ import { ApiKeyDrizzleRepo } from '~/modules/api-key/infra/persistence/drizzle.a
 import { API_KEY_REPO_PORT } from '~/modules/api-key/ports/api-key.repo.port'
 import { API_KEY_SERVICE_PORT } from '~/modules/api-key/ports/api-key.service.port'
 import { AuthModule } from '~/modules/auth/auth.module'
+import { BrandModule } from '~/modules/brand/brand.module'
+import { ProjectModule } from '~/modules/project/project.module'
 
 @Module({
   controllers: [ApiKeyController],
-  imports: [AuthModule],
+  imports: [AuthModule, BrandModule, ProjectModule],
   providers: [
     {
       provide: API_KEY_SERVICE_PORT,

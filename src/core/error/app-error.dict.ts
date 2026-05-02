@@ -1,15 +1,15 @@
-import { type HttpStatus } from '@nestjs/common'
+import { HttpStatus } from '@nestjs/common'
 
 export enum ErrorEnum {
-  USER_NOT_FOUND = 'USER_NOT_FOUND',
   INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
   UNKNOWN = 'UNKNOWN',
   INVALID_DATA = 'INVALID_DATA',
   GROUP_NOT_FOUND = 'GROUP_NOT_FOUND',
   UNAUTHORIZED = 'UNAUTHORIZED',
-  USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL = 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL',
   SOURCE_NOT_FOUND = 'SOURCE_NOT_FOUND',
   FORBIDDEN = 'FORBIDDEN',
+  CONFLICT = 'CONFLICT',
+  UNPROCESSABLE = 'UNPROCESSABLE',
 }
 
 interface ErrorChunk {
@@ -21,48 +21,50 @@ interface ErrorChunk {
 export const ERRORS: Record<keyof typeof ErrorEnum, ErrorChunk> = {
   UNKNOWN: {
     code: 'UNKNOWN',
-    httpStatus: 500,
+    httpStatus: HttpStatus.INTERNAL_SERVER_ERROR,
     message: 'Unknown Error',
-  },
-  USER_NOT_FOUND: {
-    code: 'USER_NOT_FOUND',
-    httpStatus: 404,
-    message: 'User not found',
   },
   INVALID_CREDENTIALS: {
     code: 'INVALID_CREDENTIALS',
-    httpStatus: 401,
+    httpStatus: HttpStatus.UNAUTHORIZED,
     message: 'Invalid credentials',
   },
   INVALID_DATA: {
     code: 'INVALID_DATA',
-    httpStatus: 400,
+    httpStatus: HttpStatus.BAD_REQUEST,
     message: 'Invalid data',
   },
   GROUP_NOT_FOUND: {
     code: 'GROUP_NOT_FOUND',
-    httpStatus: 404,
+    httpStatus: HttpStatus.NOT_FOUND,
     message: 'Rule Group Not Found',
   },
   UNAUTHORIZED: {
     code: 'UNAUTHORIZED',
-    httpStatus: 401,
+    httpStatus: HttpStatus.UNAUTHORIZED,
     message: 'User is not authorized',
-  },
-  USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: {
-    code: 'USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL',
-    httpStatus: 409,
-    message: 'User already exists. Use another email',
   },
   SOURCE_NOT_FOUND: {
     code: 'SOURCE_NOT_FOUND',
-    httpStatus: 404,
+    httpStatus: HttpStatus.NOT_FOUND,
     message: 'Source is not found',
   },
   FORBIDDEN: {
     code: 'FORBIDDEN',
-    httpStatus: 403,
+    httpStatus: HttpStatus.FORBIDDEN,
     message: 'Access to this resource is denied',
+  },
+  CONFLICT: {
+    code: 'CONFLICT',
+    httpStatus: HttpStatus.CONFLICT,
+    message:
+      'A conflict occurred while trying to create a record; such a record probably already exists',
+  },
+  UNPROCESSABLE: {
+    code: 'UNPROCESSABLE',
+    httpStatus: HttpStatus.UNPROCESSABLE_ENTITY,
+    message:
+      'The data was transferred in a format that is not valid for the operation',
   },
 }
 
