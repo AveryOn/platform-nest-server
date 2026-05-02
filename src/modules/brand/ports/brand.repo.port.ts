@@ -16,4 +16,12 @@ export abstract class BrandRepoPort {
     },
     tx?: TransactionContext,
   ): Promise<BrandRawEntity>
+
+  abstract findBrandByProjectId(
+    cmd: {
+      projectId: string
+      organizationId: string
+    },
+    tx?: TransactionContext,
+  ): Promise<BrandRawEntity | null>
 }

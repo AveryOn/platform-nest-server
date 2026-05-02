@@ -4,6 +4,10 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common'
 import {
+  BRAND_REPO_PORT,
+  type BrandRepoPort,
+} from '~/modules/brand/ports/brand.repo.port'
+import {
   ExportFormat,
   type ExportServiceCmd,
   type ExportServiceRes,
@@ -28,6 +32,9 @@ export class ExportService implements ExportServicePort {
     @Inject(PROJECT_REPO_PORT)
     private readonly projectRepo: ProjectRepoPort,
 
+    @Inject(BRAND_REPO_PORT)
+    private readonly brandRepo: BrandRepoPort,
+
     @Inject(RESOLVED_RULESET_SERVICE_PORT)
     private readonly resolvedRulesetService: ResolvedRulesetServicePort,
 
@@ -38,9 +45,18 @@ export class ExportService implements ExportServicePort {
   async export(
     cmd: ExportServiceCmd.Export,
   ): Promise<ExportServiceRes.Export> {
+    const brand = await this.brandRepo.findBrandByProjectId({
+      organizationId: cmd.organizationId,
+      projectId: cmd.projectId,
+    })
+
+    if (!brand) {
+      throw new Error('Brand not found')
+    }
     await this.projectRepo.findProjectOrFail({
       projectId: cmd.projectId,
       organizationId: cmd.organizationId,
+      brandId: brand.id,
     })
 
     const resolvedRuleset =

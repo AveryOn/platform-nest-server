@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { AuthModule } from '~/modules/auth/auth.module'
+import { BrandModule } from '~/modules/brand/brand.module'
 import { ExportService } from '~/modules/export/application/export.service'
 import { ExportController } from '~/modules/export/infra/http/export.controller'
 import { EXPORT_SERVICE_PORT } from '~/modules/export/ports/export.service.port'
@@ -13,6 +14,7 @@ import { SnapshotModule } from '~/modules/snapshot/snapshot.module'
     SnapshotModule,
     ResolvedRulesetModule,
     ProjectModule,
+    BrandModule,
     AuthModule,
   ],
   providers: [
