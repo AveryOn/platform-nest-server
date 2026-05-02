@@ -8,10 +8,6 @@ import {
   type ExportServiceCmd,
   type ExportServiceRes,
 } from '~/modules/export/application/export.type'
-import {
-  EXPORT_REPO_PORT,
-  type ExportRepoPort,
-} from '~/modules/export/ports/export.repo.port'
 import type { ExportServicePort } from '~/modules/export/ports/export.service.port'
 import {
   PROJECT_REPO_PORT,
@@ -29,9 +25,6 @@ import {
 @Injectable()
 export class ExportService implements ExportServicePort {
   constructor(
-    @Inject(EXPORT_REPO_PORT)
-    private readonly exportRepo: ExportRepoPort,
-
     @Inject(PROJECT_REPO_PORT)
     private readonly projectRepo: ProjectRepoPort,
 

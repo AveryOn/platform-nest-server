@@ -15,4 +15,19 @@ export const SWAGGER_EXAMPLES = {
   url_2: 'http://example.com',
   boolean: true,
   socialProvider: 'google',
+
+  exportRulesetMd:
+    '# UI Rules\n\n## Components / Button\n\n### When to use\n\nUse Button for primary user actions.',
+  exportRulesetJson: {
+    projectId: '2f972727-e95d-4564-b1bc-7dc95d44c7a3',
+    rules: [
+      {
+        id: '7f91e1c2-8d4a-4b0e-9b7f-2c58a1f6f9a3',
+        title: 'When to use',
+        body: 'Use Button for primary user actions.',
+        path: ['Components', 'Button'],
+        orderKey: '0001.0001',
+      },
+    ],
+  },
 } as const
