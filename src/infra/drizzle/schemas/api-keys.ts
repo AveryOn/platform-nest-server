@@ -30,6 +30,11 @@ export const apiKeyStatusEnum = pgEnum('api_key_status_enum', [
   'REVOKED',
 ])
 
+export const apiKeyModeEnum = pgEnum('api_key_mode_enum', [
+  'READ_ONLY',
+  'WRITABLE',
+])
+
 export const apiKeysTable = pgTable(
   'api_keys',
   {
@@ -57,6 +62,7 @@ export const apiKeysTable = pgTable(
     ).notNull(),
     keyHash: text('key_hash').notNull(),
     keyPrefix: varchar64('key_prefix').notNull(),
+    mode: apiKeyModeEnum('mode').default('READ_ONLY').notNull(),
     scopes: jsonb('scopes')
       .$type<string[]>()
       .notNull()
