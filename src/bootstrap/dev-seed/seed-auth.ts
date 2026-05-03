@@ -10,7 +10,7 @@ import { DEV_PASSWORD_HASH, DEV_SEED } from './dev-seed.const'
 
 export async function seedAuth(db: any) {
   const now = new Date()
-  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30 * 6)
 
   await db
     .insert(users)
