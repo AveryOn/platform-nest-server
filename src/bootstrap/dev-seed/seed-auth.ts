@@ -1,10 +1,12 @@
 import {
+  accounts,
   members,
   organizations,
   sessions,
   users,
+  verifications,
 } from '~/infra/drizzle/schemas'
-import { DEV_SEED } from './dev-seed.const'
+import { DEV_PASSWORD_HASH, DEV_SEED } from './dev-seed.const'
 
 export async function seedAuth(db: any) {
   const now = new Date()
@@ -46,6 +48,110 @@ export async function seedAuth(db: any) {
         email: DEV_SEED.users.otherOrg.email,
         emailVerified: true,
         image: null,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing()
+
+  await db
+    .insert(accounts)
+    .values([
+      {
+        id: DEV_SEED.accounts.owner.id,
+        accountId: DEV_SEED.accounts.owner.accountId,
+        providerId: 'credential',
+        userId: DEV_SEED.users.owner.id,
+        accessToken: null,
+        refreshToken: null,
+        idToken: null,
+        accessTokenExpiresAt: null,
+        refreshTokenExpiresAt: null,
+        scope: null,
+        password: DEV_PASSWORD_HASH,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: DEV_SEED.accounts.member.id,
+        accountId: DEV_SEED.accounts.member.accountId,
+        providerId: 'credential',
+        userId: DEV_SEED.users.member.id,
+        accessToken: null,
+        refreshToken: null,
+        idToken: null,
+        accessTokenExpiresAt: null,
+        refreshTokenExpiresAt: null,
+        scope: null,
+        password: DEV_PASSWORD_HASH,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: DEV_SEED.accounts.noMember.id,
+        accountId: DEV_SEED.accounts.noMember.accountId,
+        providerId: 'credential',
+        userId: DEV_SEED.users.noMember.id,
+        accessToken: null,
+        refreshToken: null,
+        idToken: null,
+        accessTokenExpiresAt: null,
+        refreshTokenExpiresAt: null,
+        scope: null,
+        password: DEV_PASSWORD_HASH,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: DEV_SEED.accounts.otherOrg.id,
+        accountId: DEV_SEED.accounts.otherOrg.accountId,
+        providerId: 'credential',
+        userId: DEV_SEED.users.otherOrg.id,
+        accessToken: null,
+        refreshToken: null,
+        idToken: null,
+        accessTokenExpiresAt: null,
+        refreshTokenExpiresAt: null,
+        scope: null,
+        password: DEV_PASSWORD_HASH,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ])
+    .onConflictDoNothing()
+
+  await db
+    .insert(verifications)
+    .values([
+      {
+        id: DEV_SEED.verifications.owner.id,
+        identifier: DEV_SEED.users.owner.email,
+        value: 'dev-email-verified',
+        expiresAt,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: DEV_SEED.verifications.member.id,
+        identifier: DEV_SEED.users.member.email,
+        value: 'dev-email-verified',
+        expiresAt,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: DEV_SEED.verifications.noMember.id,
+        identifier: DEV_SEED.users.noMember.email,
+        value: 'dev-email-verified',
+        expiresAt,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        id: DEV_SEED.verifications.otherOrg.id,
+        identifier: DEV_SEED.users.otherOrg.email,
+        value: 'dev-email-verified',
+        expiresAt,
         createdAt: now,
         updatedAt: now,
       },

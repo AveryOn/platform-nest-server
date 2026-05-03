@@ -53,6 +53,40 @@ export const DEV_SEED = {
     },
   },
 
+  accounts: {
+    owner: {
+      id: 'account_dev_owner',
+      accountId: 'user_dev_owner',
+    },
+    member: {
+      id: 'account_dev_member',
+      accountId: 'user_dev_member',
+    },
+    noMember: {
+      id: 'account_dev_nomember',
+      accountId: 'user_dev_nomember',
+    },
+    otherOrg: {
+      id: 'account_dev_other_org',
+      accountId: 'user_dev_other_org',
+    },
+  },
+
+  verifications: {
+    owner: {
+      id: 'verification_dev_owner',
+    },
+    member: {
+      id: 'verification_dev_member',
+    },
+    noMember: {
+      id: 'verification_dev_nomember',
+    },
+    otherOrg: {
+      id: 'verification_dev_other_org',
+    },
+  },
+
   members: {
     owner: {
       id: 'member_dev_owner_org_a',
@@ -128,3 +162,6 @@ export const DEV_SEED = {
     },
   },
 } as const
+
+export const DEV_PASSWORD_HASH =
+  'cad2b0da342e015f2129b1748f3107a3:373880fbfda8dcc5b7b2f3ab36212b6ce764ddf750995a2108fc06a434494cefb356811c005a73125e3cec552ac74c485cba17406277ce85075fc46806a009ae'
