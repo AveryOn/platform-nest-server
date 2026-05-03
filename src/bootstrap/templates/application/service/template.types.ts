@@ -76,7 +76,7 @@ export type TemplateSeedApplyResult = {
 
 export type TemplateSeedDiffItem = {
   path: string
-  type: 'group' | 'rule'
+  type: 'template' | 'group' | 'rule'
   key: string
 }
 
@@ -120,4 +120,42 @@ export type CreateTemplateSnapshotCmd = {
   version: number
   payload: TemplateSnapshotPayload
   hash: string
+}
+
+export type TemplateSeedCheckStatus = 'synced' | 'outdated' | 'missing'
+
+export type TemplateSeedCheckResult = {
+  slug: string
+  status: TemplateSeedCheckStatus
+  templateId?: string
+  latestSnapshotId?: string
+  latestVersion?: number
+  sourceHash: string
+  latestHash?: string
+}
+
+export type TemplateSeedCheckApplyResult = {
+  results: TemplateSeedCheckResult[]
+}
+
+export type TemplateSeedDryRunStatus =
+  | 'would-create'
+  | 'would-update'
+  | 'would-skip'
+
+export type TemplateSeedDryRunResult = {
+  slug: string
+  status: TemplateSeedDryRunStatus
+  templateId?: string
+  latestSnapshotId?: string
+  nextVersion: number
+  hash: string
+}
+
+export type TemplateSeedDryRunApplyResult = {
+  results: TemplateSeedDryRunResult[]
+}
+
+export type TemplateSeedDiffApplyResult = {
+  results: TemplateSeedDiff[]
 }

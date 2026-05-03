@@ -4,6 +4,13 @@ import { buildTemplateSnapshotPayload } from '~/bootstrap/templates/application/
 import type {
   TemplateBase,
   TemplateSeedApplyResult,
+  TemplateSeedCheckApplyResult,
+  TemplateSeedCheckResult,
+  TemplateSeedDiff,
+  TemplateSeedDiffApplyResult,
+  TemplateSeedDiffItem,
+  TemplateSeedDryRunApplyResult,
+  TemplateSeedDryRunResult,
   TemplateSeedResult,
   TemplateSnapshotGroup,
   TemplateSnapshotPayload,
@@ -27,6 +34,7 @@ import {
   TX_PORT,
   type TransactionPort,
 } from '~/infra/transaction/ports/transaction.port'
+import { RuleGroupType } from '~/modules/rule-group/application/rule-group.type'
 import { buildSnapshotHash } from '~/shared/crypto/hash.crypto'
 
 @Injectable()
@@ -52,11 +60,7 @@ export class TemplateSnapshotService implements TemplateSnapshotServicePort {
       const applied: TemplateSeedResult[] = []
 
       for (const source of sources) {
-        const payload = buildTemplateSnapshotPayload(source)
-
-        this.validateSourceTemplate(source)
-        this.validateSnapshotPayload(payload)
-
+        const payload = this.buildPayload(source)
         const hash = buildSnapshotHash(payload)
 
         let template = await this.templateRepo.findBySlug(
@@ -129,9 +133,178 @@ export class TemplateSnapshotService implements TemplateSnapshotServicePort {
       return applied
     })
 
-    return {
-      results,
-    }
+    return { results }
+  }
+
+  async checkTemplates(): Promise<TemplateSeedCheckApplyResult> {
+    const sources = this.templateRegistry.getTemplates()
+
+    const results = await this.transaction.run(async (tx) => {
+      const checked: TemplateSeedCheckResult[] = []
+
+      for (const source of sources) {
+        const payload = this.buildPayload(source)
+        const sourceHash = buildSnapshotHash(payload)
+
+        const template = await this.templateRepo.findBySlug(
+          payload.template.slug,
+          tx,
+        )
+
+        if (!template) {
+          checked.push({
+            slug: payload.template.slug,
+            status: 'missing',
+            sourceHash,
+          })
+
+          continue
+        }
+
+        const latest =
+          await this.templateSnapshotRepo.findLatestByTemplateId(
+            template.id,
+            tx,
+          )
+
+        if (!latest) {
+          checked.push({
+            slug: template.slug,
+            status: 'missing',
+            templateId: template.id,
+            sourceHash,
+          })
+
+          continue
+        }
+
+        checked.push({
+          slug: template.slug,
+          status: latest.hash === sourceHash ? 'synced' : 'outdated',
+          templateId: template.id,
+          latestSnapshotId: latest.id,
+          latestVersion: latest.version,
+          sourceHash,
+          latestHash: latest.hash,
+        })
+      }
+
+      return checked
+    })
+
+    return { results }
+  }
+
+  async dryRunTemplates(): Promise<TemplateSeedDryRunApplyResult> {
+    const sources = this.templateRegistry.getTemplates()
+
+    const results = await this.transaction.run(async (tx) => {
+      const dryRun: TemplateSeedDryRunResult[] = []
+
+      for (const source of sources) {
+        const payload = this.buildPayload(source)
+        const hash = buildSnapshotHash(payload)
+
+        const template = await this.templateRepo.findBySlug(
+          payload.template.slug,
+          tx,
+        )
+
+        if (!template) {
+          dryRun.push({
+            slug: payload.template.slug,
+            status: 'would-create',
+            nextVersion: 1,
+            hash,
+          })
+
+          continue
+        }
+
+        const latest =
+          await this.templateSnapshotRepo.findLatestByTemplateId(
+            template.id,
+            tx,
+          )
+
+        if (latest?.hash === hash) {
+          dryRun.push({
+            slug: template.slug,
+            status: 'would-skip',
+            templateId: template.id,
+            latestSnapshotId: latest.id,
+            nextVersion: latest.version,
+            hash,
+          })
+
+          continue
+        }
+
+        dryRun.push({
+          slug: template.slug,
+          status: 'would-update',
+          templateId: template.id,
+          latestSnapshotId: latest?.id,
+          nextVersion: latest ? latest.version + 1 : 1,
+          hash,
+        })
+      }
+
+      return dryRun
+    })
+
+    return { results }
+  }
+
+  async diffTemplates(): Promise<TemplateSeedDiffApplyResult> {
+    const sources = this.templateRegistry.getTemplates()
+
+    const results = await this.transaction.run(async (tx) => {
+      const diffs: TemplateSeedDiff[] = []
+
+      for (const source of sources) {
+        const payload = this.buildPayload(source)
+
+        const template = await this.templateRepo.findBySlug(
+          payload.template.slug,
+          tx,
+        )
+
+        if (!template) {
+          diffs.push({
+            slug: payload.template.slug,
+            added: this.collectPayloadItems(payload),
+            removed: [],
+            changed: [],
+          })
+
+          continue
+        }
+
+        const latest =
+          await this.templateSnapshotRepo.findLatestByTemplateId(
+            template.id,
+            tx,
+          )
+
+        if (!latest) {
+          diffs.push({
+            slug: template.slug,
+            added: this.collectPayloadItems(payload),
+            removed: [],
+            changed: [],
+          })
+
+          continue
+        }
+
+        diffs.push(this.buildDiff(latest.payload, payload))
+      }
+
+      return diffs
+    })
+
+    return { results }
   }
 
   buildPayload(source: TemplateBase): TemplateSnapshotPayload {
@@ -198,6 +371,7 @@ export class TemplateSnapshotService implements TemplateSnapshotServicePort {
     ruleKeys: Set<string>
   }): void {
     const orderIndexes = new Set<number>()
+    const allowedTypes = new Set<string>(Object.values(RuleGroupType))
 
     for (const group of cmd.groups) {
       const groupPath = [...cmd.path, group.key]
@@ -228,9 +402,21 @@ export class TemplateSnapshotService implements TemplateSnapshotServicePort {
         )
       }
 
+      if (!allowedTypes.has(group.type)) {
+        throw new Error(
+          `Template "${cmd.templateSlug}" group "${group.key}" has invalid type "${group.type}"`,
+        )
+      }
+
       if (!Number.isInteger(group.orderIndex)) {
         throw new Error(
           `Template "${cmd.templateSlug}" group "${group.key}" orderIndex must be integer`,
+        )
+      }
+
+      if (group.orderIndex < 0) {
+        throw new Error(
+          `Template "${cmd.templateSlug}" group "${group.key}" orderIndex must be >= 0`,
         )
       }
 
@@ -241,6 +427,13 @@ export class TemplateSnapshotService implements TemplateSnapshotServicePort {
       }
 
       orderIndexes.add(group.orderIndex)
+
+      this.validateJsonSerializable(group.metadata, {
+        templateSlug: cmd.templateSlug,
+        entity: 'group',
+        key: group.key,
+        field: 'metadata',
+      })
 
       this.validateRuleLevel({
         templateSlug: cmd.templateSlug,
@@ -300,6 +493,12 @@ export class TemplateSnapshotService implements TemplateSnapshotServicePort {
         )
       }
 
+      if (rule.orderIndex < 0) {
+        throw new Error(
+          `Template "${cmd.templateSlug}" rule "${rule.key}" orderIndex must be >= 0`,
+        )
+      }
+
       if (orderIndexes.has(rule.orderIndex)) {
         throw new Error(
           `Template "${cmd.templateSlug}" has duplicated rule orderIndex "${rule.orderIndex}" at "${cmd.path.join('/')}"`,
@@ -307,6 +506,152 @@ export class TemplateSnapshotService implements TemplateSnapshotServicePort {
       }
 
       orderIndexes.add(rule.orderIndex)
+
+      this.validateJsonSerializable(rule.metadata, {
+        templateSlug: cmd.templateSlug,
+        entity: 'rule',
+        key: rule.key,
+        field: 'metadata',
+      })
+    }
+  }
+
+  private validateJsonSerializable(
+    value: unknown,
+    cmd: {
+      templateSlug: string
+      entity: 'group' | 'rule'
+      key: string
+      field: string
+    },
+  ): void {
+    try {
+      JSON.stringify(value)
+    } catch {
+      throw new Error(
+        `Template "${cmd.templateSlug}" ${cmd.entity} "${cmd.key}" has non-serializable ${cmd.field}`,
+      )
+    }
+  }
+
+  private buildDiff(
+    previous: TemplateSnapshotPayload,
+    next: TemplateSnapshotPayload,
+  ): TemplateSeedDiff {
+    const previousItems = this.collectPayloadItemMap(previous)
+    const nextItems = this.collectPayloadItemMap(next)
+
+    const added: TemplateSeedDiffItem[] = []
+    const removed: TemplateSeedDiffItem[] = []
+    const changed: TemplateSeedDiffItem[] = []
+
+    for (const [key, item] of nextItems.entries()) {
+      const prev = previousItems.get(key)
+
+      if (!prev) {
+        added.push(item.meta)
+        continue
+      }
+
+      if (
+        buildSnapshotHash(prev.value) !== buildSnapshotHash(item.value)
+      ) {
+        changed.push(item.meta)
+      }
+    }
+
+    for (const [key, item] of previousItems.entries()) {
+      if (!nextItems.has(key)) {
+        removed.push(item.meta)
+      }
+    }
+
+    return {
+      slug: next.template.slug,
+      added,
+      removed,
+      changed,
+    }
+  }
+
+  private collectPayloadItems(
+    payload: TemplateSnapshotPayload,
+  ): TemplateSeedDiffItem[] {
+    return [...this.collectPayloadItemMap(payload).values()].map(
+      (item) => item.meta,
+    )
+  }
+
+  private collectPayloadItemMap(payload: TemplateSnapshotPayload) {
+    const items = new Map<
+      string,
+      {
+        meta: TemplateSeedDiffItem
+        value: unknown
+      }
+    >()
+
+    items.set('template', {
+      meta: {
+        path: payload.template.slug,
+        type: 'template',
+        key: payload.template.slug,
+      },
+      value: payload.template,
+    })
+
+    for (const group of payload.groups) {
+      this.collectGroupItems({
+        items,
+        group,
+        path: [],
+      })
+    }
+
+    return items
+  }
+
+  private collectGroupItems(cmd: {
+    items: Map<string, { meta: TemplateSeedDiffItem; value: unknown }>
+    group: TemplateSnapshotGroup
+    path: string[]
+  }): void {
+    const path = [...cmd.path, cmd.group.key]
+    const pathString = path.join('/')
+
+    cmd.items.set(`group:${cmd.group.key}`, {
+      meta: {
+        path: pathString,
+        type: 'group',
+        key: cmd.group.key,
+      },
+      value: {
+        key: cmd.group.key,
+        name: cmd.group.name,
+        description: cmd.group.description,
+        type: cmd.group.type,
+        orderIndex: cmd.group.orderIndex,
+        metadata: cmd.group.metadata,
+      },
+    })
+
+    for (const rule of cmd.group.rules) {
+      cmd.items.set(`rule:${rule.key}`, {
+        meta: {
+          path: `${pathString}/${rule.key}`,
+          type: 'rule',
+          key: rule.key,
+        },
+        value: rule,
+      })
+    }
+
+    for (const child of cmd.group.children) {
+      this.collectGroupItems({
+        items: cmd.items,
+        group: child,
+        path,
+      })
     }
   }
 }
