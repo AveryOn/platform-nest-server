@@ -14,12 +14,14 @@ export interface ProjectConfigEntity {
 
 export namespace ProjectConfigReqCmd {
   export interface updateRuleGroupConfig {
+    organizationId: string
     projectId: string
     groupId: string
     isActive: boolean
   }
 
   export interface updateRuleConfig {
+    organizationId: string
     projectId: string
     ruleId: string
     isActive: boolean

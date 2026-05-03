@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -15,6 +16,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
+import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import {
   ProjectRuleConfigPatchDto,
   ProjectRuleConfigRes,
@@ -39,6 +43,7 @@ export class ProjectConfigController {
   ) {}
 
   @Patch(':projectId/rule-groups/:groupId/config')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Patch project rule group config',
     description: 'Updates project-level config for a specific rule group',
@@ -92,14 +97,20 @@ export class ProjectConfigController {
     description: 'Validation failed',
   })
   async patchRuleGroupConfig(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
+
     @Body()
     body: ProjectRuleGroupConfigPatchDto,
   ): Promise<ProjectRuleGroupConfigRes> {
     return await this.configService.updateRuleGroupConfig({
+      organizationId: auth.activeOrganizationId,
       groupId: groupId,
       projectId: projectId,
       isActive: body.isActive,
@@ -107,6 +118,7 @@ export class ProjectConfigController {
   }
 
   @Patch(':projectId/rules/:ruleId/config')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Patch project rule config',
     description: 'Updates project-level config for a specific rule',
@@ -160,14 +172,20 @@ export class ProjectConfigController {
     description: 'Validation failed',
   })
   async patchRuleConfig(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Param('ruleId', ParseUUIDPipe)
     ruleId: string,
+
     @Body()
     body: ProjectRuleConfigPatchDto,
   ): Promise<ProjectRuleConfigRes> {
     return await this.configService.updateRuleConfig({
+      organizationId: auth.activeOrganizationId,
       projectId: projectId,
       ruleId: ruleId,
       isActive: body.isActive,

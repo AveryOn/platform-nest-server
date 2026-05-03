@@ -9,6 +9,10 @@ import {
   type TransactionPort,
 } from '~/infra/transaction/ports/transaction.port'
 import {
+  BRAND_REPO_PORT,
+  type BrandRepoPort,
+} from '~/modules/brand/ports/brand.repo.port'
+import {
   ProjectConfigStatus,
   type ProjectConfigReqCmd,
   type ProjectConfigRes,
@@ -18,12 +22,22 @@ import {
   type ProjectConfigRepoPort,
 } from '~/modules/project-config/ports/project-config.repo.port'
 import type { ProjectConfigServicePort } from '~/modules/project-config/ports/project-config.service.port'
+import {
+  PROJECT_REPO_PORT,
+  type ProjectRepoPort,
+} from '~/modules/project/ports/project.repo.port'
 
 @Injectable()
 export class ProjectConfigService implements ProjectConfigServicePort {
   constructor(
     @Inject(PROJECT_CONFIG_REPO_PORT)
     private readonly configRepo: ProjectConfigRepoPort,
+
+    @Inject(BRAND_REPO_PORT)
+    private readonly brandRepo: BrandRepoPort,
+
+    @Inject(PROJECT_REPO_PORT)
+    private readonly projectRepo: ProjectRepoPort,
 
     @Inject(TX_PORT)
     private readonly transaction: TransactionPort<TransactionContext>,
@@ -36,16 +50,10 @@ export class ProjectConfigService implements ProjectConfigServicePort {
     cmd: ProjectConfigReqCmd.updateRuleGroupConfig,
   ): Promise<ProjectConfigRes.updateRuleGroupConfig> {
     return await this.transaction.run(async (tx) => {
-      const project = await this.configRepo.getProjectById(
-        { projectId: cmd.projectId },
+      await this.checkProjectOrFail(
+        { organizationId: cmd.organizationId, projectId: cmd.projectId },
         tx,
       )
-
-      if (!project) {
-        throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger).log(
-          'Project not found',
-        )
-      }
 
       const ruleGroup = await this.configRepo.getRuleGroupInProject(
         {
@@ -88,16 +96,10 @@ export class ProjectConfigService implements ProjectConfigServicePort {
     cmd: ProjectConfigReqCmd.updateRuleConfig,
   ): Promise<ProjectConfigRes.updateRuleConfig> {
     return await this.transaction.run(async (tx) => {
-      const project = await this.configRepo.getProjectById(
-        { projectId: cmd.projectId },
+      await this.checkProjectOrFail(
+        { organizationId: cmd.organizationId, projectId: cmd.projectId },
         tx,
       )
-
-      if (!project) {
-        throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger).log(
-          'Project not found',
-        )
-      }
 
       const rule = await this.configRepo.getRuleInProject(
         {
@@ -134,6 +136,36 @@ export class ProjectConfigService implements ProjectConfigServicePort {
         updatedAt: this.toIsoString(config.updatedAt),
       }
     })
+  }
+
+  private async checkProjectOrFail(
+    cmd: {
+      projectId: string
+      organizationId: string
+    },
+    tx?: TransactionContext,
+  ) {
+    const brand = await this.brandRepo.findBrandByProjectId(
+      {
+        projectId: cmd.projectId,
+        organizationId: cmd.organizationId,
+      },
+      tx,
+    )
+    if (!brand) {
+      throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger).log(
+        'Brand not found',
+      )
+    }
+
+    await this.projectRepo.findProjectOrFail(
+      {
+        brandId: brand.id,
+        organizationId: cmd.organizationId,
+        projectId: cmd.projectId,
+      },
+      tx,
+    )
   }
 
   private toIsoString(value: Date | string | null): string | null {
