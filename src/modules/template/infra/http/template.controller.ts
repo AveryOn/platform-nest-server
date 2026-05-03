@@ -5,6 +5,7 @@ import {
   Inject,
   Param,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiOperation,
@@ -13,6 +14,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import {
   TemplateGetListQueryDto,
   TemplateItemRes,
@@ -40,6 +42,7 @@ export class TemplateController {
   ) {}
 
   @Get()
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get templates list',
     description: 'Returns the list of available read-only templates',
