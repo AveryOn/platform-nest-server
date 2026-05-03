@@ -3,6 +3,11 @@ import { AppError } from '~/core/error/app-error'
 import { ErrorEnum } from '~/core/error/app-error.dict'
 import { LOGGER_PORT } from '~/core/logger/logger.port'
 import type { AppLoggerService } from '~/core/logger/logger.service'
+import type { TransactionContext } from '~/infra/transaction/application/transaction.type'
+import {
+  TX_PORT,
+  type TransactionPort,
+} from '~/infra/transaction/ports/transaction.port'
 import type {
   BrandEntity,
   BrandRawEntity,
@@ -19,9 +24,30 @@ export class BrandService implements BrandServicePort {
     @Inject(BRAND_REPO_PORT)
     private readonly brandRepo: BrandRepoPort,
 
+    @Inject(TX_PORT)
+    private readonly transaction: TransactionPort<TransactionContext>,
+
     @Inject(LOGGER_PORT)
     private readonly logger: AppLoggerService,
   ) {}
+  async create(cmd: {
+    name: string
+    organizationId: string
+  }): Promise<BrandEntity> {
+    return await this.transaction.run(async (tx) => {
+      //  Check if already exists
+      const existingBrand = await this.brandRepo.getByName(cmd, tx)
+      if (existingBrand) {
+        throw new AppError(ErrorEnum.CONFLICT, this.logger).log(
+          'A brand with this name already exists',
+        )
+      }
+
+      const created = await this.brandRepo.create(cmd, tx)
+
+      return this.toItemResult(created)
+    })
+  }
 
   async getById(brandId: string): Promise<BrandEntity> {
     const rawBrand = await this.brandRepo.getById(brandId)

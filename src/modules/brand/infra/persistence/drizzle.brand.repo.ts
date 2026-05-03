@@ -16,6 +16,44 @@ export class BrandDrizzleRepo implements BrandRepoPort {
     @Inject(DRIZZLE_PORT)
     private readonly drizzle: DrizzleServicePort,
   ) {}
+  async getByName(
+    cmd: { name: string; organizationId: string },
+    tx?: Tx,
+  ): Promise<BrandRawEntity | null> {
+    const db = defineDb(this.drizzle.db, tx)
+
+    const [brand] = await db
+      .select()
+      .from(brandsTable)
+      .where(
+        and(
+          eq(brandsTable.organizationId, cmd.organizationId),
+          eq(brandsTable.name, cmd.name),
+        ),
+      )
+      .limit(1)
+
+    return brand ?? null
+  }
+  async create(
+    cmd: {
+      name: string
+      organizationId: string
+    },
+    tx?: Tx,
+  ): Promise<BrandRawEntity> {
+    const db = defineDb(this.drizzle.db, tx)
+
+    const [brand] = await db
+      .insert(brandsTable)
+      .values({
+        name: cmd.name,
+        organizationId: cmd.organizationId,
+      })
+      .returning()
+
+    return brand
+  }
   async findBrandByProjectId(
     cmd: { projectId: string; organizationId: string },
     tx?: Tx,

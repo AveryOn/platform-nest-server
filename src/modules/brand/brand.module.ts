@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { AuthModule } from '~/modules/auth/auth.module'
 import { BrandService } from '~/modules/brand/application/brand.service'
 import { BrandController } from '~/modules/brand/infra/http/brand.controller'
 import { BrandDrizzleRepo } from '~/modules/brand/infra/persistence/drizzle.brand.repo'
@@ -7,6 +8,7 @@ import { BRAND_SERVICE_PORT } from '~/modules/brand/ports/brand.service.port'
 
 @Module({
   controllers: [BrandController],
+  imports: [AuthModule],
   providers: [
     {
       provide: BRAND_SERVICE_PORT,
