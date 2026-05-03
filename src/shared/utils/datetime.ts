@@ -23,7 +23,11 @@ function excludeNumberOfFactor(value: DATE_KEY) {
 
   if (Object.is(num, Number.NaN)) return null
   if (!factor) return null
-  return { word, num, factor }
+  return {
+    word,
+    num,
+    factor,
+  }
 }
 
 export function appendDatetime(value: DATE_KEY): number | null {

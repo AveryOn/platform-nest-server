@@ -1,0 +1,1 @@
+ALTER TABLE "project_rule_snapshots" ADD COLUMN "reason" varchar(255);

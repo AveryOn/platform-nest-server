@@ -1,5 +1,5 @@
 {
-  "id": "bbf6050b-3a10-4c93-ab25-d116ed992a9e",
+  "id": "86060891-ad6a-4a25-a261-26c175c0e2e2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -783,34 +783,60 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.project_rule_groups": {
-      "name": "project_rule_groups",
+    "public.project_rule_configs": {
+      "name": "project_rule_configs",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
         "project_id": {
           "name": "project_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "rule_group_id": {
-          "name": "rule_group_id",
+        "rule_id": {
+          "name": "rule_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
         "status": {
           "name": "status",
-          "type": "project_rule_group_status",
+          "type": "project_rule_config_status",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'active'"
+        },
+        "replaced_by": {
+          "name": "replaced_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
-        "prg_pg_unique": {
-          "name": "prg_pg_unique",
+        "prc_project_rule_unique": {
+          "name": "prc_project_rule_unique",
           "columns": [
             {
               "expression": "project_id",
@@ -819,7 +845,7 @@
               "nulls": "last"
             },
             {
-              "expression": "rule_group_id",
+              "expression": "rule_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -830,8 +856,8 @@
           "method": "btree",
           "with": {}
         },
-        "prg_p_status_idx": {
-          "name": "prg_p_status_idx",
+        "prc_project_status_idx": {
+          "name": "prc_project_status_idx",
           "columns": [
             {
               "expression": "project_id",
@@ -853,9 +879,9 @@
         }
       },
       "foreignKeys": {
-        "project_rule_groups_project_id_projects_id_fk": {
-          "name": "project_rule_groups_project_id_projects_id_fk",
-          "tableFrom": "project_rule_groups",
+        "project_rule_configs_project_id_projects_id_fk": {
+          "name": "project_rule_configs_project_id_projects_id_fk",
+          "tableFrom": "project_rule_configs",
           "tableTo": "projects",
           "columnsFrom": [
             "project_id"
@@ -866,9 +892,145 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "project_rule_groups_rule_group_id_rule_groups_id_fk": {
-          "name": "project_rule_groups_rule_group_id_rule_groups_id_fk",
-          "tableFrom": "project_rule_groups",
+        "project_rule_configs_rule_id_rules_id_fk": {
+          "name": "project_rule_configs_rule_id_rules_id_fk",
+          "tableFrom": "project_rule_configs",
+          "tableTo": "rules",
+          "columnsFrom": [
+            "rule_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "project_rule_configs_replaced_by_rules_id_fk": {
+          "name": "project_rule_configs_replaced_by_rules_id_fk",
+          "tableFrom": "project_rule_configs",
+          "tableTo": "rules",
+          "columnsFrom": [
+            "replaced_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.project_rule_group_configs": {
+      "name": "project_rule_group_configs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "project_id": {
+          "name": "project_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rule_group_id": {
+          "name": "rule_group_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "project_rule_group_config_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "prgc_project_rule_group_unique": {
+          "name": "prgc_project_rule_group_unique",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "rule_group_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "prgc_project_status_idx": {
+          "name": "prgc_project_status_idx",
+          "columns": [
+            {
+              "expression": "project_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "project_rule_group_configs_project_id_projects_id_fk": {
+          "name": "project_rule_group_configs_project_id_projects_id_fk",
+          "tableFrom": "project_rule_group_configs",
+          "tableTo": "projects",
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "project_rule_group_configs_rule_group_id_rule_groups_id_fk": {
+          "name": "project_rule_group_configs_rule_group_id_rule_groups_id_fk",
+          "tableFrom": "project_rule_group_configs",
           "tableTo": "rule_groups",
           "columnsFrom": [
             "rule_group_id"
@@ -1061,6 +1223,12 @@
           "columns": [
             {
               "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "brand_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1547,9 +1715,9 @@
         },
         "slug": {
           "name": "slug",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "name": {
           "name": "name",
@@ -1603,8 +1771,16 @@
     }
   },
   "enums": {
-    "public.project_rule_group_status": {
-      "name": "project_rule_group_status",
+    "public.project_rule_config_status": {
+      "name": "project_rule_config_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "hidden"
+      ]
+    },
+    "public.project_rule_group_config_status": {
+      "name": "project_rule_group_config_status",
       "schema": "public",
       "values": [
         "active",

@@ -1,18 +1,49 @@
-import { Body, Controller, HttpStatus, Param, ParseUUIDPipe, Patch } from '@nestjs/common'
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
 import {
-  ProjectConfigStatus,
+  Body,
+  Controller,
+  HttpStatus,
+  Inject,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  UseGuards,
+} from '@nestjs/common'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
+import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
+import { SessionGuard } from '~/modules/auth/infra/session.guard'
+import {
   ProjectRuleConfigPatchDto,
-  ProjectRuleConfigResponseDto,
+  ProjectRuleConfigRes,
   ProjectRuleGroupConfigPatchDto,
-  ProjectRuleGroupConfigResponseDto,
+  ProjectRuleGroupConfigRes,
 } from '~/modules/project-config/infra/http/project-config.dto'
+import {
+  PROJECT_CONFIG_SERVICE_PORT,
+  type ProjectConfigServicePort,
+} from '~/modules/project-config/ports/project-config.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.ProjectConfig)
-@Controller({ path: 'projects', version: '1' })
+@Controller({
+  path: 'projects',
+  version: '1',
+})
 export class ProjectConfigController {
+  constructor(
+    @Inject(PROJECT_CONFIG_SERVICE_PORT)
+    private readonly configService: ProjectConfigServicePort,
+  ) {}
+
   @Patch(':projectId/rule-groups/:groupId/config')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Patch project rule group config',
     description: 'Updates project-level config for a specific rule group',
@@ -40,10 +71,10 @@ export class ProjectConfigController {
     description: 'Project rule group config patch payload',
     required: true,
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Project rule group config successfully updated',
-    type: ProjectRuleGroupConfigResponseDto,
+    type: ProjectRuleGroupConfigRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -65,22 +96,29 @@ export class ProjectConfigController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  patchRuleGroupConfig(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() body: ProjectRuleGroupConfigPatchDto,
-  ): ProjectRuleGroupConfigResponseDto {
-    return {
-      projectId,
-      ruleGroupId: groupId,
-      isHidden: body.isHidden ?? false,
-      isActive: body.isActive ?? true,
-      status: ProjectConfigStatus.success,
-      updatedAt: new Date().toISOString(),
-    }
+  async patchRuleGroupConfig(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+
+    @Body()
+    body: ProjectRuleGroupConfigPatchDto,
+  ): Promise<ProjectRuleGroupConfigRes> {
+    return await this.configService.updateRuleGroupConfig({
+      organizationId: auth.activeOrganizationId,
+      groupId: groupId,
+      projectId: projectId,
+      isActive: body.isActive,
+    })
   }
 
   @Patch(':projectId/rules/:ruleId/config')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Patch project rule config',
     description: 'Updates project-level config for a specific rule',
@@ -108,10 +146,10 @@ export class ProjectConfigController {
     description: 'Project rule config patch payload',
     required: true,
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Project rule config successfully updated',
-    type: ProjectRuleConfigResponseDto,
+    type: ProjectRuleConfigRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -133,18 +171,24 @@ export class ProjectConfigController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  patchRuleConfig(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Param('ruleId', ParseUUIDPipe) ruleId: string,
-    @Body() body: ProjectRuleConfigPatchDto,
-  ): ProjectRuleConfigResponseDto {
-    return {
-      projectId,
-      ruleId,
-      isHidden: body.isHidden ?? false,
-      isActive: body.isActive ?? true,
-      status: ProjectConfigStatus.success,
-      updatedAt: new Date().toISOString(),
-    }
+  async patchRuleConfig(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+
+    @Param('ruleId', ParseUUIDPipe)
+    ruleId: string,
+
+    @Body()
+    body: ProjectRuleConfigPatchDto,
+  ): Promise<ProjectRuleConfigRes> {
+    return await this.configService.updateRuleConfig({
+      organizationId: auth.activeOrganizationId,
+      projectId: projectId,
+      ruleId: ruleId,
+      isActive: body.isActive,
+    })
   }
 }

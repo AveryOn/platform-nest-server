@@ -1,17 +1,49 @@
-import { Controller, Get, HttpStatus, Param, ParseUUIDPipe, Query } from '@nestjs/common'
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
 import {
-  ProjectTreeNodeResponseDto,
-  ProjectTreeQueryDto,
-  ProjectTreeResponseDto,
-  RuleTreeItemResponseDto,
+  Controller,
+  Get,
+  HttpStatus,
+  Inject,
+  Param,
+  ParseUUIDPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
+import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
+import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
+import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
+import {
+  ProjectTreeDto,
+  ProjectTreeResponse,
 } from '~/modules/tree/infra/http/tree.dto'
+import {
+  TREE_SERVICE_PORT,
+  type TreeServicePort,
+} from '~/modules/tree/ports/tree.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.Tree)
-@Controller({ path: 'projects', version: '1' })
+@Controller({
+  path: 'projects',
+  version: '1',
+})
 export class TreeController {
+  constructor(
+    @Inject(TREE_SERVICE_PORT)
+    private readonly treeService: TreeServicePort,
+  ) {}
+
   @Get(':projectId/tree')
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.ProjectRead)
   @ApiOperation({
     summary: 'Get project editor tree',
     description:
@@ -27,10 +59,24 @@ export class TreeController {
     format: 'uuid',
     description: 'Project UUID',
   })
+  @ApiQuery({
+    name: 'includeHidden',
+    required: false,
+    type: Boolean,
+    example: false,
+    description: 'Include hidden rule groups and rules in the tree',
+  })
+  @ApiQuery({
+    name: 'includeMetadata',
+    required: false,
+    type: Boolean,
+    example: true,
+    description: 'Include metadata field in rule groups and rules',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Project tree successfully returned',
-    type: ProjectTreeResponseDto,
+    type: ProjectTreeResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -52,55 +98,21 @@ export class TreeController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  getProjectTree(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Query() query: ProjectTreeQueryDto,
-  ): ProjectTreeResponseDto {
-    const rule: RuleTreeItemResponseDto = {
-      id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-      ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      title: 'When to use',
-      body: 'Use button for primary actions.',
-      metadata: { tags: ['button', 'usage'] },
-      orderIndex: 0,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-    }
+  async getProjectTree(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
 
-    const childNode: ProjectTreeNodeResponseDto = {
-      id: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      projectId,
-      parentGroupId: '7c917903-d8f3-445b-bec8-122c4cf3a411',
-      name: 'Button',
-      description: 'Rules for button component',
-      kind: 'component',
-      orderIndex: 0,
-      isHidden: false,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-      rules: [rule],
-      children: [],
-    }
+    @Query()
+    query: ProjectTreeDto,
 
-    const rootNode: ProjectTreeNodeResponseDto = {
-      id: '7c917903-d8f3-445b-bec8-122c4cf3a411',
-      projectId,
-      parentGroupId: null,
-      name: 'Components',
-      description: 'Component rules',
-      kind: 'category',
-      orderIndex: 0,
-      isHidden: false,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-      rules: [],
-      children: [childNode],
-    }
-
-    return {
-      projectId,
-      includeHidden: query.includeHidden ?? true,
-      tree: [rootNode],
-    }
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+  ): Promise<ProjectTreeResponse> {
+    return await this.treeService.getEditorTree({
+      organizationId: auth.activeOrganizationId,
+      projectId: projectId,
+      includeHidden: query.includeHidden,
+      includeMetadata: query.includeMetadata,
+    })
   }
 }

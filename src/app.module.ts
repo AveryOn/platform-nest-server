@@ -1,10 +1,15 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { APP_INTERCEPTOR } from '@nestjs/core'
+import { TemplateSeedingSystemModule } from '~/bootstrap/templates/template-seeding-system.module'
 import { UserContextInterceptor } from '~/core/interceptors/user-context.interceptor'
 import { LoggerModule } from '~/core/logger/logger.module'
 import { RequestContextMiddleware } from '~/core/middlewares/request.middleware'
 import { DrizzleModule } from '~/infra/drizzle/drizzle.module'
+import { TransactionModule } from '~/infra/transaction/transaction.module'
+import { ApiKeyModule } from '~/modules/api-key/api-key.module'
 import { AuthModule } from '~/modules/auth/auth.module'
+import { BrandModule } from '~/modules/brand/brand.module'
+import { ExportModule } from '~/modules/export/export.module'
 import { ProjectConfigModule } from '~/modules/project-config/project-config.module'
 import { ProjectModule } from '~/modules/project/project.module'
 import { ResolvedRulesetModule } from '~/modules/resolved-ruleset/resolved-ruleset.module'
@@ -23,8 +28,10 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     LoggerModule,
     PaginatorModule,
     DrizzleModule,
+    TransactionModule,
     AuthModule,
     SystemModule,
+    BrandModule,
     ProjectModule,
     RuleGroupModule,
     RuleModule,
@@ -33,7 +40,9 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     SnapshotModule,
     ProjectConfigModule,
     TemplateModule,
-    // ExportModule,
+    TemplateSeedingSystemModule,
+    ExportModule,
+    ApiKeyModule,
 
     // RedisModule.forRoot({
     //   type: 'single',
@@ -42,7 +51,12 @@ import { PaginatorModule } from '~/shared/paginator/paginator.module'
     // RedisWrapperModule,
   ],
   controllers: [],
-  providers: [{ provide: APP_INTERCEPTOR, useClass: UserContextInterceptor }],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: UserContextInterceptor,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -2,7 +2,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { bearer, openAPI, organization } from 'better-auth/plugins'
 
 import { env } from '~/core/env'
-import { db } from '~/infra/drizzle/client'
+import { db } from '~/infra/drizzle/infra/client'
 import * as schema from '~/infra/drizzle/schemas/auth-schema'
 
 export const betterAuthConfig = {

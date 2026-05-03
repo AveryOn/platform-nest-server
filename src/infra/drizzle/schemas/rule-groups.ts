@@ -1,3 +1,4 @@
+import { isNull } from 'drizzle-orm'
 import {
   foreignKey,
   index,
@@ -17,10 +18,13 @@ import {
   name,
   referenceOnUUID,
   updatedAt,
-} from '~/infra/drizzle/drizzle.helpers'
+} from '~/infra/drizzle/application/drizzle.helpers'
 import { projectsTable } from '~/infra/drizzle/schemas'
 
-export const ruleGroupScopeEnum = pgEnum('rule_group_scope', ['template', 'project'])
+export const ruleGroupScopeEnum = pgEnum('rule_group_scope', [
+  'template',
+  'project',
+])
 
 export const ruleGroupTypeEnum = pgEnum('rule_group_type', [
   'category',
@@ -53,12 +57,36 @@ export const ruleGroupsTable = pgTable(
       foreignColumns: [t.id],
       name: 'rule_groups_parent_group_id_fkey',
     }),
-    // TODO This needs to be thought out separately for template nodes where project_id = null.
-    uniqueIndex('rule_groups_project_parent_order_unique').on(
+
+    uniqueIndex('rule_groups_project_parent_order_unique')
+      .on(t.projectId, t.parentGroupId, t.orderIndex)
+      .where(isNull(t.deletedAt)),
+
+    index('rule_groups_project_parent_order_idx').on(
       t.projectId,
       t.parentGroupId,
       t.orderIndex,
     ),
-    index('rule_groups_project_parent_order_idx').on(t.projectId, t.parentGroupId, t.orderIndex),
   ],
 )
+
+export type RuleGroupScopeKey =
+  (typeof ruleGroupScopeEnum.enumValues)[number]
+export type RuleGroupTypeKey =
+  (typeof ruleGroupTypeEnum.enumValues)[number]
+
+export const RuleGroupScope: Record<
+  RuleGroupScopeKey,
+  RuleGroupScopeKey
+> = {
+  project: 'project',
+  template: 'template',
+} as const
+
+export const RuleGroupType: Record<RuleGroupTypeKey, RuleGroupTypeKey> = {
+  category: 'category',
+  component: 'component',
+  section: 'section',
+  token: 'token',
+  variant: 'variant',
+} as const

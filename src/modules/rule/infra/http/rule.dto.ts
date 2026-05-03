@@ -1,47 +1,62 @@
-import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger'
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  PartialType,
+} from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
+  IsDateString,
+  IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
   IsUUID,
   Min,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator'
+import { RuleScope } from '~/modules/rule/application/rule.type'
+import { OperationStatus } from '~/shared/const/app.const'
 import { IsNotEmptyBody } from '~/shared/validators/object.validator'
 
 export class RuleCreateDto {
   @ApiPropertyOptional({
     example: 'When to use',
-    description: 'Optional rule title',
+    description: 'Required rule name',
     type: String,
+    nullable: false,
   })
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  title?: string
+  name: string
 
   @ApiProperty({
     example: 'Use button for primary actions.',
     description: 'Rule body content. Markdown/text supported',
     type: String,
   })
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   body: string
 
   @ApiPropertyOptional({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Optional flexible metadata payload',
     type: Object,
     nullable: true,
   })
   @IsOptional()
+  @ValidateIf((_, value) => value !== null)
   @IsObject()
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown> | null
 
   @ApiProperty({
     example: 1,
@@ -49,6 +64,7 @@ export class RuleCreateDto {
     type: Number,
     minimum: 0,
   })
+  @IsNotEmpty()
   @Type(() => Number)
   @IsInt()
   @Min(0)
@@ -58,12 +74,12 @@ export class RuleCreateDto {
 export class RulePatchBaseDto {
   @ApiPropertyOptional({
     example: 'When to use',
-    description: 'Updated rule title',
+    description: 'Updated rule name',
     type: String,
   })
   @IsOptional()
   @IsString()
-  title?: string
+  name?: string
 
   @ApiPropertyOptional({
     example: 'Use button for primary actions.',
@@ -75,14 +91,18 @@ export class RulePatchBaseDto {
   body?: string
 
   @ApiPropertyOptional({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Updated flexible metadata payload',
     type: Object,
     nullable: true,
   })
   @IsOptional()
+  @ValidateIf((_, value) => value !== null)
   @IsObject()
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown> | null
 }
 
 export class RulePatchDto extends PartialType(RulePatchBaseDto) {
@@ -99,6 +119,8 @@ export class RuleMoveDto {
     type: String,
     format: 'uuid',
   })
+  @IsNotEmpty()
+  @IsString()
   @IsUUID()
   targetGroupId: string
 
@@ -108,6 +130,7 @@ export class RuleMoveDto {
     type: Number,
     minimum: 0,
   })
+  @IsNotEmpty()
   @Type(() => Number)
   @IsInt()
   @Min(0)
@@ -121,6 +144,8 @@ export class RuleReorderItemDto {
     type: String,
     format: 'uuid',
   })
+  @IsNotEmpty()
+  @IsString()
   @IsUUID()
   id: string
 
@@ -130,6 +155,7 @@ export class RuleReorderItemDto {
     type: Number,
     minimum: 0,
   })
+  @IsNotEmpty()
   @Type(() => Number)
   @IsInt()
   @Min(0)
@@ -144,18 +170,23 @@ export class RuleReorderInGroupDto {
   })
   @IsArray()
   @ArrayMinSize(1)
-  @ValidateNested({ each: true })
+  @ValidateNested({
+    each: true,
+  })
   @Type(() => RuleReorderItemDto)
   items: RuleReorderItemDto[]
 }
 
-export class RuleItemResponseDto {
+export class RuleItemRes {
   @ApiProperty({
     example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
     description: 'Rule UUID',
     type: String,
     format: 'uuid',
   })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
   id: string
 
   @ApiProperty({
@@ -164,35 +195,74 @@ export class RuleItemResponseDto {
     type: String,
     format: 'uuid',
   })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
   ruleGroupId: string
 
   @ApiProperty({
+    example: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
+    description: 'Owner project UUID',
+    type: String,
+    format: 'uuid',
+    nullable: true,
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsUUID()
+  projectId: string | null
+
+  @ApiProperty({
     example: 'When to use',
-    description: 'Rule title',
+    description: 'Rule name',
     type: String,
   })
-  title: string
+  @IsNotEmpty()
+  @IsString()
+  name: string
+
+  @ApiProperty({
+    example: RuleScope.project,
+    description: 'Scope of rule',
+    type: String,
+    enum: [RuleScope.project, RuleScope.template],
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(RuleScope)
+  scope: RuleScope
 
   @ApiProperty({
     example: 'Use button for primary actions.',
     description: 'Rule body content',
     type: String,
   })
+  @IsNotEmpty()
+  @IsString()
   body: string
 
   @ApiProperty({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Flexible metadata payload',
     type: Object,
     nullable: true,
   })
-  metadata: Record<string, any> | null
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsObject()
+  metadata: Record<string, unknown> | null
 
   @ApiProperty({
     example: 1,
     description: 'Order index inside rule group',
     type: Number,
   })
+  @IsNotEmpty()
+  @IsNumber()
   orderIndex: number
 
   @ApiProperty({
@@ -201,6 +271,9 @@ export class RuleItemResponseDto {
     type: String,
     format: 'date-time',
   })
+  @IsNotEmpty()
+  @IsString()
+  @IsDateString()
   createdAt: string
 
   @ApiProperty({
@@ -208,36 +281,26 @@ export class RuleItemResponseDto {
     description: 'Update timestamp in ISO-8601 format',
     type: String,
     format: 'date-time',
+    nullable: true,
   })
-  updatedAt: string
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @IsDateString()
+  updatedAt: string | null
 }
 
-export class RuleUpdateResponseDto {
-  @ApiProperty({
-    example: 'success',
-    description: 'Operation status',
-    type: String,
-    enum: ['success', 'failed'],
-  })
-  status: string
-
-  @ApiProperty({
-    example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-    description: 'Affected rule UUID',
-    type: String,
-    format: 'uuid',
-  })
-  ruleId: string
-}
-
-export class RuleRemoveResponseDto {
+export class RuleDeleteRes {
   @ApiProperty({
     example: 'success',
     description: 'Archive operation status',
     type: String,
-    enum: ['success', 'failed'],
+    enum: [OperationStatus.success, OperationStatus.failed],
   })
-  status: string
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: OperationStatus
 
   @ApiProperty({
     example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
@@ -245,6 +308,9 @@ export class RuleRemoveResponseDto {
     type: String,
     format: 'uuid',
   })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
   ruleId: string
 
   @ApiProperty({
@@ -253,5 +319,112 @@ export class RuleRemoveResponseDto {
     type: String,
     format: 'date-time',
   })
-  archivedAt: string
+  @IsNotEmpty()
+  @IsString()
+  @IsDateString()
+  deletedAt: string
+}
+
+export class RuleUpdateRes {
+  @ApiProperty({
+    example: OperationStatus.success,
+    description: 'Operation status',
+    type: String,
+    enum: [OperationStatus.success, OperationStatus.failed],
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: OperationStatus
+
+  @ApiProperty({
+    example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
+    description: 'Affected rule UUID',
+    type: String,
+    format: 'uuid',
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  ruleId: string
+}
+
+export class RuleMoveRes {
+  @ApiProperty({
+    example: OperationStatus.success,
+    description: 'Operation status',
+    type: String,
+    enum: [OperationStatus.success, OperationStatus.failed],
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: OperationStatus
+
+  @ApiProperty({
+    example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
+    description: 'Moved rule UUID',
+    type: String,
+    format: 'uuid',
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  ruleId: string
+
+  @ApiProperty({
+    example: [
+      'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
+      'c5e51f0c-36aa-43e2-9e18-57c1f1e3d5e1',
+    ],
+    description: 'Affected rule UUIDs',
+    type: String,
+    isArray: true,
+    format: 'uuid',
+  })
+  @IsArray()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
+  @IsUUID(undefined, { each: true })
+  affectedIds: string[]
+}
+
+export class RuleReorderInGroupRes {
+  @ApiProperty({
+    example: OperationStatus.success,
+    description: 'Operation status',
+    type: String,
+    enum: [OperationStatus.success, OperationStatus.failed],
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsEnum(OperationStatus)
+  status: OperationStatus
+
+  @ApiProperty({
+    example: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
+    description: 'Rule group UUID',
+    type: String,
+    format: 'uuid',
+  })
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  groupId: string
+
+  @ApiProperty({
+    example: [
+      'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
+      'c5e51f0c-36aa-43e2-9e18-57c1f1e3d5e1',
+    ],
+    description: 'Affected rule UUIDs',
+    type: String,
+    isArray: true,
+    format: 'uuid',
+  })
+  @IsArray()
+  @IsNotEmpty({ each: true })
+  @IsString({ each: true })
+  @IsUUID(undefined, { each: true })
+  affectedIds: string[]
 }

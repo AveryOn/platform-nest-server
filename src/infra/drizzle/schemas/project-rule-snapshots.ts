@@ -1,12 +1,28 @@
-import { index, integer, jsonb, pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
-import { createdAt, id, referenceOnUUID, varchar64 } from '~/infra/drizzle/drizzle.helpers'
+import {
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core'
+import {
+  createdAt,
+  id,
+  referenceOnUUID,
+  varchar255,
+  varchar64,
+} from '~/infra/drizzle/application/drizzle.helpers'
 import { projectsTable } from '~/infra/drizzle/schemas'
 
 export const projectRuleSnapshotsTable = pgTable(
   'project_rule_snapshots',
   {
     id: id(),
-    projectId: referenceOnUUID('project_id', () => projectsTable).notNull(),
+    projectId: referenceOnUUID(
+      'project_id',
+      () => projectsTable,
+    ).notNull(),
+    comment: varchar255('comment'),
     version: integer('version').notNull(),
     payload: jsonb('payload').notNull(),
     hash: varchar64('hash').notNull(),

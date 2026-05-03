@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsBoolean, IsOptional } from 'class-validator'
 
-export class ResolvedRulesetQueryDto {
+export class GetResolvedRulesetDto {
   @ApiPropertyOptional({
     example: true,
     description: 'Include metadata payloads inside resolved rules',
@@ -15,7 +15,7 @@ export class ResolvedRulesetQueryDto {
   includeMetadata?: boolean
 }
 
-export class ResolvedRuleItemResponseDto {
+export class ResolvedRuleItemResponse {
   @ApiProperty({
     example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
     description: 'Rule UUID',
@@ -42,10 +42,10 @@ export class ResolvedRuleItemResponseDto {
 
   @ApiProperty({
     example: 'When to use',
-    description: 'Rule title',
+    description: 'Rule name',
     type: String,
   })
-  title: string
+  name: string
 
   @ApiProperty({
     example: 'Use button for primary actions.',
@@ -55,7 +55,10 @@ export class ResolvedRuleItemResponseDto {
   body: string
 
   @ApiProperty({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Optional flexible metadata payload',
     type: Object,
     nullable: true,
@@ -79,7 +82,8 @@ export class ResolvedRuleItemResponseDto {
 
   @ApiProperty({
     example: 0,
-    description: 'Final order index of the resolved rule in the flat output',
+    description:
+      'Final order index of the resolved rule in the flat output',
     type: Number,
   })
   orderIndex: number
@@ -101,7 +105,7 @@ export class ResolvedRuleItemResponseDto {
   updatedAt: string
 }
 
-export class ResolvedRulesetResponseDto {
+export class GetResolvedRulesetResponse {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Owner project UUID',
@@ -119,15 +123,16 @@ export class ResolvedRulesetResponseDto {
 
   @ApiProperty({
     example: true,
-    description: 'Whether metadata payloads were included in the response',
+    description:
+      'Whether metadata payloads were included in the response',
     type: Boolean,
   })
   includeMetadata: boolean
 
   @ApiProperty({
-    type: ResolvedRuleItemResponseDto,
+    type: ResolvedRuleItemResponse,
     isArray: true,
     description: 'Ordered flat list of resolved rules',
   })
-  rules: ResolvedRuleItemResponseDto[]
+  rules: ResolvedRuleItemResponse[]
 }

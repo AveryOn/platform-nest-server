@@ -1,11 +1,18 @@
-import { pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
-import { createdAt, description, id, name, updatedAt } from '~/infra/drizzle/drizzle.helpers'
+import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core'
+import {
+  createdAt,
+  description,
+  id,
+  name,
+  updatedAt,
+  varchar255,
+} from '~/infra/drizzle/application/drizzle.helpers'
 
 export const templatesTable = pgTable(
   'templates',
   {
     id: id(),
-    slug: text('slug').notNull(),
+    slug: varchar255('slug').notNull(),
     name: name(),
     description: description(),
 

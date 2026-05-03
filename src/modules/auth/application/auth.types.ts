@@ -1,3 +1,5 @@
+import type { Request } from 'express'
+
 export interface AuthUser {
   id: string
   email: string
@@ -23,4 +25,32 @@ export interface AuthSession {
 export interface SessionContext {
   session: AuthSession | null
   user: AuthUser | null
+}
+
+export type AuthRequest = Request & {
+  user: {
+    id: string
+    email?: string
+    name?: string | null
+  }
+
+  session: {
+    id: string
+    userId: string
+    activeOrganizationId?: string | null
+  }
+
+  activeOrganizationId: string | null
+}
+
+export type AuthReqPayload = {
+  user: AuthRequest['user']
+  session: AuthRequest['session']
+  activeOrganizationId: string | null
+}
+
+export type OrgAuthReqPayload = {
+  user: AuthRequest['user']
+  session: AuthRequest['session']
+  activeOrganizationId: string
 }

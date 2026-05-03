@@ -2,6 +2,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import express from 'express'
 import helmet from 'helmet'
+import 'reflect-metadata'
 
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from '~/app.module'
@@ -27,7 +28,11 @@ async function bootstrap() {
     app
       .useGlobalFilters(new GlobalExceptionFilter())
       .use(express.json())
-      .use(express.urlencoded({ extended: true }))
+      .use(
+        express.urlencoded({
+          extended: true,
+        }),
+      )
       .setGlobalPrefix('api')
       .enableVersioning({
         type: VersioningType.URI,
@@ -38,6 +43,9 @@ async function bootstrap() {
           whitelist: true,
           transform: true,
           forbidNonWhitelisted: true,
+          transformOptions: {
+            enableImplicitConversion: true,
+          },
         }),
       )
       .enableCors({
@@ -53,7 +61,8 @@ async function bootstrap() {
         .setDescription('API for the backend')
         .setVersion('1.0')
         .build()
-      const documentFactory = () => SwaggerModule.createDocument(app, config)
+      const documentFactory = () =>
+        SwaggerModule.createDocument(app, config)
       SwaggerModule.setup('docs', app, documentFactory, {
         jsonDocumentUrl: 'docs/json',
       })

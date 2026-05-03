@@ -21,7 +21,9 @@ import { NodeEnv } from '~/shared/const/app.const'
           timestamp: false,
           formatters: {
             level(label) {
-              return { level: label }
+              return {
+                level: label,
+              }
             },
           },
           transport: !isProd
@@ -41,9 +43,15 @@ import { NodeEnv } from '~/shared/const/app.const'
       provide: AppLoggerService,
       scope: Scope.TRANSIENT,
       inject: [LOGGER_PORT, AsyncContextService, INQUIRER],
-      useFactory: (pino: Logger, ctx: AsyncContextService, parent: object) => {
+      useFactory: (
+        pino: Logger,
+        ctx: AsyncContextService,
+        parent: object,
+      ) => {
         const moduleName = parent?.constructor?.name ?? 'Unknown'
-        const child = pino.child({ module: moduleName })
+        const child = pino.child({
+          module: moduleName,
+        })
         return new AppLoggerService(child, ctx)
       },
     },

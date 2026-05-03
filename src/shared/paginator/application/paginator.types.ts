@@ -1,7 +1,16 @@
-export type ConfigPaginatorInput = { page: number; limit: number }
-export type ConfigPaginatorData = { skip: number; take: number }
+export type ConfigPaginatorInput = {
+  page: number
+  limit: number
+}
+export type ConfigPaginatorData = {
+  skip: number
+  take: number
+}
 
-export type ResponsePaginatorInput<T> = { data: T; total: number }
+export type ResponsePaginatorInput<T> = {
+  data: T
+  total: number
+}
 export interface PaginationMeta {
   page: number
   limit: number

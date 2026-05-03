@@ -22,7 +22,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "types": ["node"],
+    "types": ["node", "jest"],
     "paths": {
       "~/*": ["src/*"]
     }
@@ -31,6 +31,6 @@
     "resolveFullPaths": true,
     "resolveFullExtension": ".js"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "test", "drizzle.config.ts"]
+  "include": ["src/**/*.ts", "test", "test/**/*.ts"],
+  "exclude": ["node_modules", "dist", "drizzle.config.ts"]
 }

@@ -7,7 +7,7 @@
   "type": "module",
   "license": "UNLICENSED",
   "scripts": {
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
     "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "start": "node dist/main.js",
     "start:dev": "tsx watch src/main.ts",
@@ -20,8 +20,13 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:generate": "npx drizzle-kit generate",
-    "db:deploy": "echo \"Todo Create script\"",
-    "db:seed": "tsx src/infra/drizzle/seeds/index.ts"
+    "db:migrate": "npx drizzle-kit migrate",
+    "db:deploy": "npx drizzle-kit migrate",
+    "db:seed:templates": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts apply",
+    "db:seed:templates:check": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts check",
+    "db:seed:templates:dry-run": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts dry-run",
+    "db:seed:templates:diff": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts diff",
+    "db:seed:dev": "tsx src/bootstrap/dev-seed/seed-dev.ts"
   },
   "dependencies": {
     "@nestjs-modules/ioredis": "^2.0.2",
@@ -54,6 +59,7 @@
     "@swc/cli": "^0.7.9",
     "@swc/core": "^1.15.7",
     "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.19.3",
     "@types/pg": "^8.18.0",
     "@types/supertest": "^6.0.2",
@@ -75,22 +81,5 @@
     "tsx": "^4.21.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }

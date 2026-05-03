@@ -5,29 +5,55 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common'
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
+import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
+import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import {
   RuleGroupCreateDto,
-  RuleGroupItemResponseDto,
+  RuleGroupDeleteRes,
+  RuleGroupItemRes,
   RuleGroupMoveDto,
   RuleGroupPatchDto,
-  RuleGroupRemoveResponseDto,
   RuleGroupReorderChildrenDto,
   RuleGroupReorderRootDto,
-  RuleGroupType,
-  RuleGroupUpdateResponseDto,
+  RuleGroupUpdateRes,
+  type RuleGroupMoveRes,
+  type RuleGroupReorderChildrenRes,
+  type RuleGroupReorderRootRes,
 } from '~/modules/rule-group/infra/http/rule-group.dto'
+import {
+  RULE_GROUP_SERVICE_PORT,
+  type RuleGroupServicePort,
+} from '~/modules/rule-group/ports/rule-group.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.RuleGroup)
-@Controller({ version: '1' })
+@Controller({
+  version: '1',
+})
 export class RuleGroupController {
+  constructor(
+    @Inject(RULE_GROUP_SERVICE_PORT)
+    private readonly ruleGroupService: RuleGroupServicePort,
+  ) {}
+
   @Post('projects/:projectId/rule-groups')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create rule group',
@@ -47,10 +73,10 @@ export class RuleGroupController {
     type: RuleGroupCreateDto,
     description: 'Payload for creating a rule group',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.CREATED,
     description: 'Rule group successfully created',
-    type: RuleGroupItemResponseDto,
+    type: RuleGroupItemRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -76,24 +102,30 @@ export class RuleGroupController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  createRuleGroup(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Body() body: RuleGroupCreateDto,
-  ): RuleGroupItemResponseDto {
-    return {
-      id: crypto.randomUUID(),
-      projectId,
-      parentGroupId: body.parentGroupId ?? null,
+  async createRuleGroup(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+
+    @Body()
+    body: RuleGroupCreateDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+  ): Promise<RuleGroupItemRes> {
+    return await this.ruleGroupService.create({
+      organizationId: auth.activeOrganizationId,
       name: body.name,
-      description: body.description ?? null,
-      type: body.type || (RuleGroupType as any).section,
       orderIndex: body.orderIndex,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
+      projectId: projectId,
+      metadata: body.metadata,
+      description: body.description,
+      parentGroupId: body.parentGroupId,
+      type: body.type,
+    })
   }
 
   @Get('rule-groups/:groupId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get rule group by id',
     description: 'Returns rule group details by UUID',
@@ -108,10 +140,10 @@ export class RuleGroupController {
     format: 'uuid',
     description: 'Rule group UUID',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully returned',
-    type: RuleGroupItemResponseDto,
+    type: RuleGroupItemRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -129,21 +161,21 @@ export class RuleGroupController {
     status: HttpStatus.NOT_FOUND,
     description: 'Rule group not found',
   })
-  getRuleGroupById(@Param('groupId', ParseUUIDPipe) groupId: string): RuleGroupItemResponseDto {
-    return {
-      id: groupId,
-      projectId: '550e8400-e29b-41d4-a716-446655440000',
-      parentGroupId: null,
-      name: 'Button',
-      description: 'Rules for button component',
-      type: RuleGroupType.component,
-      orderIndex: 1,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-    }
+  async getRuleGroupById(
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+  ): Promise<RuleGroupItemRes> {
+    return await this.ruleGroupService.getById({
+      organizationId: auth.activeOrganizationId,
+      groupId,
+    })
   }
 
   @Patch('rule-groups/:groupId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update rule group',
     description: 'Updates mutable fields of a rule group',
@@ -162,10 +194,10 @@ export class RuleGroupController {
     type: RuleGroupPatchDto,
     description: 'Payload for updating rule group fields',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully updated',
-    type: RuleGroupUpdateResponseDto,
+    type: RuleGroupUpdateRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -191,23 +223,41 @@ export class RuleGroupController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  patchRuleGroup(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() _body: RuleGroupPatchDto,
-  ): RuleGroupUpdateResponseDto {
-    return {
-      status: 'success',
-      groupId,
-    }
+  async patchRuleGroup(
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+
+    @Body()
+    body: RuleGroupPatchDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+  ): Promise<RuleGroupUpdateRes> {
+    return await this.ruleGroupService.patch({
+      organizationId: auth.activeOrganizationId,
+      groupId: groupId,
+      description: body.description,
+      name: body.name,
+      type: body.type,
+    })
   }
 
-  @Post('rule-groups/:groupId/move')
+  @Post('projects/:projectId/rule-groups/:groupId/move')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Move rule group',
     description: 'Moves a rule group to another parent and/or position',
     operationId: 'move_rule_group',
     tags: [ApiSwaggerTag.RuleGroup],
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    type: String,
+    format: 'uuid',
+    description: 'Project UUID',
   })
   @ApiParam({
     name: 'groupId',
@@ -221,10 +271,10 @@ export class RuleGroupController {
     type: RuleGroupMoveDto,
     description: 'Payload for moving a rule group',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully moved',
-    type: RuleGroupUpdateResponseDto,
+    type: RuleGroupUpdateRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -244,27 +294,42 @@ export class RuleGroupController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Invalid move operation or cross-project move detected',
+    description:
+      'Conflict. Invalid move operation or cross-project move detected',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  moveRuleGroup(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() _body: RuleGroupMoveDto,
-  ): RuleGroupUpdateResponseDto {
-    return {
-      status: 'success',
-      groupId,
-    }
+  async moveRuleGroup(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+
+    @Body()
+    body: RuleGroupMoveDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+  ): Promise<RuleGroupMoveRes> {
+    return await this.ruleGroupService.move({
+      organizationId: auth.activeOrganizationId,
+      projectId: projectId,
+      groupId: groupId,
+      orderIndex: body.orderIndex,
+      parentGroupId: body.parentGroupId,
+    })
   }
 
   @Post('rule-groups/:groupId/reorder-children')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder child rule groups',
-    description: 'Reorders direct child rule groups of the specified parent group',
+    description:
+      'Reorders direct child rule groups of the specified parent group',
     operationId: 'reorder_rule_group_children',
     tags: [ApiSwaggerTag.RuleGroup],
   })
@@ -280,10 +345,10 @@ export class RuleGroupController {
     type: RuleGroupReorderChildrenDto,
     description: 'Payload for reordering child rule groups',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Child rule groups successfully reordered',
-    type: RuleGroupUpdateResponseDto,
+    type: RuleGroupUpdateRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -303,23 +368,32 @@ export class RuleGroupController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Reorder input contains invalid hierarchy or duplicate ids',
+    description:
+      'Conflict. Reorder input contains invalid hierarchy or duplicate ids',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  reorderChildren(
-    @Param('groupId', ParseUUIDPipe) groupId: string,
-    @Body() _body: RuleGroupReorderChildrenDto,
-  ): RuleGroupUpdateResponseDto {
-    return {
-      status: 'success',
-      groupId,
-    }
+  async reorderChildren(
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+
+    @Body()
+    body: RuleGroupReorderChildrenDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+  ): Promise<RuleGroupReorderChildrenRes> {
+    return await this.ruleGroupService.reorderChildren({
+      organizationId: auth.activeOrganizationId,
+      groupId: groupId,
+      items: body.items,
+    })
   }
 
   @Post('projects/:projectId/rule-groups/reorder-root')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder root rule groups',
@@ -339,10 +413,10 @@ export class RuleGroupController {
     type: RuleGroupReorderRootDto,
     description: 'Payload for reordering root rule groups',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Root rule groups successfully reordered',
-    type: RuleGroupUpdateResponseDto,
+    type: RuleGroupUpdateRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -362,29 +436,46 @@ export class RuleGroupController {
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
-    description: 'Conflict. Reorder input contains non-root groups or duplicate ids',
+    description:
+      'Conflict. Reorder input contains non-root groups or duplicate ids',
   })
   @ApiResponse({
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  reorderRootGroups(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Body() body: RuleGroupReorderRootDto,
-  ): RuleGroupUpdateResponseDto {
-    return {
-      status: 'success',
-      groupId: body.items[0]?.id ?? crypto.randomUUID(),
-    }
+  async reorderRootGroups(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+
+    @Body()
+    body: RuleGroupReorderRootDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+  ): Promise<RuleGroupReorderRootRes> {
+    return await this.ruleGroupService.reorderRoot({
+      organizationId: auth.activeOrganizationId,
+      projectId: projectId,
+      items: body.items,
+    })
   }
 
-  @Delete('rule-groups/:groupId')
+  @Delete('projects/:projectId/rule-groups/:groupId')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Archive rule group',
     description: 'Performs soft delete of a rule group',
     operationId: 'delete_rule_group',
     tags: [ApiSwaggerTag.RuleGroup],
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    type: String,
+    format: 'uuid',
+    description: 'Project UUID',
   })
   @ApiParam({
     name: 'groupId',
@@ -394,10 +485,10 @@ export class RuleGroupController {
     format: 'uuid',
     description: 'Rule group UUID',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Rule group successfully archived',
-    type: RuleGroupRemoveResponseDto,
+    type: RuleGroupDeleteRes,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -415,11 +506,20 @@ export class RuleGroupController {
     status: HttpStatus.NOT_FOUND,
     description: 'Rule group not found',
   })
-  deleteRuleGroup(@Param('groupId', ParseUUIDPipe) groupId: string): RuleGroupRemoveResponseDto {
-    return {
-      status: 'success',
-      groupId,
-      archivedAt: new Date().toISOString(),
-    }
+  async deleteRuleGroup(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+
+    @Param('groupId', ParseUUIDPipe)
+    groupId: string,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+  ): Promise<RuleGroupDeleteRes> {
+    return await this.ruleGroupService.delete({
+      organizationId: auth.activeOrganizationId,
+      groupId: groupId,
+      projectId: projectId,
+    })
   }
 }

@@ -1,15 +1,48 @@
-import { Controller, Get, HttpStatus, Param, ParseUUIDPipe, Query } from '@nestjs/common'
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { ApiSwaggerTag } from '~/shared/const/app.const'
 import {
-  ResolvedRuleItemResponseDto,
-  ResolvedRulesetQueryDto,
-  ResolvedRulesetResponseDto,
-} from './resolved-ruleset.dto'
+  Controller,
+  Get,
+  HttpStatus,
+  Inject,
+  Param,
+  ParseUUIDPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
+import {
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
+import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
+import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
+import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
+import {
+  GetResolvedRulesetDto,
+  GetResolvedRulesetResponse,
+} from '~/modules/resolved-ruleset/infra/http/resolved-ruleset.dto'
+import {
+  RESOLVED_RULESET_SERVICE_PORT,
+  type ResolvedRulesetServicePort,
+} from '~/modules/resolved-ruleset/ports/resolved-ruleset.service.port'
+import { ApiSwaggerTag } from '~/shared/const/app.const'
 
 @ApiTags(ApiSwaggerTag.ResolvedRuleset)
-@Controller({ path: 'projects', version: '1' })
+@Controller({
+  path: 'projects',
+  version: '1',
+})
 export class ResolvedRulesetController {
+  constructor(
+    @Inject(RESOLVED_RULESET_SERVICE_PORT)
+    private readonly resolvedRulesetService: ResolvedRulesetServicePort,
+  ) {}
+
+  @UseGuards(SessionOrApiKeyGuard)
+  @ApiKeyScopes(ApiKeyScope.RulesetRead)
   @Get(':projectId/resolved-ruleset')
   @ApiOperation({
     summary: 'Get resolved ruleset',
@@ -26,10 +59,10 @@ export class ResolvedRulesetController {
     format: 'uuid',
     description: 'Project UUID',
   })
-  @ApiResponse({
+  @ApiDataResponse({
     status: HttpStatus.OK,
     description: 'Resolved ruleset successfully returned',
-    type: ResolvedRulesetResponseDto,
+    type: GetResolvedRulesetResponse,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -51,29 +84,20 @@ export class ResolvedRulesetController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Validation failed',
   })
-  getResolvedRuleset(
-    @Param('projectId', ParseUUIDPipe) projectId: string,
-    @Query() query: ResolvedRulesetQueryDto,
-  ): ResolvedRulesetResponseDto {
-    const rule: ResolvedRuleItemResponseDto = {
-      id: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
-      projectId,
-      ruleGroupId: '8fd2dbff-e5e7-4781-b22c-b17d061ee8d7',
-      title: 'When to use',
-      body: 'Use button for primary actions.',
-      metadata: query.includeMetadata === false ? null : { tags: ['button', 'usage'] },
-      path: ['Components', 'Button', 'When to use'],
-      orderKey: '0001.0001.0001',
-      orderIndex: 0,
-      createdAt: '2026-04-20T12:00:00.000Z',
-      updatedAt: '2026-04-20T12:30:00.000Z',
-    }
+  async getResolvedRuleset(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
 
-    return {
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+
+    @Query()
+    query: GetResolvedRulesetDto,
+  ): Promise<GetResolvedRulesetResponse> {
+    return await this.resolvedRulesetService.getResolvedRuleset({
       projectId,
-      total: 1,
-      includeMetadata: query.includeMetadata ?? true,
-      rules: [rule],
-    }
+      organizationId: auth.activeOrganizationId,
+      includeMetadata: query.includeMetadata,
+    })
   }
 }

@@ -7,13 +7,20 @@ import {
   NestInterceptor,
   Type,
 } from '@nestjs/common'
-import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger'
+import {
+  ApiExtraModels,
+  ApiResponse,
+  getSchemaPath,
+} from '@nestjs/swagger'
 import { map, Observable } from 'rxjs'
 import { PaginationMetaDto } from '~/shared/paginator/infra/http/paginator.dto'
 
 @Injectable()
 export class JsonResponseInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<any> {
     const http = context.switchToHttp()
     const res = http.getResponse()
 
@@ -27,10 +34,12 @@ export class JsonResponseInterceptor implements NestInterceptor {
           return data
         }
 
-        // не трогаем если это не объект
+        // don't touch if this an object
         if (typeof data !== 'object' || data === null) return data
 
-        return { data }
+        return {
+          data,
+        }
       }),
     )
   }
@@ -57,36 +66,23 @@ export const ApiDataResponse = <TModel extends Type<any>>({
   type,
   description,
   status,
-  paginated,
 }: {
   type: TModel
   status?: HttpStatus
   description?: string
-  paginated?: boolean
 }) =>
   applyDecorators(
     ApiExtraModels(type, PaginationMetaDto),
     ApiResponse({
       description,
       status: status ? status : HttpStatus.OK,
-      schema: paginated
-        ? {
-            type: 'object',
-            properties: {
-              data: {
-                type: 'array',
-                items: { $ref: getSchemaPath(type) },
-              },
-              paginator: {
-                $ref: getSchemaPath(PaginationMetaDto),
-              },
-            },
-          }
-        : {
-            type: 'object',
-            properties: {
-              data: { $ref: getSchemaPath(type) },
-            },
+      schema: {
+        type: 'object',
+        properties: {
+          data: {
+            $ref: getSchemaPath(type),
           },
+        },
+      },
     }),
   )

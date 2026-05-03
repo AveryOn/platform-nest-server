@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsBoolean, IsOptional, IsString, MaxLength } from 'class-validator'
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator'
+import { ResolvedRuleItemResponse } from '~/modules/resolved-ruleset/infra/http/resolved-ruleset.dto'
+import { PaginationDto } from '~/shared/paginator/infra/http/paginator.dto'
 
 export class ProjectSnapshotCreateDto {
   @ApiPropertyOptional({
@@ -17,17 +24,17 @@ export class ProjectSnapshotCreateDto {
 
   @ApiPropertyOptional({
     example: 'Manual snapshot before export',
-    description: 'Optional human-readable reason for snapshot creation',
+    description: 'Optional human-readable comment for snapshot creation',
     type: String,
     maxLength: 255,
   })
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  reason?: string
+  comment?: string
 }
 
-export class ProjectSnapshotItemResponseDto {
+export class ProjectSnapshotItemRes {
   @ApiProperty({
     example: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
     description: 'Snapshot UUID',
@@ -53,11 +60,20 @@ export class ProjectSnapshotItemResponseDto {
   version: number
 
   @ApiProperty({
-    example: 'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
+    example:
+      'f8ac10f23c5b5bc1167bda84b833e5c057a77d2f2f5a9174709b4f0c2d7fcb45',
     description: 'Deterministic content hash of snapshot payload',
     type: String,
   })
   hash: string
+
+  @ApiPropertyOptional({
+    example: 'Manual snapshot before export',
+    description: 'Optional snapshot comment',
+    type: String,
+    nullable: true,
+  })
+  comment?: string | null
 
   @ApiProperty({
     example: '2026-04-20T12:45:00.000Z',
@@ -68,7 +84,9 @@ export class ProjectSnapshotItemResponseDto {
   createdAt: string
 }
 
-export class ProjectSnapshotsListResponseDto {
+export class ProjectSnapshotsListQuery extends PaginationDto {}
+
+export class ProjectSnapshotsListRes {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Owner project UUID',
@@ -85,14 +103,14 @@ export class ProjectSnapshotsListResponseDto {
   total: number
 
   @ApiProperty({
-    type: ProjectSnapshotItemResponseDto,
+    type: ProjectSnapshotItemRes,
     isArray: true,
     description: 'Ordered list of project snapshots',
   })
-  items: ProjectSnapshotItemResponseDto[]
+  items: ProjectSnapshotItemRes[]
 }
 
-export class SnapshotPayloadRuleItemResponseDto {
+export class SnapshotPayloadRuleItemRes {
   @ApiProperty({
     example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
     description: 'Rule UUID inside snapshot payload',
@@ -106,7 +124,7 @@ export class SnapshotPayloadRuleItemResponseDto {
     description: 'Rule title',
     type: String,
   })
-  title: string
+  name: string
 
   @ApiProperty({
     example: 'Use button for primary actions.',
@@ -131,16 +149,17 @@ export class SnapshotPayloadRuleItemResponseDto {
   orderKey: string
 }
 
-export class SnapshotPayloadDataDto {
+export class SnapshotPayloadDto {
   @ApiProperty({
-    type: SnapshotPayloadRuleItemResponseDto,
+    type: ResolvedRuleItemResponse,
     isArray: true,
-    description: 'Flat ordered list of resolved rules stored in snapshot payload',
+    description:
+      'Flat ordered list of resolved rules stored in snapshot payload',
   })
-  rules: SnapshotPayloadRuleItemResponseDto[]
+  rules: ResolvedRuleItemResponse[]
 }
 
-export class ProjectSnapshotPayloadResponseDto {
+export class ProjectSnapshotPayloadRes {
   @ApiProperty({
     example: '4d52ad0c-5506-4fd0-a6c9-0da4bbf8f8bb',
     description: 'Snapshot UUID',
@@ -165,13 +184,13 @@ export class ProjectSnapshotPayloadResponseDto {
   version: number
 
   @ApiProperty({
-    type: SnapshotPayloadDataDto,
+    type: SnapshotPayloadDto,
     description: 'Materialized snapshot payload',
   })
-  payload: SnapshotPayloadDataDto
+  payload: SnapshotPayloadDto
 }
 
-export class ProjectSnapshotStatusResponseDto {
+export class ProjectSnapshotStatusRes {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Owner project UUID',
@@ -189,7 +208,8 @@ export class ProjectSnapshotStatusResponseDto {
 
   @ApiProperty({
     example: false,
-    description: 'Whether latest snapshot is outdated compared to live project data',
+    description:
+      'Whether latest snapshot is outdated compared to live project data',
     type: Boolean,
   })
   isOutdated: boolean

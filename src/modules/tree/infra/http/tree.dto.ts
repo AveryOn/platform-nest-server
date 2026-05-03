@@ -1,11 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Transform, Type } from 'class-transformer'
 import { IsBoolean, IsOptional, ValidateNested } from 'class-validator'
+import {
+  RuleGroupType,
+  type RuleGroupTypeKey,
+} from '~/infra/drizzle/schemas'
 
-export class ProjectTreeQueryDto {
+export class ProjectTreeDto {
   @ApiPropertyOptional({
     example: true,
-    description: 'Include hidden rule groups and rules in editor tree response',
+    description:
+      'Include hidden rule groups and rules in editor tree response',
     type: Boolean,
     default: true,
   })
@@ -26,7 +31,7 @@ export class ProjectTreeQueryDto {
   includeMetadata?: boolean
 }
 
-export class RuleTreeItemResponseDto {
+export class RuleTreeItemResponse {
   @ApiProperty({
     example: 'b9cbfc46-f42f-4a9c-9e5f-d3d5b88d9ec7',
     description: 'Rule UUID',
@@ -48,17 +53,20 @@ export class RuleTreeItemResponseDto {
     description: 'Rule title',
     type: String,
   })
-  title: string
+  name: string
 
   @ApiProperty({
-    example: 'Use button for primary actions.',
+    example: 'Use button for primary actions',
     description: 'Rule body content',
     type: String,
   })
   body: string
 
   @ApiProperty({
-    example: { tags: ['button', 'usage'], target: 'ui' },
+    example: {
+      tags: ['button', 'usage'],
+      target: 'ui',
+    },
     description: 'Flexible metadata payload',
     type: Object,
     nullable: true,
@@ -85,11 +93,12 @@ export class RuleTreeItemResponseDto {
     description: 'Update timestamp in ISO-8601 format',
     type: String,
     format: 'date-time',
+    nullable: true,
   })
-  updatedAt: string
+  updatedAt: string | null
 }
 
-export class ProjectTreeNodeResponseDto {
+export class ProjectTreeNodeResponse {
   @ApiProperty({
     example: '7c917903-d8f3-445b-bec8-122c4cf3a411',
     description: 'Rule group UUID',
@@ -131,12 +140,13 @@ export class ProjectTreeNodeResponseDto {
   description: string | null
 
   @ApiProperty({
-    example: 'category',
-    description: 'Rule group semantic kind',
+    example: RuleGroupType.category,
+    description: 'Rule group semantic type',
     type: String,
-    enum: ['category', 'token', 'section', 'component', 'variant'],
+    enum: Object.values(RuleGroupType),
+    nullable: true,
   })
-  kind: string
+  type: RuleGroupTypeKey | null
 
   @ApiProperty({
     example: 0,
@@ -147,7 +157,8 @@ export class ProjectTreeNodeResponseDto {
 
   @ApiProperty({
     example: false,
-    description: 'Whether this node is hidden at project configuration level',
+    description:
+      'Whether this node is hidden at project configuration level',
     type: Boolean,
   })
   isHidden: boolean
@@ -165,29 +176,34 @@ export class ProjectTreeNodeResponseDto {
     description: 'Update timestamp in ISO-8601 format',
     type: String,
     format: 'date-time',
+    nullable: true,
   })
-  updatedAt: string
+  updatedAt: string | null
 
   @ApiProperty({
-    type: RuleTreeItemResponseDto,
+    type: RuleTreeItemResponse,
     isArray: true,
     description: 'Direct rules that belong to this rule group',
   })
-  @ValidateNested({ each: true })
-  @Type(() => RuleTreeItemResponseDto)
-  rules: RuleTreeItemResponseDto[]
+  @ValidateNested({
+    each: true,
+  })
+  @Type(() => RuleTreeItemResponse)
+  rules: RuleTreeItemResponse[]
 
   @ApiProperty({
-    type: () => ProjectTreeNodeResponseDto,
+    type: () => ProjectTreeNodeResponse,
     isArray: true,
     description: 'Direct child rule groups',
   })
-  @ValidateNested({ each: true })
-  @Type(() => ProjectTreeNodeResponseDto)
-  children: ProjectTreeNodeResponseDto[]
+  @ValidateNested({
+    each: true,
+  })
+  @Type(() => ProjectTreeNodeResponse)
+  children: ProjectTreeNodeResponse[]
 }
 
-export class ProjectTreeResponseDto {
+export class ProjectTreeResponse {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Owner project UUID',
@@ -204,11 +220,22 @@ export class ProjectTreeResponseDto {
   includeHidden: boolean
 
   @ApiProperty({
-    type: () => ProjectTreeNodeResponseDto,
-    isArray: true,
-    description: 'Ordered list of root rule groups with nested children and direct rules',
+    example: true,
+    description:
+      'Whether metadata field were included in the rule groups and rules',
+    type: Boolean,
   })
-  @ValidateNested({ each: true })
-  @Type(() => ProjectTreeNodeResponseDto)
-  tree: ProjectTreeNodeResponseDto[]
+  includeMetadata: boolean
+
+  @ApiProperty({
+    type: () => ProjectTreeNodeResponse,
+    isArray: true,
+    description:
+      'Ordered list of root rule groups with nested children and direct rules',
+  })
+  @ValidateNested({
+    each: true,
+  })
+  @Type(() => ProjectTreeNodeResponse)
+  tree: ProjectTreeNodeResponse[]
 }
