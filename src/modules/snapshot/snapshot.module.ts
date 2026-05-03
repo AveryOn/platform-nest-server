@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ApiKeyModule } from '~/modules/api-key/api-key.module'
 import { AuthModule } from '~/modules/auth/auth.module'
 import { BrandModule } from '~/modules/brand/brand.module'
 import { ProjectModule } from '~/modules/project/project.module'
@@ -16,6 +17,7 @@ import { SNAPSHOT_SERVICE_PORT } from '~/modules/snapshot/ports/snapshot.service
     ResolvedRulesetModule,
     BrandModule,
     AuthModule,
+    ApiKeyModule,
     ProjectModule,
   ],
   controllers: [SnapshotController],

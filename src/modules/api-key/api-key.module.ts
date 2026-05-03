@@ -25,6 +25,6 @@ import { ProjectModule } from '~/modules/project/project.module'
       useClass: ApiKeyDrizzleRepo,
     },
   ],
-  exports: [API_KEY_SERVICE_PORT],
+  exports: [API_KEY_SERVICE_PORT, ApiKeyAuthGuard, SessionOrApiKeyGuard],
 })
 export class ApiKeyModule {}

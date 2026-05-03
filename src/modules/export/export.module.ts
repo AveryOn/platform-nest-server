@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ApiKeyModule } from '~/modules/api-key/api-key.module'
 import { AuthModule } from '~/modules/auth/auth.module'
 import { BrandModule } from '~/modules/brand/brand.module'
 import { ExportService } from '~/modules/export/application/export.service'
@@ -16,6 +17,7 @@ import { SnapshotModule } from '~/modules/snapshot/snapshot.module'
     ProjectModule,
     BrandModule,
     AuthModule,
+    ApiKeyModule,
   ],
   providers: [
     {
