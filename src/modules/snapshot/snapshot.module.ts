@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 import { AuthModule } from '~/modules/auth/auth.module'
+import { BrandModule } from '~/modules/brand/brand.module'
+import { ProjectModule } from '~/modules/project/project.module'
 import { ResolvedRulesetModule } from '~/modules/resolved-ruleset/resolved-ruleset.module'
 import { SnapshotPayloadBuilder } from '~/modules/snapshot/application/snapshot-payload-builder.service'
 import { SnapshotService } from '~/modules/snapshot/application/snapshot.service'
@@ -10,7 +12,12 @@ import { SNAPSHOT_REPO_PORT } from '~/modules/snapshot/ports/snapshot.repo.port'
 import { SNAPSHOT_SERVICE_PORT } from '~/modules/snapshot/ports/snapshot.service.port'
 
 @Module({
-  imports: [ResolvedRulesetModule, AuthModule],
+  imports: [
+    ResolvedRulesetModule,
+    BrandModule,
+    AuthModule,
+    ProjectModule,
+  ],
   controllers: [SnapshotController],
   providers: [
     {

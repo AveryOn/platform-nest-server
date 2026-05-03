@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { AuthModule } from '~/modules/auth/auth.module'
 import { RuleGroupService } from '~/modules/rule-group/application/rule-group.service'
 import { RuleGroupController } from '~/modules/rule-group/infra/http/rule-group.controller'
 import { RuleGroupDrizzleRepo } from '~/modules/rule-group/infra/persistence/rule-group.drizzle.repo'
@@ -7,6 +8,7 @@ import { RULE_GROUP_SERVICE_PORT } from '~/modules/rule-group/ports/rule-group.s
 
 @Module({
   controllers: [RuleGroupController],
+  imports: [AuthModule],
   providers: [
     {
       provide: RULE_GROUP_SERVICE_PORT,
