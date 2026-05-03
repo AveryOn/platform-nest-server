@@ -66,7 +66,7 @@ export class TreeDrizzleRepo implements TreeRepoPort {
       projectId: projectId,
       createdAt: group.createdAt.toISOString(),
       updatedAt: group.updatedAt?.toISOString() ?? null,
-      isHidden: !!config?.status,
+      isHidden: config?.status === 'hidden',
     }))
   }
 
@@ -103,7 +103,7 @@ export class TreeDrizzleRepo implements TreeRepoPort {
       ruleGroupId: rule.ruleGroupId,
       createdAt: rule.createdAt.toISOString(),
       updatedAt: rule.updatedAt?.toISOString() ?? null,
-      isHidden: !!config?.status,
+      isHidden: config?.status === 'hidden',
     }))
   }
 }

@@ -79,6 +79,7 @@ export type RuleMetadata = Record<string, any> | null
 export namespace TreeServiceCmd {
   export interface GetTree {
     projectId: string
+    organizationId: string
     includeHidden?: boolean
     includeMetadata?: boolean
   }

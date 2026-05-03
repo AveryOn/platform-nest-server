@@ -18,6 +18,8 @@ import {
 import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
 import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
 import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
 import {
   ProjectTreeDto,
   ProjectTreeResponse,
@@ -99,10 +101,15 @@ export class TreeController {
   async getProjectTree(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Query()
     query: ProjectTreeDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<ProjectTreeResponse> {
     return await this.treeService.getEditorTree({
+      organizationId: auth.activeOrganizationId,
       projectId: projectId,
       includeHidden: query.includeHidden,
       includeMetadata: query.includeMetadata,
