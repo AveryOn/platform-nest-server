@@ -9,7 +9,6 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -31,6 +30,8 @@ import {
   API_KEY_SERVICE_PORT,
   type ApiKeyServicePort,
 } from '~/modules/api-key/ports/api-key.service.port'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
 import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
 import { SWAGGER_EXAMPLES } from '~/shared/const/swagger.const'
@@ -98,16 +99,16 @@ export class ApiKeyController {
     @Body()
     body: CreateApiKeyDto,
 
-    @Req()
-    req: Request,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<CreateApiKeyRes> {
     return await this.apiKeyService.create({
       name: body.name,
       expiresAt: body.expiresAt,
       brandId: body.brandId,
       projectId: body.projectId,
-      createdByUserId: (req as any).user?.id,
-      organizationId: (req as any).activeOrganizationId,
+      createdByUserId: auth.user?.id,
+      organizationId: auth.activeOrganizationId,
     })
   }
   // #endregion------------------------------------------
@@ -163,8 +164,8 @@ export class ApiKeyController {
     @ValidQuery(GetApiKeysQueryDto)
     query: GetApiKeysQueryDto,
 
-    @Req()
-    req: Request,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<PaginatedResponse<ApiKeyItemRes>> {
     return await this.apiKeyService.getList({
       limit: query.limit,
@@ -172,8 +173,8 @@ export class ApiKeyController {
       status: query.status,
       projectId: query.projectId,
       brandId: query.brandId,
-      userId: (req as any).user?.id,
-      organizationId: (req as any).activeOrganizationId,
+      userId: auth.user?.id,
+      organizationId: auth.activeOrganizationId,
     })
   }
   // #endregion------------------------------------------
@@ -219,13 +220,13 @@ export class ApiKeyController {
     @Param('apiKeyId', ParseUUIDPipe)
     apiKeyId: string,
 
-    @Req()
-    req: Request,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<ApiKeyItemRes> {
     return await this.apiKeyService.getById({
       apiKeyId: apiKeyId,
-      organizationId: (req as any).activeOrganizationId,
-      userId: (req as any).user?.id,
+      organizationId: auth.activeOrganizationId,
+      userId: auth.user?.id,
     })
   }
   // #endregion------------------------------------------
@@ -274,13 +275,13 @@ export class ApiKeyController {
     @Param('apiKeyId', ParseUUIDPipe)
     apiKeyId: string,
 
-    @Req()
-    req: Request,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RevokeApiKeyRes> {
     return await this.apiKeyService.revoke({
       apiKeyId: apiKeyId,
-      organizationId: (req as any).activeOrganizationId,
-      userId: (req as any).user?.id,
+      organizationId: auth.activeOrganizationId,
+      userId: auth.user?.id,
     })
   }
   // #endregion------------------------------------------
