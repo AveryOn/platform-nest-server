@@ -18,6 +18,8 @@ import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
 import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
 import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
 import {
   GetResolvedRulesetDto,
   GetResolvedRulesetResponse,
@@ -83,13 +85,18 @@ export class ResolvedRulesetController {
     description: 'Validation failed',
   })
   async getResolvedRuleset(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Query()
     query: GetResolvedRulesetDto,
   ): Promise<GetResolvedRulesetResponse> {
     return await this.resolvedRulesetService.getResolvedRuleset({
-      projectId: projectId,
+      projectId,
+      organizationId: auth.activeOrganizationId,
       includeMetadata: query.includeMetadata,
     })
   }

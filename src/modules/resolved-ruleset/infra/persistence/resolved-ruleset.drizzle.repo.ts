@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { eq, inArray } from 'drizzle-orm'
+import { and, eq, inArray, isNull } from 'drizzle-orm'
 import type { Tx } from '~/infra/drizzle/application/drizzle.type'
 import {
   projectRuleConfigsTable,
@@ -22,17 +22,34 @@ export class ResolvedRulesetDrizzleRepo implements ResolvedRulesetRepoPort {
     private readonly transaction: TransactionPort<Tx>,
   ) {}
 
-  async getProjectResolvedRulesetData(
-    projectId: string,
-  ): Promise<ResolvedRulesetRawData> {
+  async getProjectResolvedRulesetData(cmd: {
+    projectId: string
+    organizationId: string
+  }): Promise<ResolvedRulesetRawData> {
     return await this.transaction.run(async (tx) => {
       const [project] = await tx
         .select({
           id: projectsTable.id,
         })
         .from(projectsTable)
-        .where(eq(projectsTable.id, projectId))
+        .where(
+          and(
+            eq(projectsTable.id, cmd.projectId),
+            eq(projectsTable.organizationId, cmd.organizationId),
+            isNull(projectsTable.deletedAt),
+          ),
+        )
         .limit(1)
+
+      if (!project) {
+        return {
+          project: null,
+          ruleGroups: [],
+          rules: [],
+          ruleGroupConfigs: [],
+          ruleConfigs: [],
+        }
+      }
 
       const projectGroups = await tx
         .select({
@@ -43,7 +60,12 @@ export class ResolvedRulesetDrizzleRepo implements ResolvedRulesetRepoPort {
           orderIndex: ruleGroupsTable.orderIndex,
         })
         .from(ruleGroupsTable)
-        .where(eq(ruleGroupsTable.projectId, projectId))
+        .where(
+          and(
+            eq(ruleGroupsTable.projectId, cmd.projectId),
+            isNull(ruleGroupsTable.deletedAt),
+          ),
+        )
 
       const groupIds = projectGroups.map((group) => group.id)
 
@@ -53,7 +75,7 @@ export class ResolvedRulesetDrizzleRepo implements ResolvedRulesetRepoPort {
           : await tx
               .select({
                 id: rulesTable.id,
-                projectId: ruleGroupsTable.projectId,
+                projectId: rulesTable.projectId,
                 ruleGroupId: rulesTable.ruleGroupId,
                 name: rulesTable.name,
                 body: rulesTable.body,
@@ -63,11 +85,13 @@ export class ResolvedRulesetDrizzleRepo implements ResolvedRulesetRepoPort {
                 updatedAt: rulesTable.updatedAt,
               })
               .from(rulesTable)
-              .innerJoin(
-                ruleGroupsTable,
-                eq(rulesTable.ruleGroupId, ruleGroupsTable.id),
+              .where(
+                and(
+                  inArray(rulesTable.ruleGroupId, groupIds),
+                  eq(rulesTable.projectId, cmd.projectId),
+                  isNull(rulesTable.deletedAt),
+                ),
               )
-              .where(inArray(rulesTable.ruleGroupId, groupIds))
 
       const groupConfigs =
         groupIds.length === 0
@@ -80,7 +104,16 @@ export class ResolvedRulesetDrizzleRepo implements ResolvedRulesetRepoPort {
               })
               .from(projectRuleGroupConfigsTable)
               .where(
-                eq(projectRuleGroupConfigsTable.projectId, projectId),
+                and(
+                  eq(
+                    projectRuleGroupConfigsTable.projectId,
+                    cmd.projectId,
+                  ),
+                  inArray(
+                    projectRuleGroupConfigsTable.ruleGroupId,
+                    groupIds,
+                  ),
+                ),
               )
 
       const ruleIds = projectRules.map((rule) => rule.id)
@@ -95,9 +128,15 @@ export class ResolvedRulesetDrizzleRepo implements ResolvedRulesetRepoPort {
                 status: projectRuleConfigsTable.status,
               })
               .from(projectRuleConfigsTable)
-              .where(eq(projectRuleConfigsTable.projectId, projectId))
+              .where(
+                and(
+                  eq(projectRuleConfigsTable.projectId, cmd.projectId),
+                  inArray(projectRuleConfigsTable.ruleId, ruleIds),
+                ),
+              )
+
       return {
-        project: project ?? null,
+        project,
         ruleGroups: projectGroups,
         rules: projectRules,
         ruleGroupConfigs: groupConfigs,

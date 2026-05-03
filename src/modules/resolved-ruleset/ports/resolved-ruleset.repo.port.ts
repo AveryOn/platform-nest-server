@@ -5,7 +5,8 @@ export const RESOLVED_RULESET_REPO_PORT = Symbol(
 )
 
 export abstract class ResolvedRulesetRepoPort {
-  abstract getProjectResolvedRulesetData(
-    projectId: string,
-  ): Promise<ResolvedRulesetRawData>
+  abstract getProjectResolvedRulesetData(cmd: {
+    projectId: string
+    organizationId: string
+  }): Promise<ResolvedRulesetRawData>
 }

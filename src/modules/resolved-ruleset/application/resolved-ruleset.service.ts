@@ -39,12 +39,13 @@ export class ResolvedRulesetService implements ResolvedRulesetServicePort {
   async getResolvedRuleset(
     cmd: ResolvedRulesetCmd.Get,
   ): Promise<ResolvedRulesetRes.Get> {
-    const { projectId, includeMetadata = true } = cmd
+    const { projectId, organizationId, includeMetadata = true } = cmd
 
     const raw =
-      await this.resolvedRulesetRepo.getProjectResolvedRulesetData(
+      await this.resolvedRulesetRepo.getProjectResolvedRulesetData({
         projectId,
-      )
+        organizationId,
+      })
 
     if (!raw.project) {
       throw new NotFoundException('Project not found')

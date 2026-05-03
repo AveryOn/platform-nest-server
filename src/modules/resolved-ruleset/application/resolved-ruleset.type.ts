@@ -15,6 +15,7 @@ export interface ResolvedRuleItem {
 export namespace ResolvedRulesetCmd {
   export interface Get {
     projectId: string
+    organizationId: string
     includeMetadata?: boolean
   }
 }
