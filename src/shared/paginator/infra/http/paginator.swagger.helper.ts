@@ -5,8 +5,8 @@ import {
   ApiResponse,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { DECORATORS } from '@nestjs/swagger/dist/constants'
 import { PaginationMetaDto } from '~/shared/paginator/infra/http/paginator.dto'
+import { DECORATORS } from '../../../../../node_modules/@nestjs/swagger/dist/constants'
 
 function createApiQueriesFromDto(dto: Type<any>) {
   const properties =
