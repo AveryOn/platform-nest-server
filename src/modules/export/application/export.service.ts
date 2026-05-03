@@ -61,6 +61,7 @@ export class ExportService implements ExportServicePort {
 
     const resolvedRuleset =
       await this.resolvedRulesetService.getResolvedRuleset({
+        organizationId: cmd.organizationId,
         projectId: cmd.projectId,
         includeMetadata: true,
       })
@@ -72,6 +73,7 @@ export class ExportService implements ExportServicePort {
 
     if (cmd.createSnapshot === true) {
       const snapshot = await this.snapshotService.create({
+        organizationId: cmd.organizationId,
         projectId: cmd.projectId,
         comment:
           'The ruleset was exported and the user requested a snapshot to be created',

@@ -7,8 +7,6 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Req,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -21,6 +19,8 @@ import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
 import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
 import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
 import {
   ExportProjectReq,
   ExportProjectRes,
@@ -30,10 +30,6 @@ import {
   type ExportServicePort,
 } from '~/modules/export/ports/export.service.port'
 import { ApiSwaggerTag } from '~/shared/const/app.const'
-
-type AuthRequest = Request & {
-  activeOrganizationId: string
-}
 
 @ApiTags(ApiSwaggerTag.Export)
 @Controller({
@@ -97,15 +93,12 @@ export class ExportController {
     @Body()
     body: ExportProjectReq,
 
-    @Req()
-    req: AuthRequest,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<ExportProjectRes> {
-    if (!req.activeOrganizationId) {
-      throw new UnauthorizedException('Missing organization context')
-    }
     return await this.exportService.export({
       projectId,
-      organizationId: req.activeOrganizationId,
+      organizationId: auth.activeOrganizationId,
       format: body.format,
       createSnapshot: body.createSnapshot,
     })
