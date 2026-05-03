@@ -5,64 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1776875439776,
-      "tag": "0000_sloppy_forge",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1776959453770,
-      "tag": "0001_foamy_giant_girl",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1777308164701,
-      "tag": "0002_fancy_runaways",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1777308355812,
-      "tag": "0003_sharp_purifiers",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1777585172760,
-      "tag": "0004_stormy_oracle",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1777734934453,
-      "tag": "0005_flowery_magdalene",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1777735056672,
-      "tag": "0006_silly_adam_warlock",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1777739062439,
-      "tag": "0007_acoustic_tarot",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1777825817694,
-      "tag": "0008_nifty_quicksilver",
+      "when": 1777833251102,
+      "tag": "0000_next_jubilee",
       "breakpoints": true
     }
   ]
