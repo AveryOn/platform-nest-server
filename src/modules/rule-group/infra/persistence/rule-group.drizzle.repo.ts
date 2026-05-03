@@ -82,6 +82,7 @@ export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
       })
       .where(
         and(
+          eq(rulesTable.projectId, cmd.projectId),
           inArray(rulesTable.ruleGroupId, cmd.groupIds),
           isNull(rulesTable.deletedAt),
         ),
@@ -96,6 +97,7 @@ export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
         .where(
           and(
             eq(ruleGroupsTable.id, id),
+            eq(ruleGroupsTable.projectId, cmd.projectId),
             isNull(ruleGroupsTable.deletedAt),
           ),
         )
@@ -176,6 +178,7 @@ export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
         .from(ruleGroupsTable)
         .where(
           and(
+            eq(ruleGroupsTable.projectId, cmd.projectId),
             eq(ruleGroupsTable.parentGroupId, currentId),
             isNull(ruleGroupsTable.deletedAt),
           ),
@@ -203,6 +206,7 @@ export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
       .where(
         and(
           eq(projectsTable.id, cmd.projectId),
+          eq(projectsTable.organizationId, cmd.organizationId),
           isNull(projectsTable.deletedAt),
         ),
       )
@@ -222,12 +226,31 @@ export class RuleGroupDrizzleRepo implements RuleGroupRepoPort {
     const db = defineDb(this.drizzle.db, tx)
 
     const [group] = await db
-      .select()
+      .select({
+        id: ruleGroupsTable.id,
+        projectId: ruleGroupsTable.projectId,
+        parentGroupId: ruleGroupsTable.parentGroupId,
+        scope: ruleGroupsTable.scope,
+        name: ruleGroupsTable.name,
+        description: ruleGroupsTable.description,
+        metadata: ruleGroupsTable.metadata,
+        type: ruleGroupsTable.type,
+        orderIndex: ruleGroupsTable.orderIndex,
+        createdAt: ruleGroupsTable.createdAt,
+        updatedAt: ruleGroupsTable.updatedAt,
+        deletedAt: ruleGroupsTable.deletedAt,
+      })
       .from(ruleGroupsTable)
+      .innerJoin(
+        projectsTable,
+        eq(projectsTable.id, ruleGroupsTable.projectId),
+      )
       .where(
         and(
           eq(ruleGroupsTable.id, cmd.groupId),
+          eq(projectsTable.organizationId, cmd.organizationId),
           isNull(ruleGroupsTable.deletedAt),
+          isNull(projectsTable.deletedAt),
         ),
       )
       .limit(1)

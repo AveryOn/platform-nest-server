@@ -46,6 +46,7 @@ export type RuleGroupEntity = {
 
 export namespace RuleGroupServiceCmd {
   export type Create = {
+    organizationId: string
     projectId: string
     name: string
     metadata?: RuleGroupMetadata
@@ -56,10 +57,12 @@ export namespace RuleGroupServiceCmd {
   }
 
   export type GetById = {
+    organizationId: string
     groupId: string
   }
 
   export type Patch = {
+    organizationId: string
     groupId: string
     name?: string
     metadata?: RuleGroupMetadata
@@ -68,6 +71,8 @@ export namespace RuleGroupServiceCmd {
   }
 
   export type Move = {
+    organizationId: string
+    projectId: string
     groupId: string
     parentGroupId: string | null
     orderIndex: number
@@ -79,17 +84,21 @@ export namespace RuleGroupServiceCmd {
   }
 
   export type ReorderChildren = {
+    organizationId: string
     groupId: string
     items: ReorderItem[]
   }
 
   export type ReorderRoot = {
+    organizationId: string
     projectId: string
     items: ReorderItem[]
   }
 
   export type Delete = {
+    organizationId: string
     groupId: string
+    projectId: string
   }
 }
 
@@ -150,14 +159,17 @@ export namespace RuleGroupRepoCmd {
   }
 
   export type DeleteGroupRelations = {
+    projectId: string
     groupIds: string[]
   }
 
   export type FindProjectOrFail = {
+    organizationId: string
     projectId: string
   }
 
   export type FindActiveGroup = {
+    organizationId: string
     groupId: string
   }
 
@@ -174,6 +186,7 @@ export namespace RuleGroupRepoCmd {
 
   export type Patch = {
     groupId: string
+    organizationId: string
     patch: {
       name?: string
       metadata?: RuleGroupMetadata
@@ -183,6 +196,7 @@ export namespace RuleGroupRepoCmd {
   }
   export type CollectDescendantGroupIds = {
     groupId: string
+    projectId: string
   }
 }
 export namespace RuleGroupRepoRes {

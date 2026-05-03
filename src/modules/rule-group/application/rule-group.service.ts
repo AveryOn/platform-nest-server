@@ -42,6 +42,7 @@ export class RuleGroupService implements RuleGroupServicePort {
       await this.ruleGroupRepo.findProjectOrFail(
         {
           projectId: cmd.projectId,
+          organizationId: cmd.organizationId,
         },
         tx,
       )
@@ -50,6 +51,7 @@ export class RuleGroupService implements RuleGroupServicePort {
         const parent = await this.ruleGroupRepo.findActiveGroup(
           {
             groupId: cmd.parentGroupId,
+            organizationId: cmd.organizationId,
           },
           tx,
         )
@@ -108,6 +110,7 @@ export class RuleGroupService implements RuleGroupServicePort {
       const group = await this.ruleGroupRepo.findActiveGroup(
         {
           groupId: created.id,
+          organizationId: cmd.organizationId,
         },
         tx,
       )
@@ -121,6 +124,7 @@ export class RuleGroupService implements RuleGroupServicePort {
   ): Promise<RuleGroupServiceResult.Item> {
     const group = await this.ruleGroupRepo.findActiveGroup({
       groupId: cmd.groupId,
+      organizationId: cmd.organizationId,
     })
 
     return this.toItemResult(group)
@@ -133,12 +137,14 @@ export class RuleGroupService implements RuleGroupServicePort {
       await this.ruleGroupRepo.findActiveGroup(
         {
           groupId: cmd.groupId,
+          organizationId: cmd.organizationId,
         },
         tx,
       )
 
       const command: RuleGroupRepoCmd.Patch = {
         groupId: cmd.groupId,
+        organizationId: cmd.organizationId,
         patch: {},
       }
 
@@ -159,6 +165,7 @@ export class RuleGroupService implements RuleGroupServicePort {
         {
           groupId: cmd.groupId,
           patch: command.patch,
+          organizationId: cmd.organizationId,
         },
         tx,
       )
@@ -181,9 +188,16 @@ export class RuleGroupService implements RuleGroupServicePort {
       const group = await this.ruleGroupRepo.findActiveGroup(
         {
           groupId: cmd.groupId,
+          organizationId: cmd.organizationId,
         },
         tx,
       )
+
+      if (group.projectId !== cmd.projectId) {
+        throw new ConflictException(
+          'Rule group belongs to another project',
+        )
+      }
 
       if (cmd.parentGroupId === cmd.groupId) {
         throw new ConflictException(
@@ -197,9 +211,16 @@ export class RuleGroupService implements RuleGroupServicePort {
         targetParent = await this.ruleGroupRepo.findActiveGroup(
           {
             groupId: cmd.parentGroupId,
+            organizationId: cmd.organizationId,
           },
           tx,
         )
+
+        if (targetParent.projectId !== cmd.projectId) {
+          throw new ConflictException(
+            'Target parent belongs to another project',
+          )
+        }
 
         if (targetParent.projectId !== group.projectId) {
           throw new ConflictException(
@@ -217,6 +238,7 @@ export class RuleGroupService implements RuleGroupServicePort {
           await this.ruleGroupRepo.collectDescendantGroupIds(
             {
               groupId: group.id,
+              projectId: cmd.projectId,
             },
             tx,
           )
@@ -231,7 +253,7 @@ export class RuleGroupService implements RuleGroupServicePort {
       const sourceSiblings = (
         await this.ruleGroupRepo.findActiveChildren(
           {
-            projectId: group.projectId,
+            projectId: cmd.projectId,
             parentGroupId: group.parentGroupId,
           },
           tx,
@@ -240,7 +262,7 @@ export class RuleGroupService implements RuleGroupServicePort {
 
       const targetSiblings = await this.ruleGroupRepo.findActiveChildren(
         {
-          projectId: group.projectId,
+          projectId: cmd.projectId,
           parentGroupId: cmd.parentGroupId,
         },
         tx,
@@ -309,6 +331,7 @@ export class RuleGroupService implements RuleGroupServicePort {
       const parent = await this.ruleGroupRepo.findActiveGroup(
         {
           groupId: cmd.groupId,
+          organizationId: cmd.organizationId,
         },
         tx,
       )
@@ -350,6 +373,7 @@ export class RuleGroupService implements RuleGroupServicePort {
       await this.ruleGroupRepo.findProjectOrFail(
         {
           projectId: cmd.projectId,
+          organizationId: cmd.organizationId,
         },
         tx,
       )
@@ -388,24 +412,36 @@ export class RuleGroupService implements RuleGroupServicePort {
     cmd: RuleGroupServiceCmd.Delete,
   ): Promise<RuleGroupServiceResult.Delete> {
     return await this.transaction.run(async (tx) => {
-      await this.ruleGroupRepo.findActiveGroup(
+      const group = await this.ruleGroupRepo.findActiveGroup(
         {
           groupId: cmd.groupId,
+          organizationId: cmd.organizationId,
         },
         tx,
       )
+
+      if (group.projectId !== cmd.projectId) {
+        throw new ConflictException(
+          'Rule group belongs to another project',
+        )
+      }
 
       const descendantIds =
         await this.ruleGroupRepo.collectDescendantGroupIds(
           {
             groupId: cmd.groupId,
+            projectId: cmd.projectId,
           },
           tx,
         )
+
       const groupIds = [cmd.groupId, ...descendantIds]
 
       const deletedAt = await this.ruleGroupRepo.deleteGroupRelations(
-        { groupIds },
+        {
+          projectId: cmd.projectId,
+          groupIds,
+        },
         tx,
       )
 

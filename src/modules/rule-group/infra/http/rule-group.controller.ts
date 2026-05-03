@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -19,6 +20,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
+import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import {
   RuleGroupCreateDto,
   RuleGroupDeleteRes,
@@ -49,6 +53,7 @@ export class RuleGroupController {
   ) {}
 
   @Post('projects/:projectId/rule-groups')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create rule group',
@@ -100,10 +105,15 @@ export class RuleGroupController {
   async createRuleGroup(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Body()
     body: RuleGroupCreateDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleGroupItemRes> {
     return await this.ruleGroupService.create({
+      organizationId: auth.activeOrganizationId,
       name: body.name,
       orderIndex: body.orderIndex,
       projectId: projectId,
@@ -115,6 +125,7 @@ export class RuleGroupController {
   }
 
   @Get('rule-groups/:groupId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get rule group by id',
     description: 'Returns rule group details by UUID',
@@ -153,11 +164,18 @@ export class RuleGroupController {
   async getRuleGroupById(
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleGroupItemRes> {
-    return await this.ruleGroupService.getById({ groupId })
+    return await this.ruleGroupService.getById({
+      organizationId: auth.activeOrganizationId,
+      groupId,
+    })
   }
 
   @Patch('rule-groups/:groupId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update rule group',
     description: 'Updates mutable fields of a rule group',
@@ -208,10 +226,15 @@ export class RuleGroupController {
   async patchRuleGroup(
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
+
     @Body()
     body: RuleGroupPatchDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleGroupUpdateRes> {
     return await this.ruleGroupService.patch({
+      organizationId: auth.activeOrganizationId,
       groupId: groupId,
       description: body.description,
       name: body.name,
@@ -219,13 +242,22 @@ export class RuleGroupController {
     })
   }
 
-  @Post('rule-groups/:groupId/move')
+  @Post('projects/:projectId/rule-groups/:groupId/move')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Move rule group',
     description: 'Moves a rule group to another parent and/or position',
     operationId: 'move_rule_group',
     tags: [ApiSwaggerTag.RuleGroup],
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    type: String,
+    format: 'uuid',
+    description: 'Project UUID',
   })
   @ApiParam({
     name: 'groupId',
@@ -270,12 +302,21 @@ export class RuleGroupController {
     description: 'Validation failed',
   })
   async moveRuleGroup(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
+
     @Body()
     body: RuleGroupMoveDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleGroupMoveRes> {
     return await this.ruleGroupService.move({
+      organizationId: auth.activeOrganizationId,
+      projectId: projectId,
       groupId: groupId,
       orderIndex: body.orderIndex,
       parentGroupId: body.parentGroupId,
@@ -283,6 +324,7 @@ export class RuleGroupController {
   }
 
   @Post('rule-groups/:groupId/reorder-children')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder child rule groups',
@@ -336,16 +378,22 @@ export class RuleGroupController {
   async reorderChildren(
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
+
     @Body()
     body: RuleGroupReorderChildrenDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleGroupReorderChildrenRes> {
     return await this.ruleGroupService.reorderChildren({
+      organizationId: auth.activeOrganizationId,
       groupId: groupId,
       items: body.items,
     })
   }
 
   @Post('projects/:projectId/rule-groups/reorder-root')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder root rule groups',
@@ -398,22 +446,36 @@ export class RuleGroupController {
   async reorderRootGroups(
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Body()
     body: RuleGroupReorderRootDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleGroupReorderRootRes> {
     return await this.ruleGroupService.reorderRoot({
+      organizationId: auth.activeOrganizationId,
       projectId: projectId,
       items: body.items,
     })
   }
 
-  @Delete('rule-groups/:groupId')
+  @Delete('projects/:projectId/rule-groups/:groupId')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Archive rule group',
     description: 'Performs soft delete of a rule group',
     operationId: 'delete_rule_group',
     tags: [ApiSwaggerTag.RuleGroup],
+  })
+  @ApiParam({
+    name: 'projectId',
+    required: true,
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    type: String,
+    format: 'uuid',
+    description: 'Project UUID',
   })
   @ApiParam({
     name: 'groupId',
@@ -445,11 +507,19 @@ export class RuleGroupController {
     description: 'Rule group not found',
   })
   async deleteRuleGroup(
+    @Param('projectId', ParseUUIDPipe)
+    projectId: string,
+
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleGroupDeleteRes> {
     return await this.ruleGroupService.delete({
+      organizationId: auth.activeOrganizationId,
       groupId: groupId,
+      projectId: projectId,
     })
   }
 }
