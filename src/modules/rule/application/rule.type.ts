@@ -1,6 +1,7 @@
 import type { OperationStatus } from '~/shared/const/app.const'
 
 export type RuleMetadata = Record<string, unknown> | null
+
 export enum RuleScope {
   project = 'project',
   template = 'template',
@@ -22,6 +23,7 @@ export type RuleEntity = {
 
 export namespace RuleServiceCmd {
   export type Create = {
+    organizationId: string
     ruleGroupId: string
     name: string
     body: string
@@ -30,10 +32,12 @@ export namespace RuleServiceCmd {
   }
 
   export type GetById = {
+    organizationId: string
     ruleId: string
   }
 
   export type Patch = {
+    organizationId: string
     ruleId: string
     name?: string
     body?: string
@@ -41,6 +45,7 @@ export namespace RuleServiceCmd {
   }
 
   export type Move = {
+    organizationId: string
     ruleId: string
     targetGroupId: string
     orderIndex: number
@@ -52,11 +57,13 @@ export namespace RuleServiceCmd {
   }
 
   export type ReorderInGroup = {
+    organizationId: string
     groupId: string
     items: ReorderItem[]
   }
 
   export type Delete = {
+    organizationId: string
     ruleId: string
   }
 }

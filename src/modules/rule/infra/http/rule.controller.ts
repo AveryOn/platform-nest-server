@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -19,6 +20,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
+import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import {
   RuleCreateDto,
   RuleDeleteRes,
@@ -46,10 +50,8 @@ export class RuleController {
     private readonly ruleService: RuleServicePort,
   ) {}
 
-  // ------------------------------------------
-  // [POST] | CREATE RULE
-  // #region POST------------------------------
   @Post('rule-groups/:groupId/rules')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create rule',
@@ -103,10 +105,15 @@ export class RuleController {
   async createRule(
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
+
     @Body()
     body: RuleCreateDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleItemRes> {
     return await this.ruleService.create({
+      organizationId: auth.activeOrganizationId,
       name: body.name,
       body: body.body,
       orderIndex: body.orderIndex,
@@ -115,10 +122,8 @@ export class RuleController {
     })
   }
 
-  // ------------------------------------------
-  // [POST] | MOVE RULE
-  // ------------------------------------------
   @Post('rules/:ruleId/move')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Move rule',
@@ -172,20 +177,23 @@ export class RuleController {
   async moveRule(
     @Param('ruleId', ParseUUIDPipe)
     ruleId: string,
+
     @Body()
     body: RuleMoveDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleMoveRes> {
     return await this.ruleService.move({
+      organizationId: auth.activeOrganizationId,
       orderIndex: body.orderIndex,
       targetGroupId: body.targetGroupId,
-      ruleId: ruleId,
+      ruleId,
     })
   }
 
-  // ------------------------------------------
-  // [POST] | REORDER RULES IN GROUP
-  // ------------------------------------------
   @Post('rule-groups/:groupId/reorder-rules')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Reorder rules in group',
@@ -239,19 +247,22 @@ export class RuleController {
   async reorderRulesInGroup(
     @Param('groupId', ParseUUIDPipe)
     groupId: string,
+
     @Body()
     body: RuleReorderInGroupDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleReorderInGroupRes> {
     return await this.ruleService.reorderInGroup({
+      organizationId: auth.activeOrganizationId,
       groupId,
       items: body.items,
     })
   }
 
-  // #endregion-------------------------------
-  // [GET] | GET RULE BY ID
-  // #region GET------------------------------
   @Get('rules/:ruleId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Get rule by id',
     description: 'Returns rule details by UUID',
@@ -290,14 +301,18 @@ export class RuleController {
   async getRuleById(
     @Param('ruleId', ParseUUIDPipe)
     ruleId: string,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleItemRes> {
-    return await this.ruleService.getById({ ruleId })
+    return await this.ruleService.getById({
+      organizationId: auth.activeOrganizationId,
+      ruleId,
+    })
   }
 
-  // #endregion-------------------------------
-  // [PATCH] | UPDATE RULE
-  // #region PATCH------------------------------
   @Patch('rules/:ruleId')
+  @UseGuards(SessionGuard)
   @ApiOperation({
     summary: 'Update rule',
     description: 'Updates mutable fields of a rule',
@@ -350,21 +365,24 @@ export class RuleController {
   async patchRule(
     @Param('ruleId', ParseUUIDPipe)
     ruleId: string,
+
     @Body()
     body: RulePatchDto,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleUpdateRes> {
     return await this.ruleService.patch({
-      ruleId: ruleId,
+      organizationId: auth.activeOrganizationId,
+      ruleId,
       body: body.body,
       metadata: body.metadata,
       name: body.name,
     })
   }
 
-  // #endregion-------------------------------
-  // [DELETE] | ARCHIVE RULE
-  // #region DELETE------------------------------
   @Delete('rules/:ruleId')
+  @UseGuards(SessionGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Archive rule',
@@ -404,7 +422,13 @@ export class RuleController {
   async deleteRule(
     @Param('ruleId', ParseUUIDPipe)
     ruleId: string,
+
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<RuleDeleteRes> {
-    return await this.ruleService.delete({ ruleId })
+    return await this.ruleService.delete({
+      organizationId: auth.activeOrganizationId,
+      ruleId,
+    })
   }
 }

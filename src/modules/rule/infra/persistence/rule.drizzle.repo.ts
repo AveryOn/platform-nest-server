@@ -11,6 +11,7 @@ import {
   DRIZZLE_PORT,
   type DrizzleServicePort,
 } from '~/infra/drizzle/ports/drizzle.service.port'
+import { projectsTable } from '~/infra/drizzle/schemas/projects'
 import { ruleGroupsTable } from '~/infra/drizzle/schemas/rule-groups'
 import { rulesTable } from '~/infra/drizzle/schemas/rules'
 
@@ -33,7 +34,11 @@ export class RuleDrizzleRepo implements RuleRepoPort {
   async create(cmd: RuleServiceCmd.Create, tx?: Tx): Promise<RuleEntity> {
     const db = defineDb(this.drizzle.db, tx)
 
-    const group = await this.findActiveGroup(cmd.ruleGroupId, tx)
+    const group = await this.findActiveGroup(
+      cmd.ruleGroupId,
+      cmd.organizationId,
+      tx,
+    )
 
     const [created] = await db
       .insert(rulesTable)
@@ -59,7 +64,11 @@ export class RuleDrizzleRepo implements RuleRepoPort {
     cmd: RuleServiceCmd.GetById,
     tx?: Tx,
   ): Promise<RuleEntity> {
-    const rule = await this.findActiveRule(cmd.ruleId, tx)
+    const rule = await this.findActiveRule(
+      cmd.ruleId,
+      cmd.organizationId,
+      tx,
+    )
 
     return this.toEntity(rule)
   }
@@ -67,7 +76,7 @@ export class RuleDrizzleRepo implements RuleRepoPort {
   async patch(cmd: RuleServiceCmd.Patch, tx?: Tx): Promise<RuleEntity> {
     const db = defineDb(this.drizzle.db, tx)
 
-    await this.findActiveRule(cmd.ruleId, tx)
+    await this.findActiveRule(cmd.ruleId, cmd.organizationId, tx)
 
     const patch: Partial<typeof rulesTable.$inferInsert> = {}
 
@@ -130,7 +139,7 @@ export class RuleDrizzleRepo implements RuleRepoPort {
   ): Promise<RuleServiceRes.Delete> {
     const db = defineDb(this.drizzle.db, tx)
 
-    await this.findActiveRule(cmd.ruleId, tx)
+    await this.findActiveRule(cmd.ruleId, cmd.organizationId, tx)
 
     const deletedAt = new Date()
 
@@ -159,8 +168,17 @@ export class RuleDrizzleRepo implements RuleRepoPort {
     cmd: RuleServiceCmd.Move,
     tx: Tx,
   ): Promise<RuleServiceRes.Move> {
-    const rule = await this.findActiveRule(cmd.ruleId, tx)
-    const targetGroup = await this.findActiveGroup(cmd.targetGroupId, tx)
+    const rule = await this.findActiveRule(
+      cmd.ruleId,
+      cmd.organizationId,
+      tx,
+    )
+
+    const targetGroup = await this.findActiveGroup(
+      cmd.targetGroupId,
+      cmd.organizationId,
+      tx,
+    )
 
     if (rule.projectId !== targetGroup.projectId) {
       throw new ConflictException(
@@ -175,6 +193,7 @@ export class RuleDrizzleRepo implements RuleRepoPort {
     if (rule.ruleGroupId === cmd.targetGroupId) {
       const currentRules = await this.findActiveRulesByGroup(
         rule.ruleGroupId,
+        rule.projectId,
         tx,
       )
 
@@ -203,11 +222,16 @@ export class RuleDrizzleRepo implements RuleRepoPort {
     }
 
     const sourceRules = (
-      await this.findActiveRulesByGroup(rule.ruleGroupId, tx)
+      await this.findActiveRulesByGroup(
+        rule.ruleGroupId,
+        rule.projectId,
+        tx,
+      )
     ).filter((item) => item.id !== rule.id)
 
     const targetRules = await this.findActiveRulesByGroup(
       cmd.targetGroupId,
+      targetGroup.projectId,
       tx,
     )
 
@@ -247,7 +271,11 @@ export class RuleDrizzleRepo implements RuleRepoPort {
     cmd: RuleServiceCmd.ReorderInGroup,
     tx: Tx,
   ): Promise<RuleServiceRes.ReorderInGroup> {
-    await this.findActiveGroup(cmd.groupId, tx)
+    const group = await this.findActiveGroup(
+      cmd.groupId,
+      cmd.organizationId,
+      tx,
+    )
 
     const ids = cmd.items.map((item) => item.id)
     const uniqueIds = new Set(ids)
@@ -269,8 +297,10 @@ export class RuleDrizzleRepo implements RuleRepoPort {
 
     const currentRules = await this.findActiveRulesByGroup(
       cmd.groupId,
+      group.projectId,
       tx,
     )
+
     const currentIds = new Set(currentRules.map((item) => item.id))
 
     if (cmd.items.length !== currentRules.length) {
@@ -347,13 +377,41 @@ export class RuleDrizzleRepo implements RuleRepoPort {
     return uniqueItems.map((item) => item.id)
   }
 
-  private async findActiveRule(id: string, tx?: Tx) {
+  private async findActiveRule(
+    id: string,
+    organizationId: string,
+    tx?: Tx,
+  ) {
     const db = defineDb(this.drizzle.db, tx)
 
     const [rule] = await db
-      .select()
+      .select({
+        id: rulesTable.id,
+        ruleGroupId: rulesTable.ruleGroupId,
+        projectId: rulesTable.projectId,
+        scope: rulesTable.scope,
+        name: rulesTable.name,
+        description: rulesTable.description,
+        body: rulesTable.body,
+        metadata: rulesTable.metadata,
+        orderIndex: rulesTable.orderIndex,
+        createdAt: rulesTable.createdAt,
+        updatedAt: rulesTable.updatedAt,
+        deletedAt: rulesTable.deletedAt,
+      })
       .from(rulesTable)
-      .where(and(eq(rulesTable.id, id), isNull(rulesTable.deletedAt)))
+      .innerJoin(
+        projectsTable,
+        eq(projectsTable.id, rulesTable.projectId),
+      )
+      .where(
+        and(
+          eq(rulesTable.id, id),
+          eq(projectsTable.organizationId, organizationId),
+          isNull(rulesTable.deletedAt),
+          isNull(projectsTable.deletedAt),
+        ),
+      )
       .limit(1)
 
     if (!rule) {
@@ -363,16 +421,26 @@ export class RuleDrizzleRepo implements RuleRepoPort {
     return rule
   }
 
-  private async findActiveGroup(id: string, tx?: Tx) {
+  private async findActiveGroup(
+    id: string,
+    organizationId: string,
+    tx?: Tx,
+  ) {
     const db = defineDb(this.drizzle.db, tx)
 
     const [group] = await db
       .select()
       .from(ruleGroupsTable)
+      .innerJoin(
+        projectsTable,
+        eq(projectsTable.id, ruleGroupsTable.projectId),
+      )
       .where(
         and(
           eq(ruleGroupsTable.id, id),
+          eq(projectsTable.organizationId, organizationId),
           isNull(ruleGroupsTable.deletedAt),
+          isNull(projectsTable.deletedAt),
         ),
       )
       .limit(1)
@@ -381,10 +449,14 @@ export class RuleDrizzleRepo implements RuleRepoPort {
       throw new NotFoundException('Rule group not found')
     }
 
-    return group
+    return group.rule_groups
   }
 
-  private async findActiveRulesByGroup(groupId: string, tx?: Tx) {
+  private async findActiveRulesByGroup(
+    groupId: string,
+    projectId: string | null,
+    tx?: Tx,
+  ) {
     const db = defineDb(this.drizzle.db, tx)
 
     return await db
@@ -393,6 +465,7 @@ export class RuleDrizzleRepo implements RuleRepoPort {
       .where(
         and(
           eq(rulesTable.ruleGroupId, groupId),
+          projectId ? eq(rulesTable.projectId, projectId) : undefined,
           isNull(rulesTable.deletedAt),
         ),
       )
