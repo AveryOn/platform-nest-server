@@ -9,6 +9,7 @@ export interface ProjectSnapshotEntity {
   hash: string
   createdAt: string
 }
+
 export interface SnapshotPayload {
   rules: ResolvedRuleItem[]
 }
@@ -16,26 +17,37 @@ export interface SnapshotPayload {
 export namespace ProjectSnapshotReqCmd {
   export interface GetList {
     projectId: string
+    organizationId: string
     page: number
     limit: number
   }
+
   export interface GetById {
     projectId: string
+    organizationId: string
     snapshotId: string
   }
+
   export interface GetByVersion {
     projectId: string
+    organizationId: string
     version: number
   }
+
   export interface GetPayload {
     projectId: string
+    organizationId: string
     snapshotId: string
   }
+
   export interface GetStatus {
     projectId: string
+    organizationId: string
   }
+
   export interface Create {
     projectId: string
+    organizationId: string
     skipIfUnchanged?: boolean
     comment?: string
   }
@@ -45,12 +57,14 @@ export namespace ProjectSnapshotRes {
   export type GetList = PaginatedResponse<ProjectSnapshotEntity>
   export type GetById = ProjectSnapshotEntity
   export type GetByVersion = ProjectSnapshotEntity
+
   export interface GetPayload {
     snapshotId: string
     projectId: string
     version: number
     payload: SnapshotPayload
   }
+
   export interface GetStatus {
     projectId: string
     hasSnapshots: boolean
@@ -59,10 +73,10 @@ export namespace ProjectSnapshotRes {
     latestVersion: number | null
     lastCreatedAt: string | null
   }
+
   export type Create = ProjectSnapshotEntity
 }
 
-// REPO TYPES
 export namespace SnapshotRepoCmd {
   export interface Create {
     projectId: string
@@ -105,5 +119,6 @@ export namespace SnapshotRepoCmd {
 export namespace SnapshotPayloadBuilderCmd {
   export interface Build {
     projectId: string
+    organizationId: string
   }
 }

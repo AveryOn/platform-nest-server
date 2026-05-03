@@ -8,6 +8,14 @@ import {
   TX_PORT,
   type TransactionPort,
 } from '~/infra/transaction/ports/transaction.port'
+import {
+  BRAND_REPO_PORT,
+  type BrandRepoPort,
+} from '~/modules/brand/ports/brand.repo.port'
+import {
+  PROJECT_REPO_PORT,
+  type ProjectRepoPort,
+} from '~/modules/project/ports/project.repo.port'
 import type {
   ProjectSnapshotReqCmd,
   ProjectSnapshotRes,
@@ -29,6 +37,12 @@ export class SnapshotService implements SnapshotServicePort {
     @Inject(SNAPSHOT_REPO_PORT)
     private readonly snapshotRepo: SnapshotRepoPort,
 
+    @Inject(BRAND_REPO_PORT)
+    private readonly brandRepo: BrandRepoPort,
+
+    @Inject(PROJECT_REPO_PORT)
+    private readonly projectRepo: ProjectRepoPort,
+
     @Inject(SNAPSHOT_PAYLOAD_BUILDER_PORT)
     private readonly payloadBuilder: SnapshotPayloadBuilderPort,
 
@@ -44,11 +58,16 @@ export class SnapshotService implements SnapshotServicePort {
   ): Promise<ProjectSnapshotRes.Create> {
     const payload = await this.payloadBuilder.build({
       projectId: cmd.projectId,
+      organizationId: cmd.organizationId,
     })
 
     const hash = buildSnapshotHash(payload)
 
     return await this.transaction.run(async (tx) => {
+      await this.checkProjectOrFail(
+        { organizationId: cmd.organizationId, projectId: cmd.projectId },
+        tx,
+      )
       const latestSnapshot = await this.snapshotRepo.getLatest(
         {
           projectId: cmd.projectId,
@@ -87,79 +106,151 @@ export class SnapshotService implements SnapshotServicePort {
   async getList(
     cmd: ProjectSnapshotReqCmd.GetList,
   ): Promise<ProjectSnapshotRes.GetList> {
-    return await this.snapshotRepo.getList(cmd)
+    return await this.transaction.run(async (tx) => {
+      await this.checkProjectOrFail(
+        { organizationId: cmd.organizationId, projectId: cmd.projectId },
+        tx,
+      )
+
+      return await this.snapshotRepo.getList(cmd, tx)
+    })
   }
 
   async getById(
     cmd: ProjectSnapshotReqCmd.GetById,
   ): Promise<ProjectSnapshotRes.GetById> {
-    const snapshot = await this.snapshotRepo.getById(cmd)
+    const snapshot = await this.transaction.run(async (tx) => {
+      await this.checkProjectOrFail(
+        { organizationId: cmd.organizationId, projectId: cmd.projectId },
+        tx,
+      )
+
+      return await this.snapshotRepo.getById(cmd, tx)
+    })
 
     if (snapshot === null) {
       throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger, {}).log(
         'Snapshot not found',
       )
     }
+
     return snapshot
   }
 
   async getByVersion(
     cmd: ProjectSnapshotReqCmd.GetByVersion,
   ): Promise<ProjectSnapshotRes.GetByVersion> {
-    const snapshot = await this.snapshotRepo.getByVersion(cmd)
+    const snapshot = await this.transaction.run(async (tx) => {
+      await this.checkProjectOrFail(
+        { organizationId: cmd.organizationId, projectId: cmd.projectId },
+        tx,
+      )
+
+      return await this.snapshotRepo.getByVersion(cmd, tx)
+    })
 
     if (snapshot === null) {
       throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger, {}).log(
         'Snapshot not found',
       )
     }
+
     return snapshot
   }
 
   async getPayload(
     cmd: ProjectSnapshotReqCmd.GetPayload,
   ): Promise<ProjectSnapshotRes.GetPayload> {
-    const snapshotPayload = await this.snapshotRepo.getPayload(cmd)
+    const snapshotPayload = await this.transaction.run(async (tx) => {
+      await this.checkProjectOrFail(
+        { organizationId: cmd.organizationId, projectId: cmd.projectId },
+        tx,
+      )
+
+      return await this.snapshotRepo.getPayload(cmd, tx)
+    })
 
     if (snapshotPayload === null) {
       throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger, {}).log(
         'Snapshot not found',
       )
     }
+
     return snapshotPayload
   }
 
   async getStatus(
     cmd: ProjectSnapshotReqCmd.GetStatus,
   ): Promise<ProjectSnapshotRes.GetStatus> {
-    const latestSnapshot = await this.snapshotRepo.getLatest({
-      projectId: cmd.projectId,
-    })
+    return await this.transaction.run(async (tx) => {
+      await this.checkProjectOrFail(
+        { organizationId: cmd.organizationId, projectId: cmd.projectId },
+        tx,
+      )
 
-    if (latestSnapshot === null) {
+      const latestSnapshot = await this.snapshotRepo.getLatest(
+        { projectId: cmd.projectId },
+        tx,
+      )
+
+      if (latestSnapshot === null) {
+        return {
+          projectId: cmd.projectId,
+          hasSnapshots: false,
+          isOutdated: true,
+          latestSnapshotId: null,
+          latestVersion: null,
+          lastCreatedAt: null,
+        }
+      }
+
+      const payload = await this.payloadBuilder.build({
+        projectId: cmd.projectId,
+        organizationId: cmd.organizationId,
+      })
+
+      const currentHash = buildSnapshotHash(payload)
+      const isOutdated = latestSnapshot.hash !== currentHash
+
       return {
         projectId: cmd.projectId,
-        hasSnapshots: false,
-        isOutdated: true,
-        latestSnapshotId: null,
-        latestVersion: null,
-        lastCreatedAt: null,
+        hasSnapshots: true,
+        isOutdated,
+        latestSnapshotId: latestSnapshot.id,
+        latestVersion: latestSnapshot.version,
+        lastCreatedAt: latestSnapshot.createdAt,
       }
-    }
-
-    const payload = await this.payloadBuilder.build({
-      projectId: cmd.projectId,
     })
-    const currentHash = buildSnapshotHash(payload)
-    const isOutdated = latestSnapshot.hash !== currentHash
+  }
 
-    return {
-      projectId: cmd.projectId,
-      hasSnapshots: true,
-      isOutdated: isOutdated,
-      latestSnapshotId: latestSnapshot.id,
-      latestVersion: latestSnapshot.version,
-      lastCreatedAt: latestSnapshot.createdAt,
+  private async checkProjectOrFail(
+    cmd: {
+      projectId: string
+      organizationId: string
+    },
+    tx?: TransactionContext,
+  ) {
+    const brand = await this.brandRepo.findBrandByProjectId(
+      {
+        projectId: cmd.projectId,
+        organizationId: cmd.organizationId,
+      },
+      tx,
+    )
+
+    if (!brand) {
+      throw new AppError(ErrorEnum.SOURCE_NOT_FOUND, this.logger).log(
+        'Brand not found',
+      )
     }
+
+    await this.projectRepo.findProjectOrFail(
+      {
+        brandId: brand.id,
+        organizationId: cmd.organizationId,
+        projectId: cmd.projectId,
+      },
+      tx,
+    )
   }
 }

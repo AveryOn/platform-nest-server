@@ -22,6 +22,7 @@ export class SnapshotPayloadBuilder implements SnapshotPayloadBuilderPort {
     const resolved = await this.resolvedRulesetService.getResolvedRuleset(
       {
         projectId: cmd.projectId,
+        organizationId: cmd.organizationId,
       },
     )
 

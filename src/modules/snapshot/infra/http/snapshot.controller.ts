@@ -22,6 +22,8 @@ import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
 import { ApiKeyScope } from '~/modules/api-key/application/api-key.type'
 import { ApiKeyScopes } from '~/modules/api-key/infra/auth/api-key-scopes.decorator'
 import { SessionOrApiKeyGuard } from '~/modules/api-key/infra/auth/api-key.guard'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
 import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import {
   ProjectSnapshotCreateDto,
@@ -98,13 +100,18 @@ export class SnapshotController {
     description: 'Project not found',
   })
   async getProjectSnapshots(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @ValidQuery(ProjectSnapshotsListQuery)
     query: ProjectSnapshotsListQuery,
   ): Promise<PaginatedResponse<ProjectSnapshotItemRes>> {
     return await this.snapshotService.getList({
       projectId,
+      organizationId: auth.activeOrganizationId,
       limit: query.limit,
       page: query.page,
     })
@@ -160,13 +167,18 @@ export class SnapshotController {
     description: 'Project or snapshot not found',
   })
   async getProjectSnapshotById(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Param('snapshotId', ParseUUIDPipe)
     snapshotId: string,
   ): Promise<ProjectSnapshotItemRes> {
     return await this.snapshotService.getById({
       projectId,
+      organizationId: auth.activeOrganizationId,
       snapshotId,
     })
   }
@@ -221,13 +233,18 @@ export class SnapshotController {
     description: 'Project or snapshot version not found',
   })
   async getProjectSnapshotByVersion(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Param('version', ParseIntPipe)
     version: number,
   ): Promise<ProjectSnapshotItemRes> {
     return await this.snapshotService.getByVersion({
       projectId,
+      organizationId: auth.activeOrganizationId,
       version,
     })
   }
@@ -283,13 +300,18 @@ export class SnapshotController {
     description: 'Project or snapshot not found',
   })
   async getProjectSnapshotPayload(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Param('snapshotId', ParseUUIDPipe)
     snapshotId: string,
   ): Promise<ProjectSnapshotPayloadRes> {
     return await this.snapshotService.getPayload({
       projectId,
+      organizationId: auth.activeOrganizationId,
       snapshotId,
     })
   }
@@ -337,11 +359,15 @@ export class SnapshotController {
     description: 'Project not found',
   })
   async getProjectSnapshotStatus(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
   ): Promise<ProjectSnapshotStatusRes> {
     return await this.snapshotService.getStatus({
       projectId,
+      organizationId: auth.activeOrganizationId,
     })
   }
 
@@ -402,13 +428,18 @@ export class SnapshotController {
     description: 'Validation failed',
   })
   async createProjectSnapshot(
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
+
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
+
     @Body()
     body: ProjectSnapshotCreateDto,
   ): Promise<ProjectSnapshotItemRes> {
     return await this.snapshotService.create({
       projectId,
+      organizationId: auth.activeOrganizationId,
       comment: body.comment,
       skipIfUnchanged: body.skipIfUnchanged,
     })
