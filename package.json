@@ -25,7 +25,8 @@
     "db:seed:templates": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts apply",
     "db:seed:templates:check": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts check",
     "db:seed:templates:dry-run": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts dry-run",
-    "db:seed:templates:diff": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts diff"
+    "db:seed:templates:diff": "tsx src/bootstrap/templates/infra/cli/seed-templates.cli.ts diff",
+    "db:seed:dev": "tsx src/bootstrap/dev-seed/seed-dev.ts"
   },
   "dependencies": {
     "@nestjs-modules/ioredis": "^2.0.2",

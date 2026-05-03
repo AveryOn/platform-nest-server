@@ -121,7 +121,8 @@ export const members = pgTable(
     index('members_organizationId_idx').on(table.organizationId),
     index('members_userId_idx').on(table.userId),
     uniqueIndex('organization_id_user_id_uidx').on(
-      (table.organizationId, table.userId),
+      table.organizationId,
+      table.userId,
     ),
   ],
 )
@@ -150,7 +151,9 @@ export const invitations = pgTable(
     index('invitations_organizationId_idx').on(table.organizationId),
     index('invitations_email_idx').on(table.email),
     uniqueIndex('organization_id_email_status_uidx').on(
-      (table.organizationId, table.email, table.status),
+      table.organizationId,
+      table.email,
+      table.status,
     ),
   ],
 )
