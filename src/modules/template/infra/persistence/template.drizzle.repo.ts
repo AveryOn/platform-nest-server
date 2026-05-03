@@ -31,7 +31,6 @@ export class TemplateDrizzleRepo implements TemplateRepoPort {
     @Inject(PAGINATOR_PORT)
     private readonly paginator: PaginatorServicePort,
   ) {}
-
   async getList(
     cmd: TemplateRepoCmd.getList,
     tx?: Tx,
@@ -92,6 +91,21 @@ export class TemplateDrizzleRepo implements TemplateRepoPort {
       .limit(1)
 
     return template ?? null
+  }
+
+  async getSnapshotById(
+    cmd: TemplateRepoCmd.getSnapshotById,
+    tx?: Tx,
+  ): Promise<TemplateRepoRes.getSnapshotById> {
+    const db = defineDb(this.drizzle.db, tx)
+
+    const [snapshot] = await db
+      .select()
+      .from(templateSnapshotsTable)
+      .where(eq(templateSnapshotsTable.id, cmd.templateSnapshotId))
+      .limit(1)
+
+    return snapshot
   }
 
   async getSnapshotList(

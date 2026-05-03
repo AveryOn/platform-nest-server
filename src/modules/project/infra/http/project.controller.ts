@@ -10,7 +10,6 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -21,6 +20,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { ApiDataResponse } from '~/core/interceptors/json-response.interceptor'
+import type { OrgAuthReqPayload } from '~/modules/auth/application/auth.types'
+import { OrgAuthReq } from '~/modules/auth/infra/http/auth-request.decorator'
 import { SessionGuard } from '~/modules/auth/infra/session.guard'
 import {
   ProjectCreateDto,
@@ -93,13 +94,13 @@ export class ProjectController {
     @ValidQuery(ProjectGetListQuery)
     query: ProjectGetListQuery,
 
-    @Req()
-    req: Request,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<PaginatedResponse<ProjectListItemResponse>> {
     return await this.projectService.getList({
+      organizationId: auth.activeOrganizationId,
       limit: query.limit,
       page: query.page,
-      organizationId: (req as any).activeOrganizationId,
       brandId: query.brandId,
       includeArchived: query.includeArchived,
       search: query.search,
@@ -154,11 +155,11 @@ export class ProjectController {
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
 
-    @Req()
-    req: Request,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<ProjectItemResponse> {
     return await this.projectService.getById({
-      organizationId: (req as any).activeOrganizationId,
+      organizationId: auth.activeOrganizationId,
       projectId,
     })
   }
@@ -215,12 +216,12 @@ export class ProjectController {
     @Body()
     body: ProjectCreateDto,
 
-    @Req()
-    req: Request,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<ProjectItemResponse> {
     return await this.projectService.create({
       name: body.name,
-      organizationId: (req as any).activeOrganizationId,
+      organizationId: auth.activeOrganizationId,
       brandId: body.brandId,
       description: body.description,
       templateSnapshotId: body.templateSnapshotId,
@@ -289,11 +290,12 @@ export class ProjectController {
     @Body()
     body: ProjectPatchDto,
 
-    @Req()
-    req: Request,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<ProjectPatchResponse> {
     return await this.projectService.update({
-      organizationId: (req as any).activeOrganizationId,
+      organizationId: auth.activeOrganizationId,
+      brandId: body.brandId,
       projectId,
       description: body.description,
       name: body.name,
@@ -346,11 +348,11 @@ export class ProjectController {
     @Param('projectId', ParseUUIDPipe)
     projectId: string,
 
-    @Req()
-    req: Request,
+    @OrgAuthReq()
+    auth: OrgAuthReqPayload,
   ): Promise<ProjectRemoveResponse> {
     return await this.projectService.delete({
-      organizationId: (req as any).activeOrganizationId,
+      organizationId: auth.activeOrganizationId,
       projectId,
     })
   }

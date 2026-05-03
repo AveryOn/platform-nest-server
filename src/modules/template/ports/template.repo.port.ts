@@ -21,4 +21,9 @@ export abstract class TemplateRepoPort {
     cmd: TemplateRepoCmd.getSnapshotList,
     tx?: TransactionContext,
   ): Promise<TemplateRepoRes.getSnapshotList>
+
+  abstract getSnapshotById(
+    cmd: TemplateRepoCmd.getSnapshotById,
+    tx?: TransactionContext,
+  ): Promise<TemplateRepoRes.getSnapshotById>
 }

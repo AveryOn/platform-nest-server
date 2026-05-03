@@ -6,10 +6,11 @@ import { ProjectController } from '~/modules/project/infra/http/project.controll
 import { ProjectDrizzleRepo } from '~/modules/project/infra/persistence/project.drizzle.repo'
 import { PROJECT_REPO_PORT } from '~/modules/project/ports/project.repo.port'
 import { PROJECT_SERVICE_PORT } from '~/modules/project/ports/project.service.port'
+import { TemplateModule } from '~/modules/template/template.module'
 
 @Module({
   controllers: [ProjectController],
-  imports: [AuthModule, BrandModule],
+  imports: [AuthModule, BrandModule, TemplateModule],
   providers: [
     {
       provide: PROJECT_SERVICE_PORT,

@@ -127,18 +127,17 @@ export class ProjectPatchBaseDto {
   @ValidateIf((_, value) => value !== null)
   description?: string | null
 
-  // @ApiPropertyOptional({
-  //   example: 'c6f33564-2c64-4f7c-bb6f-6e3d7ef21671',
-  //   description: 'Updated brand UUID',
-  //   format: 'uuid',
-  //   nullable: true,
-  //   type: String,
-  // })
-  // @IsOptional()
-  // @IsString()
-  // @IsUUID()
-  // @ValidateIf((_, value) => value !== null)
-  // brandId?: string | null
+  @ApiPropertyOptional({
+    example: 'c6f33564-2c64-4f7c-bb6f-6e3d7ef21671',
+    description: 'Updated brand UUID',
+    format: 'uuid',
+    nullable: false,
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  brandId?: string
 
   @ApiPropertyOptional({
     example: '2c0c5af8-7d26-4dd4-a8d6-2f8b0658f1a2',

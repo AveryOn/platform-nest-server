@@ -57,6 +57,7 @@ export namespace ProjectReqCmd {
     organizationId: string
     projectId: string
     name?: string
+    brandId?: string
     description?: string | null
     templateSnapshotId?: string | null
   }
@@ -103,5 +104,7 @@ export namespace ProjectRepoRes {
   export type GetById = ProjectEntity | null
   export type Create = ProjectEntity
   export type Update = ProjectRes.Update
-  export type Delete = ProjectRes.Delete
+  export type Delete = {
+    archivedAt: string
+  }
 }

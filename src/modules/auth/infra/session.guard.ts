@@ -5,8 +5,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
-import type { Request } from 'express'
 
+import type { AuthRequest } from '~/modules/auth/application/auth.types'
 import {
   AUTH_SERVICE_PORT,
   type AuthServicePort,
@@ -21,7 +21,7 @@ export class SessionGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>()
+    const request = context.switchToHttp().getRequest<AuthRequest>()
     const headers = toWebHeaders(request.headers)
 
     const result = await this.authService.getSession(headers)
@@ -30,10 +30,9 @@ export class SessionGuard implements CanActivate {
       throw new UnauthorizedException('Unauthorized')
     }
 
-    ;(request as Request & Record<string, unknown>).user = result.user
-    ;(request as Request & Record<string, unknown>).session =
-      result.session
-    ;(request as Request & Record<string, unknown>).activeOrganizationId =
+    request.user = result.user
+    request.session = result.session
+    request.activeOrganizationId =
       result.session.activeOrganizationId ?? null
 
     return true

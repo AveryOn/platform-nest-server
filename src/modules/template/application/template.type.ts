@@ -52,6 +52,10 @@ export namespace TemplateRepoCmd {
     templateId: string
   }
 
+  export interface getSnapshotById {
+    templateSnapshotId: string
+  }
+
   export interface getById {
     templateId: string
   }
@@ -77,5 +81,6 @@ export namespace TemplateRepoRes {
 
   export type getList = PaginatedOutput<template>
   export type getSnapshotList = PaginatedOutput<snapshot>
+  export type getSnapshotById = snapshot | null
   export type getById = template | null
 }

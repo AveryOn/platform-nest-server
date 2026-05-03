@@ -157,6 +157,7 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
         name: cmd.name,
         description: cmd.description,
         templateSnapshotId: cmd.templateSnapshotId,
+        brandId: cmd.brandId,
         updatedAt: new Date(),
       })
       .where(
@@ -192,8 +193,6 @@ export class ProjectDrizzleRepo implements ProjectRepoPort {
       )
 
     return {
-      status: OperationStatus.success,
-      projectId: cmd.projectId,
       archivedAt: archivedAt.toISOString(),
     }
   }
